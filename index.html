@@ -7,239 +7,288 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-:root {
-  --bg: #0b0b0d;
-  --surface: #141416;
-  --surface2: #1e1e22;
-  --surface3: #28282e;
-  --border: #2a2a30;
-  --border2: #363640;
-  --accent: #2a9d9f;
-  --accent-dim: rgba(42,157,159,0.1);
-  --accent-border: rgba(42,157,159,0.3);
-  --text: #ededf0;
-  --text2: #9898a6;
-  --muted: #60606e;
-  --danger: #ff5c5c;
-  --danger-dim: rgba(255,92,92,0.08);
-  --danger-border: rgba(255,92,92,0.25);
-  --income: #4ade80;
-  --expense: #ff5c5c;
-  --transfer: #b8a9e0;
-  --transfer-dim: rgba(184,169,224,0.08);
-  --warn: #c8922a;
-  --warn-dim: rgba(200,146,42,0.08);
-  --warn-border: rgba(200,146,42,0.25);
+:root{
+  --bg:#0b0b0d;--surface:#141416;--surface2:#1e1e22;--surface3:#28282e;
+  --border:#2a2a30;--border2:#363640;
+  --accent:#2a9d9f;--accent-dim:rgba(42,157,159,.1);--accent-border:rgba(42,157,159,.3);
+  --text:#ededf0;--text2:#9898a6;--muted:#60606e;
+  --danger:#ff5c5c;--danger-dim:rgba(255,92,92,.08);--danger-border:rgba(255,92,92,.25);
+  --income:#4ade80;--expense:#ff5c5c;--transfer:#b8a9e0;--transfer-dim:rgba(184,169,224,.08);
+  --warn:#c8922a;--warn-dim:rgba(200,146,42,.08);--warn-border:rgba(200,146,42,.25);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; }
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  display: flex;
-  justify-content: center;
-  overflow-x: hidden;
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+  display:flex;justify-content:center;overflow-x:hidden
 }
-
-.app { width: 100%; max-width: 430px; min-height: 100%; display: flex; flex-direction: column; padding-bottom: 40px; }
+.app{width:100%;max-width:430px;min-height:100%;display:flex;flex-direction:column;padding-bottom:40px}
 
 /* TOP BAR */
-.topbar { padding: 20px 20px 0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-.wordmark { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
-.wordmark span { color: var(--accent); }
-.gear-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-size: 16px; }
-.gear-btn:hover { border-color: var(--border2); color: var(--text2); }
-.gear-btn:active { transform: scale(0.92); }
+.topbar{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.wordmark{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.wordmark span{color:var(--accent)}
+.gear-btn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);
+  color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:all .15s;font-size:16px
+}
+.gear-btn:hover{border-color:var(--border2);color:var(--text2)}
+.gear-btn:active{transform:scale(.92)}
 
 /* MODE PILLS */
-.mode-strip { padding: 16px 20px 0; flex-shrink: 0; }
-.pills { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 3px; gap: 2px; }
-.pill { flex: 1; padding: 8px 4px; border-radius: 9px; font-size: 12px; font-weight: 500; color: var(--muted); text-align: center; cursor: pointer; transition: all 0.18s; white-space: nowrap; user-select: none; }
-.pill:hover { color: var(--text2); }
-.pill.active { background: var(--surface3); color: var(--text); font-weight: 600; }
-.pill.active[data-mode="expense"] { color: var(--expense); }
-.pill.active[data-mode="income"]  { color: var(--income); }
-.pill.active[data-mode="transfer"]{ color: var(--transfer); }
+.mode-strip{padding:16px 20px 0;flex-shrink:0}
+.pills{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:3px;gap:2px}
+.pill{
+  flex:1;padding:8px 4px;border-radius:9px;font-size:12px;font-weight:500;color:var(--muted);
+  text-align:center;cursor:pointer;transition:all .18s;white-space:nowrap;user-select:none
+}
+.pill:hover{color:var(--text2)}
+.pill.active{background:var(--surface3);color:var(--text);font-weight:600}
+.pill.active[data-mode="expense"]{color:var(--expense)}
+.pill.active[data-mode="income"]{color:var(--income)}
+.pill.active[data-mode="transfer"]{color:var(--transfer)}
 
 /* CONTENT */
-.content { flex: 1; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 12px; }
+.content{flex:1;padding:16px 20px 0;display:flex;flex-direction:column;gap:12px}
 
 /* SCREENS */
-.screen { display: none; flex-direction: column; gap: 12px; }
-.screen.active { display: flex; animation: fadeUp 0.2s cubic-bezier(0.22,1,0.36,1); }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.screen{display:none;flex-direction:column;gap:12px}
+.screen.active{display:flex;animation:fadeUp .2s cubic-bezier(.22,1,.36,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* UPLOAD HERO */
-.upload-hero { min-height: 260px; background: var(--surface); border: 1.5px dashed var(--border2); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden; }
-.upload-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(42,157,159,0.07) 0%, transparent 70%); pointer-events: none; }
-.upload-hero:hover, .upload-hero.drag { border-color: var(--accent); background: var(--accent-dim); }
-.upload-hero:active { transform: scale(0.985); }
-.upload-icon { width: 60px; height: 60px; border-radius: 16px; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 26px; transition: transform 0.2s; }
-.upload-hero:active .upload-icon { transform: scale(0.9); }
-.upload-label { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; }
-.upload-sub { font-size: 13px; color: var(--muted); }
-#file-input { display: none; }
+.upload-hero{
+  min-height:260px;background:var(--surface);border:1.5px dashed var(--border2);border-radius:20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  cursor:pointer;transition:all .2s ease;position:relative;overflow:hidden
+}
+.upload-hero::before{
+  content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(42,157,159,.07) 0%,transparent 70%);
+  pointer-events:none
+}
+.upload-hero:hover,.upload-hero.drag{border-color:var(--accent);background:var(--accent-dim)}
+.upload-hero:active{transform:scale(.985)}
+.upload-icon{
+  width:60px;height:60px;border-radius:16px;background:var(--surface2);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;font-size:26px;transition:transform .2s
+}
+.upload-hero:active .upload-icon{transform:scale(.9)}
+.upload-label{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600}
+.upload-sub{font-size:13px;color:var(--muted)}
+#file-input{display:none}
 
 /* PARSING */
-.parsing-screen { min-height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; }
-.pulse-ring { width: 48px; height: 48px; position: relative; display: flex; align-items: center; justify-content: center; }
-.pulse-ring::before, .pulse-ring::after { content: ''; position: absolute; border: 1.5px solid var(--accent); border-radius: 50%; animation: pulse-out 1.4s ease-out infinite; }
-.pulse-ring::after { animation-delay: 0.55s; }
-@keyframes pulse-out { 0% { width: 14px; height: 14px; opacity: 0.9; } 100% { width: 48px; height: 48px; opacity: 0; } }
-.pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); z-index: 1; }
-.parsing-text { font-size: 13px; color: var(--text2); letter-spacing: 0.01em; }
+.parsing-screen{
+  min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  background:var(--surface);border:1px solid var(--border);border-radius:20px
+}
+.pulse-ring{width:48px;height:48px;position:relative;display:flex;align-items:center;justify-content:center}
+.pulse-ring::before,.pulse-ring::after{
+  content:'';position:absolute;border:1.5px solid var(--accent);border-radius:50%;animation:pulse-out 1.4s ease-out infinite
+}
+.pulse-ring::after{animation-delay:.55s}
+@keyframes pulse-out{0%{width:14px;height:14px;opacity:.9}100%{width:48px;height:48px;opacity:0}}
+.pulse-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);z-index:1}
+.parsing-text{font-size:13px;color:var(--text2);letter-spacing:.01em}
 
 /* RECEIPT */
-.receipt { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
-.receipt-hero { padding: 22px 22px 18px; border-bottom: 1px dashed var(--border2); transition: background 0.3s; }
-.receipt-hero.expense-bg  { background: rgba(255,92,92,0.04); }
-.receipt-hero.income-bg   { background: rgba(42,157,159,0.06); }
-.receipt-hero.transfer-bg { background: rgba(155,143,255,0.04); }
+.receipt{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.receipt-hero{padding:22px 22px 18px;border-bottom:1px dashed var(--border2);transition:background .3s}
+.receipt-hero.expense-bg{background:rgba(255,92,92,.04)}
+.receipt-hero.income-bg{background:rgba(42,157,159,.06)}
+.receipt-hero.transfer-bg{background:rgba(155,143,255,.04)}
 
-.hero-amount-wrap { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
-.receipt-amount { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; cursor: pointer; border-bottom: 1.5px dashed transparent; transition: border-color 0.15s; flex: 1; }
-.receipt-amount:hover { border-bottom-color: var(--border2); }
-.receipt-amount.expense  { color: var(--expense); }
-.receipt-amount.income   { color: var(--income); }
-.receipt-amount.transfer { color: var(--transfer); }
-.receipt-amount-input { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; background: transparent; border: none; outline: none; width: 100%; }
-.receipt-amount-input.expense  { color: var(--expense); }
-.receipt-amount-input.income   { color: var(--income); }
-.receipt-amount-input.transfer { color: var(--transfer); }
+.hero-amount-wrap{display:flex;align-items:flex-start;gap:8px;margin-bottom:12px}
+.receipt-amount{
+  font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1;
+  cursor:pointer;border-bottom:1.5px dashed transparent;transition:border-color .15s;flex:1
+}
+.receipt-amount:hover{border-bottom-color:var(--border2)}
+.receipt-amount.expense{color:var(--expense)}
+.receipt-amount.income{color:var(--income)}
+.receipt-amount.transfer{color:var(--transfer)}
+.receipt-amount-input{
+  font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1;
+  background:transparent;border:none;outline:none;width:100%
+}
+.receipt-amount-input.expense{color:var(--expense)}
+.receipt-amount-input.income{color:var(--income)}
+.receipt-amount-input.transfer{color:var(--transfer)}
 
-.type-chip { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; font-weight: 500; margin-top: 6px; flex-shrink: 0; }
-.type-chip.expense  { background: var(--danger-dim);   color: var(--expense);  border: 1px solid var(--danger-border); }
-.type-chip.income   { background: var(--accent-dim);   color: var(--income);   border: 1px solid var(--accent-border); }
-.type-chip.transfer { background: var(--transfer-dim); color: var(--transfer); border: 1px solid rgba(184,169,224,0.25); }
+.type-chip{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 7px;border-radius:6px;font-weight:500;margin-top:6px;flex-shrink:0
+}
+.type-chip.expense{background:var(--danger-dim);color:var(--expense);border:1px solid var(--danger-border)}
+.type-chip.income{background:var(--accent-dim);color:var(--income);border:1px solid var(--accent-border)}
+.type-chip.transfer{background:var(--transfer-dim);color:var(--transfer);border:1px solid rgba(184,169,224,.25)}
 
-.receipt-meta { display: flex; align-items: center; gap: 10px; }
-.receipt-merchant-wrap { flex: 1; }
-.receipt-merchant { font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; border-bottom: 1.5px dashed transparent; display: inline-block; transition: border-color 0.15s; }
-.receipt-merchant:hover { border-bottom-color: var(--border2); }
-.merchant-input { font-size: 15px; font-weight: 600; background: transparent; border: none; border-bottom: 1.5px solid var(--accent-border); outline: none; color: var(--text); width: 100%; padding-bottom: 1px; }
-.receipt-date { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); cursor: pointer; border-bottom: 1.5px dashed transparent; transition: border-color 0.15s; white-space: nowrap; }
-.receipt-date:hover { border-bottom-color: var(--border2); }
-.date-input { font-family: 'DM Mono', monospace; font-size: 11px; background: transparent; border: none; border-bottom: 1.5px solid var(--accent-border); outline: none; color: var(--text2); width: 120px; }
+.receipt-meta{display:flex;align-items:center;gap:10px}
+.receipt-merchant-wrap{flex:1}
+.receipt-merchant{
+  font-size:15px;font-weight:600;color:var(--text);cursor:pointer;border-bottom:1.5px dashed transparent;
+  display:inline-block;transition:border-color .15s
+}
+.receipt-merchant:hover{border-bottom-color:var(--border2)}
+.merchant-input{
+  font-size:15px;font-weight:600;background:transparent;border:none;border-bottom:1.5px solid var(--accent-border);
+  outline:none;color:var(--text);width:100%;padding-bottom:1px
+}
+.receipt-date{
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;border-bottom:1.5px dashed transparent;
+  transition:border-color .15s;white-space:nowrap
+}
+.receipt-date:hover{border-bottom-color:var(--border2)}
+.date-input{
+  font-family:'DM Mono',monospace;font-size:11px;background:transparent;border:none;border-bottom:1.5px solid var(--accent-border);
+  outline:none;color:var(--text2);width:120px
+}
 
 /* WARN */
-.warn-banner { background: var(--warn-dim); border: 1px solid var(--warn-border); border-radius: 10px; padding: 8px 14px; font-size: 12px; color: var(--warn); display: flex; align-items: center; gap: 6px; }
+.warn-banner{
+  background:var(--warn-dim);border:1px solid var(--warn-border);border-radius:10px;
+  padding:8px 14px;font-size:12px;color:var(--warn);display:flex;align-items:center;gap:6px
+}
 
 /* FIELD ROWS */
-.field-section { padding: 2px 0; }
-.field-row { display: grid; grid-template-columns: 76px 1fr; align-items: center; padding: 10px 22px; border-bottom: 1px solid var(--border); min-height: 46px; gap: 12px; }
-.field-row:last-child { border-bottom: none; }
-.field-key { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.field-val { font-size: 14px; font-weight: 500; color: var(--text); text-align: right; }
-.field-val.group-tag { display: flex; justify-content: flex-end; }
-.group-badge { font-family: 'DM Mono', monospace; font-size: 10px; background: var(--surface3); border: 1px solid var(--border2); border-radius: 6px; padding: 2px 8px; color: var(--text2); letter-spacing: 0.04em; }
-.auto-badge { font-family: 'DM Mono', monospace; font-size: 9px; background: var(--accent-dim); border: 1px solid var(--accent-border); border-radius: 5px; padding: 2px 6px; color: var(--accent); letter-spacing: 0.04em; margin-left: 6px; }
+.field-section{padding:2px 0}
+.field-row{
+  display:grid;grid-template-columns:76px 1fr;align-items:center;padding:10px 22px;border-bottom:1px solid var(--border);
+  min-height:46px;gap:12px
+}
+.field-row:last-child{border-bottom:none}
+.field-key{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.field-val{font-size:14px;font-weight:500;color:var(--text);text-align:right}
+.field-val.group-tag{display:flex;justify-content:flex-end}
+.group-badge{
+  font-family:'DM Mono',monospace;font-size:10px;background:var(--surface3);border:1px solid var(--border2);
+  border-radius:6px;padding:2px 8px;color:var(--text2);letter-spacing:.04em
+}
+.auto-badge{
+  font-family:'DM Mono',monospace;font-size:9px;background:var(--accent-dim);border:1px solid var(--accent-border);
+  border-radius:5px;padding:2px 6px;color:var(--accent);letter-spacing:.04em;margin-left:6px
+}
+.inline-input{
+  background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+  color:var(--text);text-align:right;width:100%
+}
+.inline-input::placeholder{color:var(--muted)}
+.char-count{font-size:10px;color:var(--muted);text-align:right;margin-top:2px;font-family:'DM Mono',monospace}
 
-.inline-input { background: transparent; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); text-align: right; width: 100%; }
-.inline-input::placeholder { color: var(--muted); }
-.char-count { font-size: 10px; color: var(--muted); text-align: right; margin-top: 2px; font-family: 'DM Mono', monospace; }
+/* DROPDOWN */
+.dropdown-wrap{position:relative;width:100%;display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.dropdown-input{
+  background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+  color:var(--text);text-align:right;width:100%;cursor:pointer
+}
+.dropdown-input::placeholder{color:var(--muted)}
+.dropdown-list{
+  position:absolute;right:0;top:calc(100% + 6px);background:var(--surface2);border:1px solid var(--border2);
+  border-radius:12px;max-height:200px;overflow-y:auto;z-index:50;min-width:180px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);animation:dropIn .15s cubic-bezier(.22,1,.36,1)
+}
+@keyframes dropIn{from{opacity:0;transform:translateY(-4px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.dropdown-item{padding:10px 14px;font-size:13px;cursor:pointer;color:var(--text);transition:background .1s}
+.dropdown-item:hover,.dropdown-item.highlighted{background:var(--surface3)}
+.dropdown-item.selected{color:var(--accent)}
+.dropdown-empty{padding:10px 14px;font-size:12px;color:var(--muted);text-align:center}
 
-/* SEARCHABLE DROPDOWN */
-.dropdown-wrap { position: relative; width: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
-.dropdown-input { background: transparent; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); text-align: right; width: 100%; cursor: pointer; }
-.dropdown-input::placeholder { color: var(--muted); }
-.dropdown-list { position: absolute; right: 0; top: calc(100% + 6px); background: var(--surface2); border: 1px solid var(--border2); border-radius: 12px; max-height: 200px; overflow-y: auto; z-index: 50; min-width: 180px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: dropIn 0.15s cubic-bezier(0.22,1,0.36,1); }
-@keyframes dropIn { from { opacity: 0; transform: translateY(-4px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-.dropdown-item { padding: 10px 14px; font-size: 13px; cursor: pointer; color: var(--text); transition: background 0.1s; }
-.dropdown-item:hover, .dropdown-item.highlighted { background: var(--surface3); }
-.dropdown-item.selected { color: var(--accent); }
-.dropdown-empty { padding: 10px 14px; font-size: 12px; color: var(--muted); text-align: center; }
+/* SELECT */
+.inline-select{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 10px;outline:none;text-align:right
+}
 
-/* NATIVE SELECT */
-.inline-select { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 6px 10px; outline: none; text-align: right; }
-
-/* DUPE WARNING */
-.dupe-card { background: var(--warn-dim); border: 1px solid var(--warn-border); border-radius: 14px; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
-.dupe-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: var(--warn); }
-.dupe-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
-.dupe-actions { display: flex; gap: 8px; }
-.btn-dupe-log { flex: 1; padding: 10px; border-radius: 10px; background: var(--warn); color: #061414; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
-.btn-dupe-cancel { flex: 1; padding: 10px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border2); color: var(--text2); font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+/* DUPE */
+.dupe-card{background:var(--warn-dim);border:1px solid var(--warn-border);border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.dupe-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--warn)}
+.dupe-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.dupe-actions{display:flex;gap:8px}
+.btn-dupe-log{flex:1;padding:10px;border-radius:10px;background:var(--warn);color:#061414;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;border:none;cursor:pointer}
+.btn-dupe-cancel{flex:1;padding:10px;border-radius:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
 
 /* ACTIONS */
-.action-bar { display: flex; gap: 10px; }
-.btn { flex: 1; padding: 16px; border-radius: 14px; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; letter-spacing: -0.01em; position: relative; overflow: hidden; }
-.btn::after { content: ''; position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 0.15s; border-radius: inherit; }
-.btn:active::after { opacity: 0.08; }
-.btn-log { background: var(--accent); color: #051010; }
-.btn-log:hover { filter: brightness(1.08); }
-.btn-log:active { transform: scale(0.96); }
-.btn-ghost { background: var(--surface); border: 1px solid var(--border); color: var(--text2); }
-.btn-ghost:hover { border-color: var(--border2); color: var(--text); }
-.btn-ghost:active { transform: scale(0.97); }
+.action-bar{display:flex;gap:10px}
+.btn{
+  flex:1;padding:16px;border-radius:14px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;
+  border:none;cursor:pointer;transition:all .15s;letter-spacing:-.01em;position:relative;overflow:hidden
+}
+.btn::after{content:'';position:absolute;inset:0;background:white;opacity:0;transition:opacity .15s;border-radius:inherit}
+.btn:active::after{opacity:.08}
+.btn-log{background:var(--accent);color:#051010}
+.btn-log:hover{filter:brightness(1.08)}
+.btn-log:active{transform:scale(.96)}
+.btn-ghost{background:var(--surface);border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+.btn-ghost:active{transform:scale(.97)}
 
 /* FAILURE */
-.failure-card { background: var(--danger-dim); border: 1px solid var(--danger-border); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-.failure-title { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: var(--danger); }
-.failure-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
-.failure-actions { display: flex; gap: 8px; }
-.btn-retry { flex: 1; padding: 12px; border-radius: 10px; background: var(--danger); color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; }
-.btn-copy  { flex: 1; padding: 12px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border2); color: var(--text2); font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
-.btn-retry:active, .btn-copy:active { transform: scale(0.96); }
+.failure-card{background:var(--danger-dim);border:1px solid var(--danger-border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.failure-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--danger)}
+.failure-desc{font-size:13px;color:var(--text2);line-height:1.5}
+.failure-actions{display:flex;gap:8px}
+.btn-retry{flex:1;padding:12px;border-radius:10px;background:var(--danger);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .15s}
+.btn-copy{flex:1;padding:12px;border-radius:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.btn-retry:active,.btn-copy:active{transform:scale(.96)}
 
 /* SUCCESS */
-.success-card { background: var(--accent-dim); border: 1px solid var(--accent-border); border-radius: 20px; padding: 32px 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; animation: successPop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
-@keyframes successPop { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
-.success-check { width: 52px; height: 52px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #061414; margin-bottom: 4px; animation: checkPop 0.4s 0.1s cubic-bezier(0.34,1.56,0.64,1) both; }
-@keyframes checkPop { from { transform: scale(0); } to { transform: scale(1); } }
-.success-label { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); }
-.success-detail { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
-.success-row { font-size: 13px; color: var(--text2); }
-.success-row strong { color: var(--text); font-weight: 600; }
+.success-card{background:var(--accent-dim);border:1px solid var(--accent-border);border-radius:20px;padding:32px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;animation:successPop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes successPop{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.success-check{width:52px;height:52px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;color:#061414;margin-bottom:4px;animation:checkPop .4s .1s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes checkPop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-label{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--accent)}
+.success-detail{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.success-row{font-size:13px;color:var(--text2)}
+.success-row strong{color:var(--text);font-weight:600}
 
 /* MANUAL FORM */
-.form-block { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-.form-row-inner { display: flex; align-items: center; padding: 12px 22px; border-bottom: 1px solid var(--border); min-height: 48px; gap: 12px; }
-.form-row-inner:last-child { border-bottom: none; }
-.form-key { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); flex-shrink: 0; width: 76px; }
-.form-ctrl { background: transparent; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); text-align: right; flex: 1; min-width: 0; }
-.form-ctrl::placeholder { color: var(--muted); }
-.form-select-ctrl { background: transparent; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); text-align: right; width: 100%; cursor: pointer; }
+.form-block{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.form-row-inner{display:flex;align-items:center;padding:12px 22px;border-bottom:1px solid var(--border);min-height:48px;gap:12px}
+.form-row-inner:last-child{border-bottom:none}
+.form-key{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);flex-shrink:0;width:76px}
+.form-ctrl{background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--text);text-align:right;flex:1;min-width:0}
+.form-ctrl::placeholder{color:var(--muted)}
+.form-select-ctrl{background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);text-align:right;width:100%;cursor:pointer}
 
-.transfer-notice { background: var(--transfer-dim); border: 1px solid rgba(184,169,224,0.2); border-radius: 12px; padding: 10px 14px; font-size: 12px; color: var(--transfer); }
+/* CATEGORY SHEET */
+.sheet-overlay{position:fixed;inset:0;z-index:300;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6);display:none}
+.cat-group-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 16px 4px}
+.cat-item{padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);border-radius:10px;cursor:pointer;transition:background .1s}
+.cat-item:hover,.cat-item:active{background:var(--surface2)}
+.cat-item-active{color:var(--accent);font-weight:600}
 
 /* NUMPAD */
-.numpad-overlay { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
-.numpad { width: 100%; max-width: 430px; background: var(--surface); border-top: 1px solid var(--border2); padding: 12px 16px 40px; animation: slideUp 0.22s cubic-bezier(0.22,1,0.36,1); }
-.numpad-display { background: var(--bg); border: 1px solid var(--border2); border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; min-height: 56px; }
-.numpad-expr { font-family: 'DM Mono', monospace; font-size: 22px; color: var(--text); flex: 1; word-break: break-all; }
-.numpad-result { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent); margin-left: 10px; white-space: nowrap; }
-.numpad-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.nk { height: 52px; border-radius: 12px; border: none; font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; cursor: pointer; transition: all 0.1s; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
-.nk:active { transform: scale(0.92); }
-.nk-num  { background: var(--surface2); color: var(--text); }
-.nk-num:active  { background: var(--surface3); }
-.nk-op   { background: var(--surface3); color: var(--accent); font-size: 20px; }
-.nk-op:active   { background: var(--border2); }
-.nk-del  { background: var(--surface3); color: var(--text2); font-size: 15px; }
-.nk-done { background: var(--accent); color: #051010; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; }
-.nk-done:active { filter: brightness(1.1); }
-.nk-zero { grid-column: span 2; }
-
-/* REVIEW BUTTONS */
-.review-btns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-.review-btn { padding: 5px 12px; border-radius: 20px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.review-btn:hover { border-color: var(--accent); color: var(--accent); }
-.review-btn.active { background: var(--accent); border-color: var(--accent); color: #051010; font-weight: 600; }
+.numpad-overlay{position:fixed;inset:0;z-index:200;display:none;align-items:flex-end;justify-content:center}
+.numpad{width:100%;max-width:430px;background:var(--surface);border-top:1px solid var(--border2);padding:12px 16px 40px;animation:slideUp .22s cubic-bezier(.22,1,.36,1)}
+.numpad-display{background:var(--bg);border:1px solid var(--border2);border-radius:12px;padding:14px 18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;min-height:56px}
+.numpad-expr{font-family:'DM Mono',monospace;font-size:22px;color:var(--text);flex:1;word-break:break-all}
+.numpad-result{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);margin-left:10px;white-space:nowrap}
+.numpad-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.nk{height:52px;border-radius:12px;border:none;font-family:'DM Mono',monospace;font-size:18px;font-weight:500;cursor:pointer;transition:all .1s;display:flex;align-items:center;justify-content:center}
+.nk:active{transform:scale(.92)}
+.nk-num{background:var(--surface2);color:var(--text)}
+.nk-num:active{background:var(--surface3)}
+.nk-op{background:var(--surface3);color:var(--accent);font-size:20px}
+.nk-op:active{background:var(--border2)}
+.nk-del{background:var(--surface3);color:var(--text2);font-size:15px}
+.nk-done{background:var(--accent);color:#051010;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700}
+.nk-done:active{filter:brightness(1.1)}
+.nk-zero{grid-column:span 2}
 
 /* SETTINGS */
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
-.overlay.open { display: flex; }
-.sheet { width: 100%; max-width: 430px; background: var(--surface); border-radius: 24px 24px 0 0; border: 1px solid var(--border); border-bottom: none; padding: 12px 20px 52px; display: flex; flex-direction: column; gap: 14px; animation: slideUp 0.25s cubic-bezier(0.22,1,0.36,1); }
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.sheet-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 4px; }
-.sheet-title { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; }
-.setting-group { display: flex; flex-direction: column; gap: 6px; }
-.setting-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
-.setting-input { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 13px; padding: 12px 14px; outline: none; transition: border-color 0.15s; width: 100%; }
-.setting-input:focus { border-color: var(--accent-border); }
-.setting-hint { font-size: 11px; color: var(--muted); line-height: 1.6; }
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.sheet{width:100%;max-width:430px;background:var(--surface);border-radius:24px 24px 0 0;border:1px solid var(--border);border-bottom:none;padding:12px 20px 52px;display:flex;flex-direction:column;gap:14px;animation:slideUp .25s cubic-bezier(.22,1,.36,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 4px}
+.sheet-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700}
+.setting-group{display:flex;flex-direction:column;gap:6px}
+.setting-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.setting-input{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:12px 14px;outline:none;transition:border-color .15s;width:100%}
+.setting-input:focus{border-color:var(--accent-border)}
+.setting-hint{font-size:11px;color:var(--muted);line-height:1.6}
 </style>
 </head>
 
@@ -260,7 +309,6 @@ body {
   </div>
 
   <div class="content">
-    <!-- UPLOAD -->
     <div class="screen active" id="screen-upload">
       <div class="upload-hero" id="upload-hero" onclick="document.getElementById('file-input').click()">
         <div class="upload-icon" id="upload-icon">📷</div>
@@ -270,7 +318,6 @@ body {
       <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)" />
     </div>
 
-    <!-- PARSING -->
     <div class="screen" id="screen-parsing">
       <div class="parsing-screen">
         <div class="pulse-ring"><div class="pulse-dot"></div></div>
@@ -278,7 +325,6 @@ body {
       </div>
     </div>
 
-    <!-- CONFIRM -->
     <div class="screen" id="screen-confirm">
       <div class="receipt" id="receipt-card">
         <div class="receipt-hero" id="receipt-hero">
@@ -298,7 +344,6 @@ body {
       </div>
 
       <div id="dupe-warn-wrap"></div>
-      <div id="transfer-notice" class="transfer-notice" style="display:none">↕ Logs 2 rows. Outgoing and incoming.</div>
 
       <div class="action-bar">
         <div class="btn btn-ghost" onclick="cancelConfirm()">Retake</div>
@@ -306,7 +351,6 @@ body {
       </div>
     </div>
 
-    <!-- FAILURE -->
     <div class="screen" id="screen-failure">
       <div class="failure-card">
         <div class="failure-title">Failed to log</div>
@@ -319,7 +363,6 @@ body {
       <div class="btn btn-ghost" onclick="cancelConfirm()">Start over</div>
     </div>
 
-    <!-- SUCCESS -->
     <div class="screen" id="screen-success">
       <div class="success-card">
         <div class="success-check">✓</div>
@@ -328,7 +371,6 @@ body {
       </div>
     </div>
 
-    <!-- MANUAL -->
     <div class="screen" id="screen-manual">
       <div class="form-block" id="manual-form"></div>
       <div class="action-bar">
@@ -348,7 +390,7 @@ body {
     <div class="setting-group">
       <div class="setting-label">Gemini API Key</div>
       <input class="setting-input" type="password" id="s-gemini" placeholder="AIza…" oninput="saveSetting('gemini',this.value)" />
-      <div class="setting-hint">This runs in the browser. Use key restrictions.</div>
+      <div class="setting-hint">Browser key. Restrict by referrer to your GitHub Pages domain.</div>
     </div>
 
     <div class="setting-group">
@@ -357,13 +399,19 @@ body {
       <div class="setting-hint">Your Apps Script /exec endpoint.</div>
     </div>
 
+    <div class="setting-group">
+      <div class="setting-label">Debug Gemini</div>
+      <input class="setting-input" type="text" id="s-debug" placeholder="true / false" oninput="saveSetting('debug',this.value)" />
+      <div class="setting-hint">Set to true to show Gemini raw output in the console.</div>
+    </div>
+
     <div class="btn btn-log" onclick="closeSettings()">Done</div>
   </div>
 </div>
 
-<!-- CATEGORY PICKER SHEET -->
-<div class="sheet-overlay" id="cat-sheet" style="display:none;position:fixed;inset:0;z-index:300;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6)" onclick="if(event.target===this)closeCatPicker()">
-  <div style="width:100%;max-width:430px;background:var(--surface);border-radius:24px 24px 0 0;border:1px solid var(--border2);border-bottom:none;padding:8px 0 48px;max-height:70vh;display:flex;flex-direction:column;animation:slideUp 0.22s cubic-bezier(0.22,1,0.36,1)">
+<!-- CATEGORY PICKER -->
+<div class="sheet-overlay" id="cat-sheet" onclick="if(event.target===this)closeCatPicker()">
+  <div style="width:100%;max-width:430px;background:var(--surface);border-radius:24px 24px 0 0;border:1px solid var(--border2);border-bottom:none;padding:8px 0 48px;max-height:70vh;display:flex;flex-direction:column;animation:slideUp .22s cubic-bezier(.22,1,.36,1)">
     <div style="width:36px;height:4px;background:var(--border2);border-radius:2px;margin:8px auto 12px"></div>
     <div style="padding:0 16px 10px">
       <input id="cat-search" type="text" placeholder="Search…" autocomplete="off"
@@ -375,7 +423,7 @@ body {
 </div>
 
 <!-- NUMPAD -->
-<div class="numpad-overlay" id="numpad-overlay" style="display:none" onclick="numpadOutside(event)">
+<div class="numpad-overlay" id="numpad-overlay" onclick="numpadOutside(event)">
   <div class="numpad">
     <div class="numpad-display">
       <div class="numpad-expr" id="np-expr">0</div>
@@ -445,302 +493,286 @@ const MERCHANT_RULES = [
 ];
 
 /* STATE */
-let currentMode     = localStorage.getItem('lastMode') || 'expense';
-let manualMode      = 'manual'; // 'manual' or 'transfer'
-let parsedData      = {};
-let lastFailedRows  = null;
-let lastLoggedKey   = null;
-let lastLoggedTime  = 0;
-let pendingRows     = null;
+let currentMode    = localStorage.getItem('lastMode') || 'expense';
+let manualMode     = 'manual'; // manual | transfer
+let parsedData     = {};
+let lastFailedRows = null;
+let lastLoggedKey  = null;
+let lastLoggedTime = 0;
+let pendingRows    = null;
 
 /* SETTINGS */
-function loadSettings() {
+function loadSettings(){
   document.getElementById('s-gemini').value  = localStorage.getItem('gemini')  || '';
   document.getElementById('s-webhook').value = localStorage.getItem('webhook') || WEBHOOK_DEFAULT;
+  document.getElementById('s-debug').value   = localStorage.getItem('debug')   || 'false';
 }
-function saveSetting(k,v) { localStorage.setItem(k,v); }
-function openSettings()   { loadSettings(); document.getElementById('overlay').classList.add('open'); }
-function closeSettings(e) {
-  if (!e || e.target === document.getElementById('overlay')) document.getElementById('overlay').classList.remove('open');
-}
-function getWebhook() {
-  return (localStorage.getItem('webhook') || WEBHOOK_DEFAULT).trim();
-}
+function saveSetting(k,v){ localStorage.setItem(k,v); }
+function openSettings(){ loadSettings(); document.getElementById('overlay').classList.add('open'); }
+function closeSettings(e){ if(!e || e.target===document.getElementById('overlay')) document.getElementById('overlay').classList.remove('open'); }
+function getWebhook(){ return (localStorage.getItem('webhook') || WEBHOOK_DEFAULT).trim(); }
+function debugOn(){ return String(localStorage.getItem('debug') || '').trim().toLowerCase() === 'true'; }
 
 /* UTIL */
-function haptic(style='light') {
-  if (!navigator.vibrate) return;
-  const map = { light:30, medium:60, success:[30,50,30], error:[60,30,60] };
-  navigator.vibrate(map[style] || 30);
+function haptic(style='light'){
+  if(!navigator.vibrate) return;
+  const map={light:30,medium:60,success:[30,50,30],error:[60,30,60]};
+  navigator.vibrate(map[style]||30);
 }
-function fmt(n) {
-  return '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits:2, maximumFractionDigits:2 });
-}
-function toSheetDate(isoOrRaw) {
-  const d = new Date(isoOrRaw + 'T00:00:00');
-  if (isNaN(d)) return isoOrRaw;
+function fmt(n){ return '₱' + Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function toSheetDate(isoOrRaw){
+  const d=new Date(isoOrRaw + 'T00:00:00'); if(isNaN(d)) return isoOrRaw;
   return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
 }
-function todayISO() {
-  const d = new Date();
+function todayISO(){
+  const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-function displayDate(iso) {
-  const d = new Date(iso + 'T00:00:00');
-  if (isNaN(d)) return iso;
-  return d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+function displayDate(iso){
+  const d=new Date(iso + 'T00:00:00'); if(isNaN(d)) return iso;
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
 }
-function applyMerchantRules(merchant) {
-  if (!merchant) return {};
-  const lower = merchant.toLowerCase();
-  for (const rule of MERCHANT_RULES) {
-    if (rule.keywords.some(k => lower.includes(k))) {
-      return { paymentMethod: rule.paymentMethod, category: rule.category };
-    }
+function applyMerchantRules(merchant){
+  if(!merchant) return {};
+  const lower=merchant.toLowerCase();
+  for(const rule of MERCHANT_RULES){
+    if(rule.keywords.some(k=>lower.includes(k))) return { paymentMethod: rule.paymentMethod, category: rule.category };
   }
   return {};
 }
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   closeAllDropdowns();
 }
-function cancelConfirm() {
-  parsedData = {};
-  lastFailedRows = null;
-  pendingRows = null;
-  document.getElementById('dupe-warn-wrap').innerHTML = '';
+function cancelConfirm(){
+  parsedData={}; lastFailedRows=null; pendingRows=null;
+  document.getElementById('dupe-warn-wrap').innerHTML='';
   refreshHero();
   show('screen-upload');
 }
+function escapeHtml(s){
+  return String(s||'')
+    .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+    .replaceAll('"','&quot;').replaceAll("'","&#039;");
+}
+function escapeJs(s){ return String(s).replaceAll('\\','\\\\').replaceAll("'","\\'"); }
 
 /* MODE */
-function selectMode(mode) {
-  currentMode = mode;
-  localStorage.setItem('lastMode', mode);
+function selectMode(mode){
+  currentMode=mode;
+  localStorage.setItem('lastMode',mode);
+  document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('active',p.dataset.mode===mode));
 
-  document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.mode === mode));
-
-  if (mode === 'transfer') {
-    manualMode = 'transfer';
-    buildManualForm('transfer');
-    show('screen-manual');
-    return;
-  }
-  if (mode === 'manual') {
-    manualMode = 'manual';
-    buildManualForm('manual');
-    show('screen-manual');
-    return;
-  }
+  if(mode==='transfer'){ manualMode='transfer'; buildManualForm('transfer'); show('screen-manual'); return; }
+  if(mode==='manual'){ manualMode='manual'; buildManualForm('manual'); show('screen-manual'); return; }
 
   refreshHero();
   show('screen-upload');
 }
-function refreshHero() {
-  const map = {
-    expense: { icon:'📷', label:'Share a screenshot', sub:'GCash, credit card, any bank app' },
-    income:  { icon:'📥', label:'Share a screenshot', sub:'Salary slip, GCash, any inflow' },
+function refreshHero(){
+  const map={
+    expense:{icon:'📷',label:'Share a screenshot',sub:'GCash, credit card, any bank app'},
+    income:{icon:'📥',label:'Share a screenshot',sub:'Salary slip, GCash, any inflow'}
   };
-  const d = map[currentMode] || map.expense;
-  document.getElementById('upload-icon').textContent  = d.icon;
-  document.getElementById('upload-label').textContent = d.label;
-  document.getElementById('upload-sub').textContent   = d.sub;
+  const d=map[currentMode]||map.expense;
+  document.getElementById('upload-icon').textContent=d.icon;
+  document.getElementById('upload-label').textContent=d.label;
+  document.getElementById('upload-sub').textContent=d.sub;
 }
 
 /* FILE */
-function handleFile(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  e.target.value = '';
-  const reader = new FileReader();
-  reader.onload = () => parseWithGemini(reader.result);
+function handleFile(e){
+  const file=e.target.files[0]; if(!file) return;
+  e.target.value='';
+  const reader=new FileReader();
+  reader.onload=()=>parseWithGemini(reader.result);
   reader.readAsDataURL(file);
 }
 
+/* SAFE JSON PARSE */
+function safeJsonParse(text){
+  const s=String(text||'').trim();
+  try{ return JSON.parse(s); }catch{}
+  const a=s.indexOf('{'); const b=s.lastIndexOf('}');
+  if(a>=0 && b>a) return JSON.parse(s.slice(a,b+1));
+  throw new Error('Non-JSON response');
+}
+
 /* GEMINI */
-async function parseWithGemini(dataUrl) {
-  const rawKey = (localStorage.getItem('gemini') || '').trim();
-  const apiKey = rawKey.replace(/[^A-Za-z0-9_\-]/g, '');
-  if (!apiKey || apiKey.length < 20) {
-    alert('Gemini API key is missing. Open Settings.');
-    return;
-  }
+async function parseWithGemini(dataUrl){
+  const rawKey=(localStorage.getItem('gemini')||'').trim();
+  const apiKey=rawKey.replace(/[^A-Za-z0-9_\-]/g,'');
+  if(!apiKey || apiKey.length<20){ alert('Gemini API key is missing. Open Settings.'); return; }
 
   show('screen-parsing');
 
-  const cats  = (currentMode === 'income' ? INCOME_CATS : EXPENSE_CATS);
-  const today = todayISO();
+  const cats=(currentMode==='income') ? INCOME_CATS : EXPENSE_CATS;
+  const today=todayISO();
 
-  const prompt = `Extract transaction data from this Filipino payment app screenshot.
-Return ONLY JSON.
+  const prompt =
+`Extract ONE transaction from this Filipino payment app screenshot.
+Return ONLY JSON. No markdown. No extra text.
 
-Schema:
-amount: number (always positive)
-date: "YYYY-MM-DD" (use ${today} if unclear)
-merchant: string
-payment_method: one of: ${PAYMENT_METHODS.join(', ')}
-category: one of: ${cats.join(', ')}
-low_confidence: boolean
-If no recognizable transaction: {"error":"no_transaction"}`;
+Format:
+{
+  "amount": number,
+  "date": "YYYY-MM-DD",
+  "merchant": "string",
+  "payment_method": "one of: ${PAYMENT_METHODS.join(', ')}",
+  "category": "one of: ${cats.join(', ')}",
+  "low_confidence": boolean
+}
 
-  const base64   = dataUrl.split(',')[1];
-  const mimeType = dataUrl.split(';')[0].split(':')[1];
+Rules:
+- amount is always positive
+- if date unclear, use ${today}
+- if payment method unclear, use GCash
+- category must be one of the provided categories only
+- low_confidence true if any field is uncertain
+- if no recognizable transaction, return {"error":"no_transaction"}`;
 
-  let rawText = '';
-  try {
-    const schema = {
-      type: "object",
-      properties: {
-        amount: { type: "number" },
-        date: { type: "string" },
-        merchant: { type: "string" },
-        payment_method: { type: "string", enum: PAYMENT_METHODS },
-        category: { type: "string", enum: cats },
-        low_confidence: { type: "boolean" },
-        error: { type: "string" }
-      },
-      required: ["low_confidence"],
-      additionalProperties: false
-    };
+  const base64=dataUrl.split(',')[1];
+  const mimeType=dataUrl.split(';')[0].split(':')[1];
 
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [
-            { text: prompt },
-            { inline_data: { mime_type: mimeType, data: base64 } }
-          ]
-        }],
-        generationConfig: {
-          maxOutputTokens: 400,
-          temperature: 0.1,
-          responseMimeType: "application/json",
-          responseSchema: schema
+  let rawText='';
+
+  try{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{parts:[
+          {text:prompt},
+          {inline_data:{mime_type:mimeType,data:base64}}
+        ]}],
+        generationConfig:{
+          maxOutputTokens:400,
+          temperature:0.1,
+          responseMimeType:"application/json"
         }
       })
     });
 
-    const data = await res.json().catch(() => ({}));
+    const data=await res.json().catch(()=>({}));
 
-    if (!res.ok) {
-      console.error('Gemini HTTP', res.status, data);
+    if(!res.ok){
+      console.error('Gemini HTTP',res.status,data);
       alert(`Gemini error ${res.status}: ${data?.error?.message || 'unknown'}`);
       show('screen-upload');
       return;
     }
 
-    rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    if (!rawText) {
-      console.error('Gemini empty response', data);
-      alert('Gemini returned an empty response. Try again.');
+    rawText=data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if(debugOn()){
+      console.log('Gemini response:',data);
+      console.log('Gemini raw text:',rawText);
+    }
+
+    if(!rawText){ alert('Gemini returned empty output. Try another screenshot.'); show('screen-upload'); return; }
+
+    const parsed=safeJsonParse(rawText);
+
+    if(parsed?.error==='no_transaction'){
+      alert('No transaction found in this screenshot. Try another or use Manual.');
       show('screen-upload');
       return;
     }
 
-    const parsed = JSON.parse(rawText.trim());
+    const rules=applyMerchantRules(parsed.merchant||'');
+    const paymentMethod=rules.paymentMethod || parsed.payment_method || 'GCash';
+    const category=rules.category || parsed.category || cats[0];
 
-    if (parsed.error === 'no_transaction') {
-      alert('No transaction found. Try another screenshot or use Manual.');
-      show('screen-upload');
-      return;
-    }
-
-    const rules = applyMerchantRules(parsed.merchant || '');
-    const paymentMethod = rules.paymentMethod || parsed.payment_method || 'GCash';
-    const category      = rules.category || parsed.category || cats[0];
-
-    parsedData = {
-      type:          currentMode === 'income' ? 'Income' : 'Expense',
-      amount:        Number(parsed.amount) || 0,
-      date:          parsed.date || today,
-      merchant:      (parsed.merchant || '').trim(),
+    parsedData={
+      type:(currentMode==='income')?'Income':'Expense',
+      amount:Number(parsed.amount)||0,
+      date:parsed.date||today,
+      merchant:(parsed.merchant||'').trim(),
       paymentMethod,
       category,
-      group:         CATEGORY_MAP[category] || '',
-      memo:          '',
-      review:        'Myself',
-      lowConfidence: !!parsed.low_confidence,
-      autoPayment:   !!rules.paymentMethod,
-      autoCategory:  !!rules.category,
+      group:CATEGORY_MAP[category]||'',
+      memo:'',
+      review:'Myself',
+      lowConfidence:!!parsed.low_confidence,
+      autoPayment:!!rules.paymentMethod,
+      autoCategory:!!rules.category
     };
 
     buildReceiptCard();
     show('screen-confirm');
     haptic('light');
-  } catch (err) {
-    console.error('PARSE ERROR', err);
-    if (rawText) console.error('RAW MODEL TEXT', rawText);
-    alert('Could not parse screenshot. Open DevTools Console for the exact error.');
+  }catch(err){
+    console.error('PARSE ERROR',err);
+    if(rawText) console.error('RAW MODEL TEXT',rawText);
+    alert('Could not parse screenshot. Open DevTools Console for details.');
     show('screen-upload');
   }
 }
 
 /* RECEIPT */
-function buildReceiptCard() {
-  const d = parsedData;
+function buildReceiptCard(){
+  const d=parsedData;
 
-  const amtEl = document.getElementById('r-amount');
-  amtEl.textContent = fmt(d.amount);
-  amtEl.className   = `receipt-amount ${d.type.toLowerCase()}`;
+  const amtEl=document.getElementById('r-amount');
+  amtEl.textContent=fmt(d.amount);
+  amtEl.className=`receipt-amount ${d.type.toLowerCase()}`;
 
-  const hero = document.getElementById('receipt-hero');
-  hero.className = `receipt-hero ${d.type.toLowerCase()}-bg`;
+  const hero=document.getElementById('receipt-hero');
+  hero.className=`receipt-hero ${d.type.toLowerCase()}-bg`;
 
-  const chip = document.getElementById('r-type-chip');
-  chip.textContent = d.type.toLowerCase();
-  chip.className   = `type-chip ${d.type.toLowerCase()}`;
+  const chip=document.getElementById('r-type-chip');
+  chip.textContent=d.type.toLowerCase();
+  chip.className=`type-chip ${d.type.toLowerCase()}`;
 
-  document.getElementById('r-merchant').textContent = d.merchant || '—';
-  document.getElementById('r-date').textContent     = displayDate(d.date);
+  document.getElementById('r-merchant').textContent=d.merchant||'—';
+  document.getElementById('r-date').textContent=displayDate(d.date);
 
-  const warnWrap = document.getElementById('warn-banner-wrap');
-  warnWrap.innerHTML = d.lowConfidence
+  const warnWrap=document.getElementById('warn-banner-wrap');
+  warnWrap.innerHTML=d.lowConfidence
     ? `<div class="warn-banner" style="margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;">⚠ Low confidence. Review fields.</div>`
     : '';
 
-  const cats = (d.type === 'Income' ? INCOME_CATS : EXPENSE_CATS);
-  const fields = [
-    { key:'Via',      dataKey:'paymentMethod', type:'select',   options:PAYMENT_METHODS, auto: d.autoPayment },
-    { key:'Category', dataKey:'category',      type:'dropdown', options:cats,             auto: d.autoCategory },
-    { key:'Group',    dataKey:'group',         type:'badge' },
-    { key:'Memo',     dataKey:'memo',          type:'text' },
-    { key:'Review',   dataKey:'review',        type:'select',   options:REVIEW_OPTIONS },
+  const cats=(d.type==='Income')?INCOME_CATS:EXPENSE_CATS;
+
+  const fields=[
+    {key:'Via',dataKey:'paymentMethod',type:'select',options:PAYMENT_METHODS,auto:d.autoPayment},
+    {key:'Category',dataKey:'category',type:'dropdown',options:cats,auto:d.autoCategory},
+    {key:'Group',dataKey:'group',type:'badge'},
+    {key:'Memo',dataKey:'memo',type:'text'},
+    {key:'Review',dataKey:'review',type:'select',options:REVIEW_OPTIONS}
   ];
 
-  const container = document.getElementById('r-fields');
-  container.innerHTML = '';
+  const container=document.getElementById('r-fields');
+  container.innerHTML='';
 
-  fields.forEach(f => {
-    const row = document.createElement('div');
-    row.className = 'field-row';
-    row.dataset.key = f.dataKey;
+  fields.forEach(f=>{
+    const row=document.createElement('div');
+    row.className='field-row';
+    row.dataset.key=f.dataKey;
 
-    if (f.type === 'badge') {
-      row.innerHTML = `
+    if(f.type==='badge'){
+      row.innerHTML=`
         <div class="field-key">${f.key}</div>
-        <div class="field-val group-tag"><span class="group-badge" id="badge-group">${d[f.dataKey] || '—'}</span></div>`;
+        <div class="field-val group-tag"><span class="group-badge" id="badge-group">${escapeHtml(d[f.dataKey]||'—')}</span></div>`;
     }
 
-    if (f.type === 'text') {
-      row.innerHTML = `
+    if(f.type==='text'){
+      row.innerHTML=`
         <div class="field-key">${f.key}</div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;flex:1">
-          <input class="inline-input" id="field-memo" maxlength="60" value="${escapeHtml(d[f.dataKey] || '')}" placeholder="Optional"
+          <input class="inline-input" id="field-memo" maxlength="60" value="${escapeHtml(d[f.dataKey]||'')}" placeholder="Optional"
             oninput="updateField('${f.dataKey}',this.value);updateCharCount(this)"
             onfocus="updateCharCount(this)" />
           <div class="char-count" id="memo-count" style="display:none"></div>
         </div>`;
     }
 
-    if (f.type === 'dropdown') {
-      const autoBadge = f.auto ? `<span class="auto-badge">auto</span>` : '';
-      row.innerHTML = `
+    if(f.type==='dropdown'){
+      const autoBadge=f.auto?`<span class="auto-badge">auto</span>`:'';
+      row.innerHTML=`
         <div class="field-key">${f.key}</div>
         <div class="dropdown-wrap" id="dd-wrap-${f.dataKey}">
-          <input class="dropdown-input" id="dd-${f.dataKey}" value="${escapeHtml(d[f.dataKey] || '')}" placeholder="Tap to search…"
+          <input class="dropdown-input" id="dd-${f.dataKey}" value="${escapeHtml(d[f.dataKey]||'')}" placeholder="Tap to search…"
             autocomplete="off"
             onfocus="openDropdown('${f.dataKey}')"
             oninput="filterDropdown('${f.dataKey}', this.value)"
@@ -751,10 +783,10 @@ function buildReceiptCard() {
         </div>`;
     }
 
-    if (f.type === 'select') {
-      const autoBadge = f.auto ? `<span class="auto-badge">auto</span>` : '';
-      const opts = f.options.map(o => `<option ${d[f.dataKey] === o ? 'selected' : ''}>${o}</option>`).join('');
-      row.innerHTML = `
+    if(f.type==='select'){
+      const autoBadge=f.auto?`<span class="auto-badge">auto</span>`:'';
+      const opts=f.options.map(o=>`<option ${d[f.dataKey]===o?'selected':''}>${escapeHtml(o)}</option>`).join('');
+      row.innerHTML=`
         <div class="field-key">${f.key}</div>
         <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;flex:1">
           ${autoBadge}
@@ -765,209 +797,176 @@ function buildReceiptCard() {
     container.appendChild(row);
   });
 
-  renderDropdownList('category', cats, d.category);
-}
-function escapeHtml(s) {
-  return String(s)
-    .replaceAll('&','&amp;')
-    .replaceAll('<','&lt;')
-    .replaceAll('>','&gt;')
-    .replaceAll('"','&quot;')
-    .replaceAll("'",'&#039;');
+  renderDropdownList('category',cats,d.category);
 }
 
 /* HERO INLINE EDITING */
-function editAmount() {
-  const el = document.getElementById('r-amount');
-  const raw = parsedData.amount || 0;
-  el.outerHTML = `<input class="receipt-amount-input ${parsedData.type.toLowerCase()}" id="r-amount-input"
+function editAmount(){
+  const el=document.getElementById('r-amount');
+  const raw=parsedData.amount||0;
+  el.outerHTML=`<input class="receipt-amount-input ${parsedData.type.toLowerCase()}" id="r-amount-input"
     type="text" inputmode="decimal" value="${raw}"
     onblur="commitAmount(this.value)"
     onkeydown="if(event.key==='Enter')this.blur()" />`;
-  setTimeout(() => {
-    const inp = document.getElementById('r-amount-input');
-    if (inp) { inp.focus(); inp.select(); }
-  }, 50);
+  setTimeout(()=>{ const inp=document.getElementById('r-amount-input'); if(inp){inp.focus();inp.select();}},50);
 }
-function commitAmount(val) {
-  const num = parseFloat(String(val).replace(/,/g,'')) || 0;
-  parsedData.amount = num;
-  const wrap = document.getElementById('r-amount-input') || document.querySelector('.receipt-amount-input');
-  if (!wrap) return;
-  const div = document.createElement('div');
-  div.className = `receipt-amount ${parsedData.type.toLowerCase()}`;
-  div.id = 'r-amount';
-  div.textContent = fmt(num);
-  div.onclick = editAmount;
+function commitAmount(val){
+  const num=parseFloat(String(val).replace(/,/g,''))||0;
+  parsedData.amount=num;
+  const wrap=document.getElementById('r-amount-input')||document.querySelector('.receipt-amount-input');
+  if(!wrap) return;
+  const div=document.createElement('div');
+  div.className=`receipt-amount ${parsedData.type.toLowerCase()}`;
+  div.id='r-amount';
+  div.textContent=fmt(num);
+  div.onclick=editAmount;
   wrap.replaceWith(div);
 }
-function editMerchant() {
-  const el = document.getElementById('r-merchant');
-  el.outerHTML = `<input class="merchant-input" id="merchant-input" value="${escapeHtml(parsedData.merchant || '')}"
+function editMerchant(){
+  const el=document.getElementById('r-merchant');
+  el.outerHTML=`<input class="merchant-input" id="merchant-input" value="${escapeHtml(parsedData.merchant||'')}"
     onblur="commitMerchant(this.value)"
     onkeydown="if(event.key==='Enter')this.blur()" />`;
-  setTimeout(() => {
-    const inp = document.getElementById('merchant-input');
-    if (inp) { inp.focus(); inp.select(); }
-  }, 50);
+  setTimeout(()=>{ const inp=document.getElementById('merchant-input'); if(inp){inp.focus();inp.select();}},50);
 }
-function commitMerchant(val) {
-  parsedData.merchant = val;
-  const inp = document.getElementById('merchant-input');
-  if (inp) {
-    const div = document.createElement('div');
-    div.className = 'receipt-merchant';
-    div.id = 'r-merchant';
-    div.textContent = val || '—';
-    div.onclick = editMerchant;
+function commitMerchant(val){
+  parsedData.merchant=val;
+  const inp=document.getElementById('merchant-input');
+  if(inp){
+    const div=document.createElement('div');
+    div.className='receipt-merchant';
+    div.id='r-merchant';
+    div.textContent=val||'—';
+    div.onclick=editMerchant;
     inp.replaceWith(div);
   }
 
-  const rules = applyMerchantRules(val || '');
-  if (rules.paymentMethod) {
-    parsedData.paymentMethod = rules.paymentMethod;
-    parsedData.autoPayment = true;
-    const sel = document.querySelector('[data-key="paymentMethod"] select');
-    if (sel) sel.value = rules.paymentMethod;
+  const rules=applyMerchantRules(val||'');
+  if(rules.paymentMethod){
+    parsedData.paymentMethod=rules.paymentMethod;
+    parsedData.autoPayment=true;
+    const sel=document.querySelector('[data-key="paymentMethod"] select');
+    if(sel) sel.value=rules.paymentMethod;
   }
-  if (rules.category) {
-    parsedData.category = rules.category;
-    parsedData.group = CATEGORY_MAP[rules.category] || '';
-    const inpCat = document.getElementById('dd-category');
-    if (inpCat) inpCat.value = rules.category;
-    const badge = document.getElementById('badge-group');
-    if (badge) badge.textContent = parsedData.group || '—';
-    renderDropdownList('category', (parsedData.type === 'Income' ? INCOME_CATS : EXPENSE_CATS), parsedData.category);
+  if(rules.category){
+    parsedData.category=rules.category;
+    parsedData.group=CATEGORY_MAP[rules.category]||'';
+    const catInp=document.getElementById('dd-category');
+    if(catInp) catInp.value=rules.category;
+    const badge=document.getElementById('badge-group');
+    if(badge) badge.textContent=parsedData.group||'—';
+    renderDropdownList('category',(parsedData.type==='Income'?INCOME_CATS:EXPENSE_CATS),parsedData.category);
   }
 }
-function editDate() {
-  const el = document.getElementById('r-date');
-  el.outerHTML = `<input class="date-input" id="date-input" type="date" value="${parsedData.date || todayISO()}"
-    onblur="commitDate(this.value)"
-    onchange="commitDate(this.value)" />`;
-  setTimeout(() => {
-    const inp = document.getElementById('date-input');
-    if (inp) inp.focus();
-  }, 50);
+function editDate(){
+  const el=document.getElementById('r-date');
+  el.outerHTML=`<input class="date-input" id="date-input" type="date" value="${parsedData.date||todayISO()}"
+    onblur="commitDate(this.value)" onchange="commitDate(this.value)" />`;
+  setTimeout(()=>{ const inp=document.getElementById('date-input'); if(inp) inp.focus();},50);
 }
-function commitDate(val) {
-  parsedData.date = val;
-  const inp = document.getElementById('date-input');
-  if (!inp) return;
-  const div = document.createElement('div');
-  div.className = 'receipt-date';
-  div.id = 'r-date';
-  div.textContent = displayDate(val);
-  div.onclick = editDate;
+function commitDate(val){
+  parsedData.date=val;
+  const inp=document.getElementById('date-input');
+  if(!inp) return;
+  const div=document.createElement('div');
+  div.className='receipt-date';
+  div.id='r-date';
+  div.textContent=displayDate(val);
+  div.onclick=editDate;
   inp.replaceWith(div);
 }
 
 /* DROPDOWN */
-function renderDropdownList(key, options, selected, filter='') {
-  const list = document.getElementById(`ddlist-${key}`);
-  if (!list) return;
+function renderDropdownList(key,options,selected,filter=''){
+  const list=document.getElementById(`ddlist-${key}`); if(!list) return;
+  const filtered=filter?options.filter(o=>o.toLowerCase().includes(filter.toLowerCase())):options;
 
-  const filtered = filter
-    ? options.filter(o => o.toLowerCase().includes(filter.toLowerCase()))
-    : options;
-
-  if (!filtered.length) {
-    list.innerHTML = `<div class="dropdown-empty">No match</div>`;
-    list.style.display = 'block';
+  if(!filtered.length){
+    list.innerHTML=`<div class="dropdown-empty">No match</div>`;
+    list.style.display='block';
     return;
   }
 
-  list.innerHTML = filtered.map(o =>
-    `<div class="dropdown-item ${o === selected ? 'selected' : ''}" data-val="${escapeHtml(o)}"
+  list.innerHTML=filtered.map(o=>
+    `<div class="dropdown-item ${o===selected?'selected':''}" data-val="${escapeHtml(o)}"
       onmousedown="selectDropdownItem('${key}', this.dataset.val)" ontouchend="selectDropdownItem('${key}', this.dataset.val)">${escapeHtml(o)}</div>`
   ).join('');
-  list.style.display = 'block';
+  list.style.display='block';
 }
-function openDropdown(key) {
-  const opts = (parsedData.type === 'Income' ? INCOME_CATS : EXPENSE_CATS);
-  renderDropdownList(key, opts, parsedData[key] || '');
+function openDropdown(key){
+  const opts=(parsedData.type==='Income')?INCOME_CATS:EXPENSE_CATS;
+  renderDropdownList(key,opts,parsedData[key]||'');
 }
-function filterDropdown(key, val) {
-  const opts = (parsedData.type === 'Income' ? INCOME_CATS : EXPENSE_CATS);
-  renderDropdownList(key, opts, parsedData[key] || '', val);
+function filterDropdown(key,val){
+  const opts=(parsedData.type==='Income')?INCOME_CATS:EXPENSE_CATS;
+  renderDropdownList(key,opts,parsedData[key]||'',val);
 }
-function selectDropdownItem(key, val) {
-  updateField(key, val);
-  const inp = document.getElementById(`dd-${key}`);
-  if (inp) { inp.value = val; inp.blur(); }
-  const list = document.getElementById(`ddlist-${key}`);
-  if (list) list.style.display = 'none';
+function selectDropdownItem(key,val){
+  updateField(key,val);
+  const inp=document.getElementById(`dd-${key}`);
+  if(inp){ inp.value=val; inp.blur(); }
+  const list=document.getElementById(`ddlist-${key}`);
+  if(list) list.style.display='none';
   haptic('light');
 }
-function dropdownKeyNav(e, key) {
-  const list = document.getElementById(`ddlist-${key}`);
-  if (!list || list.style.display === 'none') return;
-  const items = Array.from(list.querySelectorAll('.dropdown-item'));
-  const current = list.querySelector('.highlighted');
-  let idx = current ? items.indexOf(current) : -1;
+function dropdownKeyNav(e,key){
+  const list=document.getElementById(`ddlist-${key}`);
+  if(!list || list.style.display==='none') return;
+  const items=Array.from(list.querySelectorAll('.dropdown-item'));
+  const current=list.querySelector('.highlighted');
+  let idx=current?items.indexOf(current):-1;
 
-  if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx + 1, items.length - 1); }
-  else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx - 1, 0); }
-  else if (e.key === 'Enter' && current) { e.preventDefault(); selectDropdownItem(key, current.dataset.val); return; }
-  else if (e.key === 'Escape') { list.style.display = 'none'; return; }
+  if(e.key==='ArrowDown'){ e.preventDefault(); idx=Math.min(idx+1,items.length-1); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); idx=Math.max(idx-1,0); }
+  else if(e.key==='Enter' && current){ e.preventDefault(); selectDropdownItem(key,current.dataset.val); return; }
+  else if(e.key==='Escape'){ list.style.display='none'; return; }
 
-  items.forEach(it => it.classList.remove('highlighted'));
-  if (items[idx]) items[idx].classList.add('highlighted');
+  items.forEach(it=>it.classList.remove('highlighted'));
+  if(items[idx]) items[idx].classList.add('highlighted');
 }
-function closeAllDropdowns() {
-  document.querySelectorAll('.dropdown-list').forEach(l => l.style.display = 'none');
-}
-document.addEventListener('click', e => {
-  if (!e.target.closest('.dropdown-wrap')) closeAllDropdowns();
-});
+function closeAllDropdowns(){ document.querySelectorAll('.dropdown-list').forEach(l=>l.style.display='none'); }
+document.addEventListener('click',e=>{ if(!e.target.closest('.dropdown-wrap')) closeAllDropdowns(); });
 
 /* FIELD UPDATES */
-function updateField(key, value) {
-  parsedData[key] = value;
-  if (key === 'category') {
-    parsedData.group = CATEGORY_MAP[value] || '';
-    const b = document.getElementById('badge-group');
-    if (b) b.textContent = parsedData.group || '—';
+function updateField(key,value){
+  parsedData[key]=value;
+  if(key==='category'){
+    parsedData.group=CATEGORY_MAP[value]||'';
+    const b=document.getElementById('badge-group');
+    if(b) b.textContent=parsedData.group||'—';
   }
 }
-function updateCharCount(inp) {
-  const counter = document.getElementById('memo-count');
-  if (!counter) return;
-  const len = inp.value.length;
-  counter.style.display = len > 0 ? 'block' : 'none';
-  counter.textContent = `${len}/60`;
-  counter.style.color = len > 50 ? 'var(--warn)' : 'var(--muted)';
+function updateCharCount(inp){
+  const counter=document.getElementById('memo-count'); if(!counter) return;
+  const len=inp.value.length;
+  counter.style.display=len>0?'block':'none';
+  counter.textContent=`${len}/60`;
+  counter.style.color=len>50?'var(--warn)':'var(--muted)';
 }
 
 /* LOG IT */
-function handleLogIt() {
-  const amtInp = document.getElementById('r-amount-input');
-  if (amtInp) commitAmount(amtInp.value);
-  const mInp = document.getElementById('merchant-input');
-  if (mInp) commitMerchant(mInp.value);
-  const dInp = document.getElementById('date-input');
-  if (dInp) commitDate(dInp.value);
+function handleLogIt(){
+  const amtInp=document.getElementById('r-amount-input'); if(amtInp) commitAmount(amtInp.value);
+  const mInp=document.getElementById('merchant-input'); if(mInp) commitMerchant(mInp.value);
+  const dInp=document.getElementById('date-input'); if(dInp) commitDate(dInp.value);
 
-  const d  = parsedData;
-  const ts = new Date().toISOString();
-  const amt = (d.type === 'Income') ? Math.abs(d.amount) : -Math.abs(d.amount);
-  const sheetDate = toSheetDate(d.date);
+  const d=parsedData;
+  const ts=new Date().toISOString();
+  const amt=(d.type==='Income')?Math.abs(d.amount):-Math.abs(d.amount);
+  const sheetDate=toSheetDate(d.date);
 
-  const rows = [[ts, d.type, amt, sheetDate, d.merchant, d.paymentMethod, d.category, d.group, d.memo, d.review]];
+  const rows=[[ts,d.type,amt,sheetDate,d.merchant,d.paymentMethod,d.category,d.group,d.memo,d.review]];
 
-  const dupeKey = `${Math.abs(d.amount)}|${(d.merchant || '').trim().toLowerCase()}`;
-  const now = Date.now();
-  if (dupeKey === lastLoggedKey && now - lastLoggedTime < 60000) {
-    showDupeWarning(rows, d);
-    return;
-  }
+  const dupeKey=`${Math.abs(d.amount)}|${String(d.merchant||'').trim().toLowerCase()}`;
+  const now=Date.now();
+  if(dupeKey===lastLoggedKey && now-lastLoggedTime<60000){ showDupeWarning(rows,d); return; }
 
   haptic('medium');
-  appendRows(rows, d);
+  appendRows(rows,d);
 }
-function showDupeWarning(rows, d) {
-  const wrap = document.getElementById('dupe-warn-wrap');
-  wrap.innerHTML = `
+function showDupeWarning(rows,d){
+  const wrap=document.getElementById('dupe-warn-wrap');
+  wrap.innerHTML=`
     <div class="dupe-card">
       <div class="dupe-title">⚠ Possible duplicate</div>
       <div class="dupe-desc">Same amount and merchant logged less than a minute ago. Log again?</div>
@@ -976,369 +975,330 @@ function showDupeWarning(rows, d) {
         <button class="btn-dupe-cancel" onclick="dismissDupe()">Cancel</button>
       </div>
     </div>`;
-  pendingRows = { rows, d };
+  pendingRows={rows,d};
 }
-function confirmDupe() {
-  document.getElementById('dupe-warn-wrap').innerHTML = '';
-  if (pendingRows) {
-    haptic('medium');
-    appendRows(pendingRows.rows, pendingRows.d);
-    pendingRows = null;
-  }
+function confirmDupe(){
+  document.getElementById('dupe-warn-wrap').innerHTML='';
+  if(pendingRows){ haptic('medium'); appendRows(pendingRows.rows,pendingRows.d); pendingRows=null; }
 }
-function dismissDupe() {
-  document.getElementById('dupe-warn-wrap').innerHTML = '';
-  pendingRows = null;
-}
+function dismissDupe(){ document.getElementById('dupe-warn-wrap').innerHTML=''; pendingRows=null; }
 
 /* MANUAL FORM */
-function buildManualForm(mode) {
-  const today = todayISO();
-  const lastMethod = localStorage.getItem('lastPaymentMethod') || PAYMENT_METHODS[0];
-  const c = document.getElementById('manual-form');
+function buildManualForm(mode){
+  const today=todayISO();
+  const lastMethod=localStorage.getItem('lastPaymentMethod') || PAYMENT_METHODS[0];
+  const c=document.getElementById('manual-form');
 
-  const row = (key, ctrl) =>
-    `<div class="form-row-inner"><div class="form-key">${key}</div><div style="display:flex;align-items:center;justify-content:flex-end;flex:1;min-width:0">${ctrl}</div></div>`;
+  const row=(key,ctrl)=>`<div class="form-row-inner"><div class="form-key">${key}</div><div style="display:flex;align-items:center;justify-content:flex-end;flex:1;min-width:0">${ctrl}</div></div>`;
+  const text=(id,ph)=>`<input class="form-ctrl" id="${id}" type="text" placeholder="${ph}" />`;
+  const nativeSelect=(id,opts,selected,onch='')=>`<select class="form-select-ctrl" id="${id}" ${onch}>${opts.map(o=>`<option ${o===selected?'selected':''}>${escapeHtml(o)}</option>`).join('')}</select>`;
+  const amtDisplay=()=>`<div class="form-ctrl" id="m-amount-display" onclick="openNumpad('m-amount')" style="cursor:pointer;color:var(--muted)">0.00</div><input type="hidden" id="m-amount" value="0" />`;
+  const catPicker=(firstCat)=>`<div class="form-ctrl" id="m-category-display" data-val="${escapeHtml(firstCat)}" onclick="openCategoryPicker()" style="cursor:pointer">${escapeHtml(firstCat)}</div>`;
 
-  const text = (id, ph) =>
-    `<input class="form-ctrl" id="${id}" type="text" placeholder="${ph}" />`;
-
-  const nativeSelect = (id, opts, selected, onch='') =>
-    `<select class="form-select-ctrl" id="${id}" ${onch}>${opts.map(o => `<option ${o===selected?'selected':''}>${o}</option>`).join('')}</select>`;
-
-  const amtDisplay = () =>
-    `<div class="form-ctrl" id="m-amount-display" onclick="openNumpad('m-amount')" style="cursor:pointer;color:var(--muted)">0.00</div><input type="hidden" id="m-amount" value="0" />`;
-
-  const catPicker = (firstCat) =>
-    `<div class="form-ctrl" id="m-category-display" data-val="${firstCat}" onclick="openCategoryPicker()" style="cursor:pointer">${firstCat}</div>`;
-
-  if (mode === 'transfer') {
+  if(mode==='transfer'){
     c.innerHTML =
       row('Amount', amtDisplay()) +
       row('Date', `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark" />`) +
       row('From', nativeSelect('m-from', PAYMENT_METHODS, lastMethod, 'onchange="syncTransferTo()"')) +
-      row('To',   nativeSelect('m-to', PAYMENT_METHODS.filter(p => p !== lastMethod), PAYMENT_METHODS.find(p => p !== lastMethod) || PAYMENT_METHODS[1])) +
+      row('To', nativeSelect('m-to', PAYMENT_METHODS.filter(p=>p!==lastMethod), PAYMENT_METHODS.find(p=>p!==lastMethod)||PAYMENT_METHODS[1])) +
       row('Memo', text('m-memo','Optional'));
     return;
   }
 
-  const firstCat = EXPENSE_CATS[0];
+  const firstCat=EXPENSE_CATS[0];
   c.innerHTML =
-    row('Type', nativeSelect('m-type', ['Expense','Income','Balance'], 'Expense', 'onchange="updateManualCats()"')) +
+    row('Type', nativeSelect('m-type',['Expense','Income','Balance'],'Expense','onchange="updateManualCats()"')) +
     row('Amount', amtDisplay()) +
     row('Date', `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark" />`) +
     row('Merchant', `<input class="form-ctrl" id="m-merchant" type="text" placeholder="Who or where" oninput="applyManualMerchantRules(this.value)" />`) +
     row('Via', nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
     row('Category', catPicker(firstCat)) +
-    row('Group', `<div class="form-ctrl" id="m-group" style="color:var(--muted)">${CATEGORY_MAP[firstCat] || ''}</div>`) +
+    row('Group', `<div class="form-ctrl" id="m-group" style="color:var(--muted)">${escapeHtml(CATEGORY_MAP[firstCat]||'')}</div>`) +
     row('Memo', text('m-memo','Optional')) +
     row('Review', `<div class="review-btns" id="review-btns">
-      ${REVIEW_OPTIONS.map((o,i) => `<button type="button" class="review-btn${i===0?' active':''}" onclick="selectReview(this,'${o}')">${o}</button>`).join('')}
+      ${REVIEW_OPTIONS.map((o,i)=>`<button type="button" class="review-btn${i===0?' active':''}" onclick="selectReview(this,'${escapeJs(o)}')">${escapeHtml(o)}</button>`).join('')}
     </div>`);
 }
-function selectReview(btn, val) {
-  document.querySelectorAll('.review-btn').forEach(b => b.classList.remove('active'));
+function selectReview(btn,val){
+  document.querySelectorAll('.review-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
-function getReviewVal() {
-  const active = document.querySelector('.review-btn.active');
+function getReviewVal(){
+  const active=document.querySelector('.review-btn.active');
   return active ? active.textContent : 'Myself';
 }
-function getRawAmt(id) {
-  const el = document.getElementById(id);
-  if (!el) return 0;
-  return parseFloat(el.value) || 0;
+function getRawAmt(id){
+  const el=document.getElementById(id); if(!el) return 0;
+  return parseFloat(el.value)||0;
 }
-function syncTransferTo() {
-  const from  = document.getElementById('m-from')?.value;
-  const toSel = document.getElementById('m-to');
-  if (!toSel || !from) return;
-  const filtered = PAYMENT_METHODS.filter(p => p !== from);
-  toSel.innerHTML = filtered.map(p => `<option>${p}</option>`).join('');
+function syncTransferTo(){
+  const from=document.getElementById('m-from')?.value;
+  const toSel=document.getElementById('m-to');
+  if(!toSel || !from) return;
+  const filtered=PAYMENT_METHODS.filter(p=>p!==from);
+  toSel.innerHTML=filtered.map(p=>`<option>${escapeHtml(p)}</option>`).join('');
 }
-function applyManualMerchantRules(val) {
-  const rules = applyMerchantRules(val || '');
-  if (rules.paymentMethod) {
-    const sel = document.getElementById('m-payment');
-    if (sel) sel.value = rules.paymentMethod;
+function applyManualMerchantRules(val){
+  const rules=applyMerchantRules(val||'');
+  if(rules.paymentMethod){
+    const sel=document.getElementById('m-payment');
+    if(sel) sel.value=rules.paymentMethod;
   }
-  if (rules.category) {
-    setManualCategory(rules.category);
-  }
+  if(rules.category) setManualCategory(rules.category);
 }
-function updateManualCats() {
-  const type = document.getElementById('m-type')?.value || 'Expense';
-  const catRow = document.getElementById('m-category-display')?.closest('.form-row-inner');
-  const grpRow = document.getElementById('m-group')?.closest('.form-row-inner');
-  const revRow = document.getElementById('review-btns')?.closest('.form-row-inner');
+function updateManualCats(){
+  const type=document.getElementById('m-type')?.value || 'Expense';
+  const catRow=document.getElementById('m-category-display')?.closest('.form-row-inner');
+  const grpRow=document.getElementById('m-group')?.closest('.form-row-inner');
+  const revRow=document.getElementById('review-btns')?.closest('.form-row-inner');
 
-  if (type === 'Balance') {
-    if (catRow) catRow.style.display = 'none';
-    if (grpRow) grpRow.style.display = 'none';
-    if (revRow) revRow.style.display = 'none';
+  if(type==='Balance'){
+    if(catRow) catRow.style.display='none';
+    if(grpRow) grpRow.style.display='none';
+    if(revRow) revRow.style.display='none';
     return;
   }
+  if(catRow) catRow.style.display='';
+  if(grpRow) grpRow.style.display='';
+  if(revRow) revRow.style.display='';
 
-  if (catRow) catRow.style.display = '';
-  if (grpRow) grpRow.style.display = '';
-  if (revRow) revRow.style.display = '';
-
-  const cats = (type === 'Income') ? INCOME_CATS : EXPENSE_CATS;
+  const cats=(type==='Income')?INCOME_CATS:EXPENSE_CATS;
   setManualCategory(cats[0]);
 }
-function updateManualGroup() {
-  const cat = document.getElementById('m-category-display')?.dataset.val || '';
-  const el  = document.getElementById('m-group');
-  if (el) el.textContent = CATEGORY_MAP[cat] || '';
+function updateManualGroup(){
+  const cat=document.getElementById('m-category-display')?.dataset.val || '';
+  const el=document.getElementById('m-group');
+  if(el) el.textContent=CATEGORY_MAP[cat]||'';
 }
-function setManualCategory(cat) {
-  const disp = document.getElementById('m-category-display');
-  if (!disp) return;
-  disp.dataset.val = cat;
-  disp.textContent = cat;
+function setManualCategory(cat){
+  const disp=document.getElementById('m-category-display');
+  if(!disp) return;
+  disp.dataset.val=cat;
+  disp.textContent=cat;
   updateManualGroup();
 }
 
 /* SUBMIT */
-async function submitManual() {
-  const ts = new Date().toISOString();
-  let rows = [], d = {};
+async function submitManual(){
+  const ts=new Date().toISOString();
+  let rows=[], d={};
 
-  if (manualMode === 'transfer') {
-    const amount = getRawAmt('m-amount');
-    const date   = document.getElementById('m-date')?.value;
-    const from   = document.getElementById('m-from')?.value || PAYMENT_METHODS[0];
-    const to     = document.getElementById('m-to')?.value || PAYMENT_METHODS[1];
-    const memo   = document.getElementById('m-memo')?.value || '';
+  if(manualMode==='transfer'){
+    const amount=getRawAmt('m-amount');
+    const date=document.getElementById('m-date')?.value;
+    const from=document.getElementById('m-from')?.value || PAYMENT_METHODS[0];
+    const to=document.getElementById('m-to')?.value || PAYMENT_METHODS[1];
+    const memo=document.getElementById('m-memo')?.value || '';
 
-    if (!amount || !date) { alert('Amount and date are required.'); return; }
-    if (from === to) { alert('From and To must be different.'); return; }
+    if(!amount || !date){ alert('Amount and date are required.'); return; }
+    if(from===to){ alert('From and To must be different.'); return; }
 
-    const sd = toSheetDate(date);
-    rows = [
-      [ts,'Transfer',-Math.abs(amount), sd, `To ${to}`,   from,'','',memo,'Myself'],
-      [ts,'Transfer', Math.abs(amount), sd, `From ${from}`,to,'','',memo,'Myself'],
+    const sd=toSheetDate(date);
+    rows=[
+      [ts,'Transfer',-Math.abs(amount),sd,`To ${to}`,from,'','',memo,'Myself'],
+      [ts,'Transfer', Math.abs(amount),sd,`From ${from}`,to,'','',memo,'Myself']
     ];
-    d = { type:'Transfer', amount, merchant:`${from} → ${to}`, paymentMethod:from };
-    localStorage.setItem('lastPaymentMethod', from);
+    d={type:'Transfer',amount,merchant:`${from} → ${to}`,paymentMethod:from};
+    localStorage.setItem('lastPaymentMethod',from);
 
     haptic('medium');
-    await appendRows(rows, d);
+    await appendRows(rows,d);
     return;
   }
 
-  const type     = document.getElementById('m-type')?.value || 'Expense';
-  const amount   = getRawAmt('m-amount');
-  const date     = document.getElementById('m-date')?.value || todayISO();
-  const merchant = (document.getElementById('m-merchant')?.value || '').trim();
-  const payment  = document.getElementById('m-payment')?.value || PAYMENT_METHODS[0];
-  const memo     = (document.getElementById('m-memo')?.value || '').trim();
+  const type=document.getElementById('m-type')?.value || 'Expense';
+  const amount=getRawAmt('m-amount');
+  const date=document.getElementById('m-date')?.value || todayISO();
+  const merchant=(document.getElementById('m-merchant')?.value || '').trim();
+  const payment=document.getElementById('m-payment')?.value || PAYMENT_METHODS[0];
+  const memo=(document.getElementById('m-memo')?.value || '').trim();
 
-  if (!amount || !date) { alert('Amount and date are required.'); return; }
+  if(!amount || !date){ alert('Amount and date are required.'); return; }
 
-  const sd = toSheetDate(date);
+  const sd=toSheetDate(date);
 
-  if (type === 'Balance') {
-    rows = [[ts, 'Balance', Math.abs(amount), sd, `${payment} Balance`, payment, '', '', memo, '' ]];
-    d = { type:'Balance', amount, merchant:`${payment} Balance`, paymentMethod:payment };
-    localStorage.setItem('lastPaymentMethod', payment);
-
+  if(type==='Balance'){
+    rows=[[ts,'Balance',Math.abs(amount),sd,`${payment} Balance`,payment,'','',memo,'']];
+    d={type:'Balance',amount,merchant:`${payment} Balance`,paymentMethod:payment};
+    localStorage.setItem('lastPaymentMethod',payment);
     haptic('medium');
-    await appendRows(rows, d);
+    await appendRows(rows,d);
     return;
   }
 
-  const category = document.getElementById('m-category-display')?.dataset.val || EXPENSE_CATS[0];
-  const review   = getReviewVal();
-  const amt      = (type === 'Income') ? Math.abs(amount) : -Math.abs(amount);
-  const group    = CATEGORY_MAP[category] || '';
+  const category=document.getElementById('m-category-display')?.dataset.val || EXPENSE_CATS[0];
+  const review=getReviewVal();
+  const amt=(type==='Income')?Math.abs(amount):-Math.abs(amount);
+  const group=CATEGORY_MAP[category]||'';
 
-  rows = [[ts, type, amt, sd, merchant || '(no merchant)', payment, category, group, memo, review]];
-  d    = { type, amount, merchant: merchant || '(no merchant)', paymentMethod: payment, category, group };
-  localStorage.setItem('lastPaymentMethod', payment);
+  rows=[[ts,type,amt,sd,merchant||'(no merchant)',payment,category,group,memo,review]];
+  d={type,amount,merchant:merchant||'(no merchant)',paymentMethod:payment,category,group};
+  localStorage.setItem('lastPaymentMethod',payment);
 
   haptic('medium');
-  await appendRows(rows, d);
+  await appendRows(rows,d);
 }
 
 /* APPEND */
-async function appendRows(rows, d) {
-  lastFailedRows = rows;
+async function appendRows(rows,d){
+  lastFailedRows=rows;
+  try{
+    const fd=new FormData();
+    fd.append('data',JSON.stringify({rows}));
 
-  try {
-    const fd = new FormData();
-    fd.append('data', JSON.stringify({ rows }));
-
-    const res = await fetch(getWebhook(), { method: 'POST', body: fd });
-    if (!res.ok) {
-      const txt = await res.text().catch(() => '');
+    const res=await fetch(getWebhook(),{method:'POST',body:fd});
+    if(!res.ok){
+      const txt=await res.text().catch(()=> '');
       throw new Error(`Webhook ${res.status}: ${txt || 'unknown'}`);
     }
 
-    if (d && d.amount && d.merchant) {
-      lastLoggedKey  = `${Math.abs(d.amount)}|${String(d.merchant).trim().toLowerCase()}`;
-      lastLoggedTime = Date.now();
+    if(d && d.amount && d.merchant){
+      lastLoggedKey=`${Math.abs(d.amount)}|${String(d.merchant).trim().toLowerCase()}`;
+      lastLoggedTime=Date.now();
     }
 
-    lastFailedRows = null;
+    lastFailedRows=null;
 
     document.getElementById('success-label').textContent =
-      rows.length > 1 ? 'Transfer logged' : `${d?.type || 'Transaction'} logged`;
+      rows.length>1 ? 'Transfer logged' : `${d?.type || 'Transaction'} logged`;
 
-    const det = document.getElementById('success-detail');
-    if (rows.length === 1) {
-      det.innerHTML = `
+    const det=document.getElementById('success-detail');
+    if(rows.length===1){
+      det.innerHTML=`
         <div class="success-row">${fmt(Math.abs(rows[0][2]))}</div>
         <div class="success-row"><strong>${escapeHtml(d.merchant || d.type || 'Transaction')}</strong> · ${escapeHtml(d.paymentMethod || '')}</div>
         ${d.category ? `<div class="success-row">${escapeHtml(d.category)} <span style="color:var(--muted)">→</span> ${escapeHtml(d.group || '')}</div>` : ''}`;
-    } else {
-      det.innerHTML = `<div class="success-row">${fmt(Math.abs(rows[0][2]))} moved</div>`;
+    }else{
+      det.innerHTML=`<div class="success-row">${fmt(Math.abs(rows[0][2]))} moved</div>`;
     }
 
     show('screen-success');
     haptic('success');
-    setTimeout(cancelConfirm, 2400);
-  } catch (err) {
-    console.error('LOG ERROR', err);
+    setTimeout(cancelConfirm,2400);
+  }catch(err){
+    console.error('LOG ERROR',err);
     haptic('error');
     show('screen-failure');
   }
 }
-function retryLog() { if (lastFailedRows) appendRows(lastFailedRows, parsedData); }
-function copyFailed() {
-  if (!lastFailedRows) return;
-  navigator.clipboard.writeText(lastFailedRows.map(r => r.join('\t')).join('\n'))
-    .then(() => alert('Copied.'));
+function retryLog(){ if(lastFailedRows) appendRows(lastFailedRows,parsedData); }
+function copyFailed(){
+  if(!lastFailedRows) return;
+  navigator.clipboard.writeText(lastFailedRows.map(r=>r.join('\t')).join('\n')).then(()=>alert('Copied.'));
 }
 
 /* CATEGORY PICKER */
-function openCategoryPicker() {
-  const type = document.getElementById('m-type')?.value || 'Expense';
-  const cats = (type === 'Income') ? INCOME_CATS : EXPENSE_CATS;
-  const cur  = document.getElementById('m-category-display')?.dataset.val || '';
+function openCategoryPicker(){
+  const type=document.getElementById('m-type')?.value || 'Expense';
+  const cats=(type==='Income')?INCOME_CATS:EXPENSE_CATS;
+  const cur=document.getElementById('m-category-display')?.dataset.val || '';
 
-  document.getElementById('cat-search').value = '';
-  document.getElementById('cat-list').innerHTML = renderCatList(cats, cur);
-  document.getElementById('cat-sheet').style.display = 'flex';
+  document.getElementById('cat-search').value='';
+  document.getElementById('cat-list').innerHTML=renderCatList(cats,cur);
+  document.getElementById('cat-sheet').style.display='flex';
   haptic('light');
 }
-function renderCatList(cats, cur) {
-  const groups = {};
-  cats.forEach(c => {
-    const g = CATEGORY_MAP[c] || 'Other';
-    if (!groups[g]) groups[g] = [];
+function renderCatList(cats,cur){
+  const groups={};
+  cats.forEach(c=>{
+    const g=CATEGORY_MAP[c] || 'Other';
+    if(!groups[g]) groups[g]=[];
     groups[g].push(c);
   });
 
-  return Object.entries(groups).map(([g, cs]) =>
-    `<div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:10px 16px 4px">${escapeHtml(g)}</div>` +
-    cs.map(c =>
-      `<div style="padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:${c===cur?'var(--accent)':'var(--text)'};border-radius:10px;cursor:pointer"
-        ontouchend="selectCategory('${escapeJs(c)}')" onclick="selectCategory('${escapeJs(c)}')">${escapeHtml(c)}</div>`
-    ).join('')
+  return Object.entries(groups).map(([g,cs])=>
+    `<div class="cat-group-label">${escapeHtml(g)}</div>` +
+    cs.map(c=>`<div class="cat-item ${c===cur?'cat-item-active':''}" ontouchend="selectCategory('${escapeJs(c)}')" onclick="selectCategory('${escapeJs(c)}')">${escapeHtml(c)}</div>`).join('')
   ).join('');
 }
-function filterCats(val) {
-  const type = document.getElementById('m-type')?.value || 'Expense';
-  const catsAll = (type === 'Income') ? INCOME_CATS : EXPENSE_CATS;
-  const cats = catsAll.filter(c => c.toLowerCase().includes(String(val).toLowerCase()));
-  const cur  = document.getElementById('m-category-display')?.dataset.val || '';
-  document.getElementById('cat-list').innerHTML = renderCatList(cats, cur);
+function filterCats(val){
+  const type=document.getElementById('m-type')?.value || 'Expense';
+  const all=(type==='Income')?INCOME_CATS:EXPENSE_CATS;
+  const cats=all.filter(c=>c.toLowerCase().includes(String(val||'').toLowerCase()));
+  const cur=document.getElementById('m-category-display')?.dataset.val || '';
+  document.getElementById('cat-list').innerHTML=renderCatList(cats,cur);
 }
-function selectCategory(val) {
-  setManualCategory(val);
-  closeCatPicker();
-  haptic('light');
-}
-function closeCatPicker() {
-  document.getElementById('cat-sheet').style.display = 'none';
-}
-function escapeJs(s) {
-  return String(s).replaceAll('\\','\\\\').replaceAll("'","\\'");
-}
+function selectCategory(val){ setManualCategory(val); closeCatPicker(); haptic('light'); }
+function closeCatPicker(){ document.getElementById('cat-sheet').style.display='none'; }
 
 /* NUMPAD */
-let npTarget = null;
-let npExpr = '0';
+let npTarget=null;
+let npExpr='0';
 
-function openNumpad(targetId) {
-  npTarget = targetId;
-  const hidden = document.getElementById(targetId);
-  npExpr = (hidden?.value && hidden.value !== '0') ? hidden.value : '0';
+function openNumpad(targetId){
+  npTarget=targetId;
+  const hidden=document.getElementById(targetId);
+  npExpr=(hidden?.value && hidden.value!=='0') ? hidden.value : '0';
   renderNumpad();
-  document.getElementById('numpad-overlay').style.display = 'flex';
+  document.getElementById('numpad-overlay').style.display='flex';
   haptic('light');
 }
-function renderNumpad() {
-  const exprEl = document.getElementById('np-expr');
-  const resultEl = document.getElementById('np-result');
-  if (!exprEl) return;
-
-  exprEl.textContent = formatExprDisplay(npExpr);
-
-  if (/[+\-×÷]/.test(npExpr) && npExpr.length > 1) {
-    const result = evalExpr(npExpr.replace(/×/g,'*').replace(/÷/g,'/'));
-    resultEl.textContent = (result !== null) ? '= ' + fmt(result) : '';
-  } else {
-    resultEl.textContent = '';
-  }
+function evalExpr(str){
+  const cleaned=String(str).replace(/,/g,'').trim();
+  if(!/^[0-9+\-*/.() ]+$/.test(cleaned)) return null;
+  try{
+    const result=Function('"use strict"; return ('+cleaned+')')();
+    if(typeof result!=='number' || !isFinite(result)) return null;
+    return Math.round(result*100)/100;
+  }catch{ return null; }
 }
-function formatExprDisplay(expr) {
-  return expr.replace(/[0-9]+(\.[0-9]*)*/g, seg => {
-    const parts = seg.split('.');
-    const int = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return parts.length > 1 ? int + '.' + parts[1] : int;
+function formatExprDisplay(expr){
+  return String(expr).replace(/[0-9]+(\.[0-9]*)*/g,seg=>{
+    const parts=seg.split('.');
+    const int=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    return parts.length>1 ? int+'.'+parts[1] : int;
   });
 }
-function npInput(char) {
+function renderNumpad(){
+  const exprEl=document.getElementById('np-expr');
+  const resultEl=document.getElementById('np-result');
+  if(!exprEl) return;
+
+  exprEl.textContent=formatExprDisplay(npExpr);
+
+  if(/[+\-×÷]/.test(npExpr) && npExpr.length>1){
+    const result=evalExpr(npExpr.replace(/×/g,'*').replace(/÷/g,'/'));
+    resultEl.textContent=(result!==null) ? '= ' + fmt(result) : '';
+  }else{
+    resultEl.textContent='';
+  }
+}
+function npInput(char){
   haptic('light');
-  if (npExpr === '0' && char !== '.' && !/[+\-×÷]/.test(char)) {
-    npExpr = char;
-  } else {
-    if (/[+\-×÷]/.test(char) && /[+\-×÷]/.test(npExpr.slice(-1))) {
-      npExpr = npExpr.slice(0, -1) + char;
-    } else {
-      npExpr += char;
+  if(npExpr==='0' && char!=='.' && !/[+\-×÷]/.test(char)){
+    npExpr=char;
+  }else{
+    if(/[+\-×÷]/.test(char) && /[+\-×÷]/.test(npExpr.slice(-1))){
+      npExpr=npExpr.slice(0,-1)+char;
+    }else{
+      npExpr+=char;
     }
   }
   renderNumpad();
 }
-function npDelete() {
+function npDelete(){
   haptic('light');
-  npExpr = (npExpr.length > 1) ? npExpr.slice(0, -1) : '0';
+  npExpr=(npExpr.length>1) ? npExpr.slice(0,-1) : '0';
   renderNumpad();
 }
-function evalExpr(str) {
-  const cleaned = String(str).replace(/,/g, '').trim();
-  if (!/^[0-9+\-*/.() ]+$/.test(cleaned)) return null;
-  try {
-    const result = Function('"use strict"; return (' + cleaned + ')')();
-    if (typeof result !== 'number' || !isFinite(result)) return null;
-    return Math.round(result * 100) / 100;
-  } catch {
-    return null;
-  }
-}
-function npDone() {
-  const raw = npExpr.replace(/×/g,'*').replace(/÷/g,'/');
-  const result = evalExpr(raw);
-  const final = (result !== null) ? result : (parseFloat(raw) || 0);
+function npDone(){
+  const raw=npExpr.replace(/×/g,'*').replace(/÷/g,'/');
+  const result=evalExpr(raw);
+  const final=(result!==null) ? result : (parseFloat(raw)||0);
 
-  const hidden = document.getElementById(npTarget);
-  if (hidden) hidden.value = String(final);
+  const hidden=document.getElementById(npTarget);
+  if(hidden) hidden.value=String(final);
 
-  const display = document.getElementById(npTarget + '-display');
-  if (display) {
-    display.textContent = fmt(final);
-    display.style.color = 'var(--text)';
+  const display=document.getElementById(npTarget+'-display');
+  if(display){
+    display.textContent=fmt(final);
+    display.style.color='var(--text)';
   }
 
-  document.getElementById('numpad-overlay').style.display = 'none';
+  document.getElementById('numpad-overlay').style.display='none';
   haptic('medium');
 }
-function numpadOutside(e) {
-  if (e.target === document.getElementById('numpad-overlay')) npDone();
-}
+function numpadOutside(e){ if(e.target===document.getElementById('numpad-overlay')) npDone(); }
 
 /* BOOT */
 loadSettings();
