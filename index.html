@@ -700,7 +700,18 @@ function buildManualForm(mode) {
     `<select class="form-select-ctrl" id="${id}" ${onch}>${opts.map(o=>`<option ${o===selected?'selected':''}>${o}</option>`).join('')}</select>`;
 
   const amtDisplay = () =>
-    `<input class="form-ctrl" id="m-amount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off">`;
+    `<div class="amt-wrap" id="amt-wrap">
+      <input class="form-ctrl" id="m-amount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off"
+        oninput="updateAmtPreview(this.value)"
+        onblur="resolveAmtOnBlur(this)">
+      <div class="amt-preview" id="amt-preview" style="display:none"></div>
+      <div class="amt-ops" id="amt-ops">
+        <button type="button" class="amt-op" onmousedown="appendOp('+')" ontouchstart="appendOp('+')">+</button>
+        <button type="button" class="amt-op" onmousedown="appendOp('-')" ontouchstart="appendOp('-')">−</button>
+        <button type="button" class="amt-op" onmousedown="appendOp('*')" ontouchstart="appendOp('*')">×</button>
+        <button type="button" class="amt-op" onmousedown="appendOp('/')" ontouchstart="appendOp('/')">÷</button>
+      </div>
+    </div>`;
 
   const catDropdown = (firstCat) =>
     `<div class="dropdown-wrap" id="dd-wrap-m-category">
@@ -800,7 +811,6 @@ function getRawAmt(id) {
   const el = document.getElementById(id);
   if (!el) return 0;
   const val = el.value.replace(/,/g, '').trim();
-  // Evaluate simple expressions (e.g. "100+50")
   try {
     const cleaned = val.replace(/[^0-9+\-*/.() ]/g, '');
     if (cleaned && /[+\-*/]/.test(cleaned)) {
@@ -809,6 +819,52 @@ function getRawAmt(id) {
     }
   } catch {}
   return parseFloat(val) || 0;
+}
+
+function evalAmt(val) {
+  const cleaned = val.replace(/,/g, '').replace(/[^0-9+\-*/.() ]/g, '').trim();
+  if (!cleaned || !/[+\-*/]/.test(cleaned)) return null;
+  try {
+    const result = Function('"use strict"; return (' + cleaned + ')')();
+    return (typeof result === 'number' && isFinite(result) && result >= 0)
+      ? Math.round(result * 100) / 100
+      : null;
+  } catch { return null; }
+}
+
+function updateAmtPreview(val) {
+  const preview = document.getElementById('amt-preview');
+  if (!preview) return;
+  const result = evalAmt(val);
+  if (result !== null) {
+    preview.textContent = '= ' + fmt(result);
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+function resolveAmtOnBlur(el) {
+  const result = evalAmt(el.value);
+  if (result !== null) {
+    el.value = String(result);
+    const preview = document.getElementById('amt-preview');
+    if (preview) preview.style.display = 'none';
+  }
+}
+
+function appendOp(op) {
+  const el = document.getElementById('m-amount');
+  if (!el) return;
+  const val = el.value.trim();
+  // Replace trailing operator if present
+  const replaced = val.replace(/[+\-*/]\s*$/, '') + op;
+  el.value = replaced;
+  el.focus();
+  // Move cursor to end
+  const len = el.value.length;
+  el.setSelectionRange(len, len);
+  updateAmtPreview(el.value);
 }
 
 function syncTransferTo() {
