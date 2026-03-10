@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>YNAB</title>
 <link rel="stylesheet" href="finance-logger.css">
 </head>
 <body>
 <div class="app">
-
   <div class="topbar">
     <div class="wordmark">YNA<em>B</em></div>
     <div class="gear-btn" onclick="openSettings()">⚙</div>
@@ -16,10 +15,11 @@
 
   <div class="mode-strip">
     <div class="pills">
-      <div class="pill active" data-mode="expense"  onclick="selectMode('expense')">Expense</div>
-      <div class="pill"        data-mode="income"   onclick="selectMode('income')">Income</div>
-      <div class="pill"        data-mode="transfer" onclick="selectMode('transfer')">Transfer</div>
-      <div class="pill"        data-mode="manual"   onclick="selectMode('manual')">Manual</div>
+      <div class="pill active" data-mode="expense"       onclick="selectMode('expense')">Expense</div>
+      <div class="pill"        data-mode="income"        onclick="selectMode('income')">Income</div>
+      <div class="pill"        data-mode="transfer"      onclick="selectMode('transfer')">Transfer</div>
+      <div class="pill"        data-mode="reimbursement" onclick="selectMode('reimbursement')">Reimburse</div>
+      <div class="pill"        data-mode="manual"        onclick="selectMode('manual')">Manual</div>
     </div>
   </div>
 
@@ -125,72 +125,17 @@
   </div>
 </div>
 
-<!-- GENERIC PICKER SHEET -->
-<div class="sheet-overlay" id="picker-sheet" onclick="if(event.target===this)closePicker()">
-  <div class="sheet-inner">
-    <div class="sheet-drag"></div>
-    <div class="sheet-list" id="picker-list"></div>
-  </div>
-</div>
-
-<!-- CATEGORY PICKER SHEET -->
-<div class="sheet-overlay" id="cat-sheet" onclick="if(event.target===this)closeCatPicker()">
-  <div class="sheet-inner">
-    <div class="sheet-drag"></div>
-    <div class="sheet-search-wrap">
-      <input id="cat-search" type="text" class="sheet-search" placeholder="Search…" autocomplete="off" oninput="filterCats(this.value)">
-    </div>
-    <div class="sheet-list" id="cat-list"></div>
-  </div>
-</div>
-
-<!-- NUMPAD -->
-<div class="numpad-overlay" id="numpad-overlay" style="display:none" onclick="numpadOutside(event)">
-  <div class="numpad" id="numpad">
-    <div class="numpad-display">
-      <div class="numpad-expr" id="np-expr">0</div>
-      <div class="numpad-result" id="np-result"></div>
-    </div>
-    <div class="numpad-grid">
-      <button class="nk nk-num" onclick="npInput('7')">7</button>
-      <button class="nk nk-num" onclick="npInput('8')">8</button>
-      <button class="nk nk-num" onclick="npInput('9')">9</button>
-      <button class="nk nk-op"  onclick="npInput('÷')">÷</button>
-
-      <button class="nk nk-num" onclick="npInput('4')">4</button>
-      <button class="nk nk-num" onclick="npInput('5')">5</button>
-      <button class="nk nk-num" onclick="npInput('6')">6</button>
-      <button class="nk nk-op"  onclick="npInput('×')">×</button>
-
-      <button class="nk nk-num" onclick="npInput('1')">1</button>
-      <button class="nk nk-num" onclick="npInput('2')">2</button>
-      <button class="nk nk-num" onclick="npInput('3')">3</button>
-      <button class="nk nk-op"  onclick="npInput('-')">−</button>
-
-      <button class="nk nk-num nk-zero" onclick="npInput('0')">0</button>
-      <button class="nk nk-num"         onclick="npInput('.')">.</button>
-      <button class="nk nk-op"          onclick="npInput('+')">+</button>
-
-      <button class="nk nk-del" style="grid-column:span 3" onclick="npDelete()">⌫ delete</button>
-      <button class="nk nk-done" onclick="npDone()">Done</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 
-const SHEET_TAB        = 'Log';
-const WEBHOOK          = 'https://script.google.com/macros/s/AKfycbwfl8-4sVKehGHxjGJirXVOYoTOZyinPFijxhQxJVVZQbWFaeBv53hr5HHuoPzYCg5z-Q/exec';
-const SHEET_ID_DEFAULT = '15G5abgmSIE-kYkh0LI3FtWXPO2DlvVgUnWmAcn36nE0';
-
-// Gemini: supported image MIME types
-const SUPPORTED_MIME = ['image/jpeg','image/png','image/webp','image/gif'];
+const SHEET_TAB = 'Log';
+const WEBHOOK   = 'https://script.google.com/macros/s/AKfycbwfl8-4sVKehGHxjGJirXVOYoTOZyinPFijxhQxJVVZQbWFaeBv53hr5HHuoPzYCg5z-Q/exec';
+const SHEET_ID_DEFAULT      = '15G5abgmSIE-kYkh0LI3FtWXPO2DlvVgUnWmAcn36nE0';
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 
 const CATEGORY_MAP = {
-  'Salary':'Income','IOU':'Income',
+  'Salary':'Income','Freelance':'Income','Gifts Income':'Income','IOU':'Income',
   'Electricity':'Home','Groceries':'Home','Lulay':'Home',
   'Pet Food':'Pets','Grooming':'Pets','Litter':'Pets','Misc':'Pets','Vet':'Pets',
   'Doctor':'Health','Supplements':'Health','Therapy':'Health','Medicine':'Health','Lab Tests':'Health','Eyes':'Health',
@@ -202,43 +147,35 @@ const CATEGORY_MAP = {
   'Tech Fund':'Goals','Beauty Fund':'Goals','Vacation Fund':'Goals',
 };
 
-const INCOME_CATS     = ['Salary','IOU'];
+const INCOME_CATS     = ['Salary','Freelance','Gifts Income','Others'];
 const EXPENSE_CATS    = Object.keys(CATEGORY_MAP).filter(c => !INCOME_CATS.includes(c));
-const PAYMENT_METHODS = ['GCash','Maribank','BDO','BPI','Maya','UnionBank','UnionBank Credit','Cash'];
+const PAYMENT_METHODS = ['GCash','Maribank','BDO','BPI','Maya','UnionBank','UnionBank Credit','Grab Wallet','Shopee Pay','Cash'];
 const REVIEW_OPTIONS  = ['Myself','Others','Both'];
 
+// Merchant intelligence: keyword → { paymentMethod, category (optional) }
 const MERCHANT_RULES = [
-  { keywords: ['grab'],                     paymentMethod: 'UnionBank Credit', category: null },
-  { keywords: ['indrive','in drive'],       paymentMethod: 'Cash',             category: null },
-  { keywords: ['shopee'],                   paymentMethod: 'Maribank',         category: null },
-  { keywords: ['lazada'],                   paymentMethod: 'UnionBank Credit', category: null },
-  { keywords: ['app store','apple'],        paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
+  { keywords: ['grab'],              paymentMethod: 'UnionBank Credit', category: null },
+  { keywords: ['indrive','in drive'],paymentMethod: 'Cash',             category: null },
+  { keywords: ['shopee'],            paymentMethod: 'Maribank',          category: null },
+  { keywords: ['lazada'],            paymentMethod: 'UnionBank Credit', category: null },
+  { keywords: ['app store','apple'], paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
   { keywords: ['google play','play store'], paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['netflix'],                  paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['spotify'],                  paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['youtube premium'],          paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['canva'],                    paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['adobe'],                    paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
+  { keywords: ['netflix'],           paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
+  { keywords: ['spotify'],           paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
+  { keywords: ['youtube premium'],   paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
+  { keywords: ['canva'],             paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
+  { keywords: ['adobe'],             paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
 ];
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 
-let currentMode    = localStorage.getItem('lastMode') || 'expense';
-let parsedData     = {};
-let lastFailedRows = null;
-let lastLoggedKey  = null;
-let lastLoggedTime = 0;
-let activeDropdown = null;
-let pendingRows    = null;
-
-// Numpad state
-let npTarget = null;
-let npExpr   = '0';
-
-// Generic picker state
-let _pickerTarget  = null;
-let _pickerOptions = [];
-let _pickerCb      = null;
+let currentMode     = localStorage.getItem('lastMode') || 'expense';
+let parsedData      = {};
+let lastFailedRows  = null;
+let lastLoggedKey   = null;
+let lastLoggedTime  = 0;
+let activeDropdown  = null;
+let pendingRows     = null;
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
@@ -249,24 +186,25 @@ function loadSettings() {
   document.getElementById('s-sheetid').value   = localStorage.getItem('sheetId')   || '';
   document.getElementById('s-googleapi').value = localStorage.getItem('googleApi') || '';
 }
-function saveSetting(k, v) { localStorage.setItem(k, v); }
-function openSettings()    { loadSettings(); document.getElementById('overlay').classList.add('open'); }
-function closeSettings(e)  { if (!e || e.target === document.getElementById('overlay')) document.getElementById('overlay').classList.remove('open'); }
+function saveSetting(k,v) { localStorage.setItem(k,v); }
+function openSettings()   { loadSettings(); document.getElementById('overlay').classList.add('open'); }
+function closeSettings(e) { if (!e || e.target===document.getElementById('overlay')) document.getElementById('overlay').classList.remove('open'); }
 
 // ── UTILITIES ─────────────────────────────────────────────────────────────────
 
-function haptic(style = 'light') {
+function haptic(style='light') {
   if (navigator.vibrate) {
-    const map = { light: 30, medium: 60, success: [30,50,30], error: [60,30,60] };
-    navigator.vibrate(map[style] || 30);
+    const map = { light:30, medium:60, success:[30,50,30], error:[60,30,60] };
+    navigator.vibrate(map[style]||30);
   }
 }
 
 function fmt(n) {
-  return '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits:2, maximumFractionDigits:2 });
 }
 
 function toSheetDate(isoOrRaw) {
+  // Convert YYYY-MM-DD → M/D/YYYY
   const d = new Date(isoOrRaw + 'T00:00:00');
   if (isNaN(d)) return isoOrRaw;
   return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
@@ -277,10 +215,14 @@ function todayISO() {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
+function todayDisplay() {
+  return new Date().toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+
 function displayDate(iso) {
   const d = new Date(iso + 'T00:00:00');
   if (isNaN(d)) return iso;
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
 }
 
 function applyMerchantRules(merchant) {
@@ -305,7 +247,7 @@ function show(id) {
 function cancelConfirm() {
   parsedData = {}; lastFailedRows = null; pendingRows = null;
   document.getElementById('dupe-warn-wrap').innerHTML = '';
-  if (currentMode === 'transfer' || currentMode === 'manual') {
+  if (currentMode === 'transfer' || currentMode === 'manual' || currentMode === 'reimbursement') {
     buildManualForm(currentMode);
     show('screen-manual');
   } else {
@@ -320,14 +262,14 @@ function selectMode(mode) {
   currentMode = mode;
   localStorage.setItem('lastMode', mode);
   document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.mode === mode));
-  if (mode === 'transfer' || mode === 'manual') { buildManualForm(mode); show('screen-manual'); }
+  if (mode === 'transfer' || mode === 'manual' || mode === 'reimbursement') { buildManualForm(mode); show('screen-manual'); }
   else { refreshHero(); show('screen-upload'); }
 }
 
 function refreshHero() {
   const map = {
-    expense: { icon: '📷', label: 'Share a screenshot', sub: 'GCash, credit card, any bank app' },
-    income:  { icon: '📥', label: 'Share a screenshot', sub: 'Salary slip, GCash, any inflow' },
+    expense: { icon:'📷', label:'Share a screenshot', sub:'GCash, credit card, any bank app' },
+    income:  { icon:'📥', label:'Share a screenshot', sub:'Salary slip, GCash, any inflow' },
   };
   const d = map[currentMode] || map.expense;
   document.getElementById('upload-icon').textContent  = d.icon;
@@ -350,28 +292,15 @@ function handleFile(e) {
 async function parseWithGemini(dataUrl) {
   const rawKey = localStorage.getItem('gemini') || '';
   const apiKey = rawKey.trim().replace(/[^A-Za-z0-9_\-]/g, '');
-  if (!apiKey || apiKey.length < 20) {
-    alert('Gemini API key is missing or invalid. Check Settings.');
-    return;
-  }
-
-  // FIX: reject unsupported image formats before sending to Gemini
-  const mimeType = dataUrl.split(';')[0].split(':')[1];
-  if (!SUPPORTED_MIME.includes(mimeType)) {
-    alert('Unsupported image format. Please use a JPEG, PNG, or WebP screenshot.');
-    show('screen-upload');
-    return;
-  }
-
+  if (!apiKey || apiKey.length < 20) { alert('Gemini API key is missing or invalid. Check Settings.'); return; }
   show('screen-parsing');
 
   const cats  = currentMode === 'income' ? INCOME_CATS.join(', ') : EXPENSE_CATS.join(', ');
   const today = todayISO();
 
-  // FIX: prompt now lists UnionBank Credit instead of the removed Credit Card option
   const prompt = `Extract transaction data from this Filipino payment app screenshot.
 Return ONLY valid JSON — no markdown, no explanation:
-{"amount":number,"date":"YYYY-MM-DD","merchant":"string","payment_method":"one of: GCash, UnionBank Credit, Maribank, BDO, BPI, Maya, UnionBank, Cash","category":"one of: ${cats}","low_confidence":boolean}
+{"amount":number,"date":"YYYY-MM-DD","merchant":"string","payment_method":"one of: GCash, Credit Card, Maribank, BDO, BPI, Maya, UnionBank, UnionBank Credit, Cash","category":"one of: ${cats}","low_confidence":boolean}
 
 Rules:
 - amount is always positive
@@ -381,7 +310,8 @@ Rules:
 - Set low_confidence to true if you are unsure about any field
 - If screenshot has no recognizable transaction, return {"error":"no_transaction"}`;
 
-  const base64 = dataUrl.split(',')[1];
+  const base64   = dataUrl.split(',')[1];
+  const mimeType = dataUrl.split(';')[0].split(':')[1];
 
   try {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
@@ -389,27 +319,17 @@ Rules:
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: mimeType, data: base64 } }] }],
-        // FIX: raised from 400 to 1024 to prevent truncation on verbose responses
-        generationConfig: { maxOutputTokens: 1024, temperature: 0.1 }
+        generationConfig: { maxOutputTokens: 400, temperature: 0.1 }
       })
     });
 
-    const data = await res.json();
-
-    // FIX: surface specific errors before attempting JSON.parse
-    if (res.status === 429) {
-      alert('Gemini daily limit reached (20 requests/day on free tier). Resets at midnight UTC.');
-      show('screen-upload');
-      return;
-    }
-
+    const data   = await res.json();
     if (!res.ok) {
       console.error('Gemini error:', JSON.stringify(data));
       throw new Error(`Gemini ${res.status}: ${data?.error?.message || 'unknown'}`);
     }
-
     const raw    = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
 
     if (parsed.error === 'no_transaction') {
       alert('No transaction found in this screenshot. Try a different image or use Manual.');
@@ -417,7 +337,8 @@ Rules:
       return;
     }
 
-    const rules       = applyMerchantRules(parsed.merchant);
+    // Apply merchant intelligence
+    const rules = applyMerchantRules(parsed.merchant);
     const paymentMethod = rules.paymentMethod || parsed.payment_method;
     const category      = rules.category      || parsed.category;
 
@@ -439,7 +360,6 @@ Rules:
     buildReceiptCard();
     show('screen-confirm');
     haptic('light');
-
   } catch(err) {
     console.error(err);
     alert('Could not parse screenshot. Try again or use Manual.');
@@ -452,6 +372,7 @@ Rules:
 function buildReceiptCard() {
   const d = parsedData;
 
+  // Hero
   const amtEl = document.getElementById('r-amount');
   amtEl.textContent = fmt(d.amount);
   amtEl.className   = `receipt-amount ${d.type.toLowerCase()}`;
@@ -466,18 +387,20 @@ function buildReceiptCard() {
   document.getElementById('r-merchant').textContent = d.merchant || '—';
   document.getElementById('r-date').textContent     = displayDate(d.date);
 
+  // Warn banner
   const warnWrap = document.getElementById('warn-banner-wrap');
   warnWrap.innerHTML = d.lowConfidence
-    ? `<div class="warn-banner" style="border-radius:0;border-left:none;border-right:none;border-top:none;">⚠ Low confidence — review fields carefully</div>`
+    ? `<div class="warn-banner" style="margin:0 0 0 0;border-radius:0;border-left:none;border-right:none;border-top:none;">⚠ Low confidence — review fields carefully</div>`
     : '';
 
+  // Fields
   const cats   = d.type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
   const fields = [
-    { key: 'Via',      dataKey: 'paymentMethod', type: 'select',   options: PAYMENT_METHODS, auto: d.autoPayment },
-    { key: 'Category', dataKey: 'category',      type: 'dropdown', options: cats,             auto: d.autoCategory },
-    { key: 'Group',    dataKey: 'group',          type: 'badge' },
-    { key: 'Memo',     dataKey: 'memo',           type: 'text' },
-    { key: 'Review',   dataKey: 'review',         type: 'select',   options: REVIEW_OPTIONS },
+    { key:'Via',      dataKey:'paymentMethod', type:'select',   options:PAYMENT_METHODS, auto: d.autoPayment },
+    { key:'Category', dataKey:'category',      type:'dropdown', options:cats,             auto: d.autoCategory },
+    { key:'Group',    dataKey:'group',          type:'badge' },
+    { key:'Memo',     dataKey:'memo',           type:'text' },
+    { key:'Review',   dataKey:'review',         type:'select',   options:REVIEW_OPTIONS },
   ];
 
   const container = document.getElementById('r-fields');
@@ -491,13 +414,13 @@ function buildReceiptCard() {
     if (f.type === 'badge') {
       row.innerHTML = `
         <div class="field-key">${f.key}</div>
-        <div class="field-val group-tag"><span class="group-badge" id="badge-group">${d[f.dataKey] || '—'}</span></div>`;
+        <div class="field-val group-tag"><span class="group-badge" id="badge-group">${d[f.dataKey]||'—'}</span></div>`;
 
     } else if (f.type === 'text') {
       row.innerHTML = `
         <div class="field-key">${f.key}</div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;flex:1">
-          <input class="inline-input" id="field-memo" maxlength="60" value="${d[f.dataKey] || ''}" placeholder="Optional"
+          <input class="inline-input" id="field-memo" maxlength="60" value="${d[f.dataKey]||''}" placeholder="Optional"
             oninput="updateField('${f.dataKey}',this.value);updateCharCount(this)"
             onfocus="updateCharCount(this)">
           <div class="char-count" id="memo-count" style="display:none"></div>
@@ -508,7 +431,7 @@ function buildReceiptCard() {
       row.innerHTML = `
         <div class="field-key">${f.key}</div>
         <div class="dropdown-wrap" id="dd-wrap-${f.dataKey}">
-          <input class="dropdown-input" id="dd-${f.dataKey}" value="${d[f.dataKey] || ''}" placeholder="Tap to search…"
+          <input class="dropdown-input" id="dd-${f.dataKey}" value="${d[f.dataKey]||''}" placeholder="Tap to search…"
             autocomplete="off"
             onfocus="openDropdown('${f.dataKey}')"
             oninput="filterDropdown('${f.dataKey}', this.value)"
@@ -520,7 +443,7 @@ function buildReceiptCard() {
 
     } else if (f.type === 'select') {
       const autoBadge = f.auto ? `<span class="auto-badge">auto</span>` : '';
-      const opts = f.options.map(o => `<option ${d[f.dataKey] === o ? 'selected' : ''}>${o}</option>`).join('');
+      const opts = f.options.map(o=>`<option ${d[f.dataKey]===o?'selected':''}>${o}</option>`).join('');
       row.innerHTML = `
         <div class="field-key">${f.key}</div>
         <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;flex:1">
@@ -532,6 +455,7 @@ function buildReceiptCard() {
     container.appendChild(row);
   });
 
+  // Populate dropdowns after DOM insert
   if (document.getElementById('ddlist-category')) {
     renderDropdownList('category', cats, d.category);
   }
@@ -540,17 +464,17 @@ function buildReceiptCard() {
 // ── HERO INLINE EDITING ───────────────────────────────────────────────────────
 
 function editAmount() {
-  const el  = document.getElementById('r-amount');
+  const el = document.getElementById('r-amount');
   const raw = parsedData.amount || 0;
   el.outerHTML = `<input class="receipt-amount-input ${parsedData.type.toLowerCase()}" id="r-amount-input"
     type="text" inputmode="decimal" value="${raw}"
     onblur="commitAmount(this.value)"
     onkeydown="if(event.key==='Enter')this.blur()">`;
-  setTimeout(() => { const inp = document.getElementById('r-amount-input'); if (inp) { inp.focus(); inp.select(); } }, 50);
+  setTimeout(() => { const inp = document.getElementById('r-amount-input'); if(inp){inp.focus();inp.select();} }, 50);
 }
 
 function commitAmount(val) {
-  const num  = parseFloat(val.replace(/,/g, '')) || 0;
+  const num = parseFloat(val.replace(/,/g,'')) || 0;
   parsedData.amount = num;
   const wrap = document.getElementById('r-amount-input') || document.querySelector('.receipt-amount-input');
   if (wrap) {
@@ -565,10 +489,10 @@ function commitAmount(val) {
 
 function editMerchant() {
   const el = document.getElementById('r-merchant');
-  el.outerHTML = `<input class="merchant-input" id="merchant-input" value="${parsedData.merchant || ''}"
+  el.outerHTML = `<input class="merchant-input" id="merchant-input" value="${parsedData.merchant||''}"
     onblur="commitMerchant(this.value)"
     onkeydown="if(event.key==='Enter')this.blur()">`;
-  setTimeout(() => { const inp = document.getElementById('merchant-input'); if (inp) { inp.focus(); inp.select(); } }, 50);
+  setTimeout(() => { const inp = document.getElementById('merchant-input'); if(inp){inp.focus();inp.select();} }, 50);
 }
 
 function commitMerchant(val) {
@@ -582,6 +506,7 @@ function commitMerchant(val) {
     div.onclick = editMerchant;
     inp.replaceWith(div);
   }
+  // Re-apply merchant rules
   const rules = applyMerchantRules(val);
   if (rules.paymentMethod) {
     parsedData.paymentMethod = rules.paymentMethod;
@@ -593,10 +518,10 @@ function commitMerchant(val) {
 
 function editDate() {
   const el = document.getElementById('r-date');
-  el.outerHTML = `<input class="date-input" id="date-input" type="date" value="${parsedData.date || todayISO()}"
+  el.outerHTML = `<input class="date-input" id="date-input" type="date" value="${parsedData.date||todayISO()}"
     onblur="commitDate(this.value)"
     onchange="commitDate(this.value)">`;
-  setTimeout(() => { const inp = document.getElementById('date-input'); if (inp) inp.focus(); }, 50);
+  setTimeout(() => { const inp = document.getElementById('date-input'); if(inp) inp.focus(); }, 50);
 }
 
 function commitDate(val) {
@@ -614,7 +539,7 @@ function commitDate(val) {
 
 // ── DROPDOWN ──────────────────────────────────────────────────────────────────
 
-function renderDropdownList(key, options, selected, filter = '') {
+function renderDropdownList(key, options, selected, filter='') {
   const list = document.getElementById(`ddlist-${key}`);
   if (!list) return;
   const filtered = filter
@@ -627,8 +552,8 @@ function renderDropdownList(key, options, selected, filter = '') {
     return;
   }
 
-  list.innerHTML = filtered.map((o, i) =>
-    `<div class="dropdown-item ${o === selected ? 'selected' : ''}" data-idx="${i}" data-val="${o}"
+  list.innerHTML = filtered.map((o,i) =>
+    `<div class="dropdown-item ${o===selected?'selected':''}" data-idx="${i}" data-val="${o}"
       onmousedown="selectDropdownItem('${key}','${o}')" ontouchend="selectDropdownItem('${key}','${o}')">${o}</div>`
   ).join('');
   list.style.display = 'block';
@@ -658,21 +583,21 @@ function selectDropdownItem(key, val) {
 function dropdownKeyNav(e, key) {
   const list = document.getElementById(`ddlist-${key}`);
   if (!list || list.style.display === 'none') return;
-  const items   = list.querySelectorAll('.dropdown-item');
+  const items = list.querySelectorAll('.dropdown-item');
   const current = list.querySelector('.highlighted');
   let idx = current ? parseInt(current.dataset.idx) : -1;
 
-  if (e.key === 'ArrowDown')                    { e.preventDefault(); idx = Math.min(idx+1, items.length-1); }
-  else if (e.key === 'ArrowUp')                 { e.preventDefault(); idx = Math.max(idx-1, 0); }
-  else if (e.key === 'Enter' && current)        { e.preventDefault(); selectDropdownItem(key, current.dataset.val); return; }
-  else if (e.key === 'Escape')                  { list.style.display = 'none'; return; }
+  if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx+1, items.length-1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx-1, 0); }
+  else if (e.key === 'Enter' && current) { e.preventDefault(); selectDropdownItem(key, current.dataset.val); return; }
+  else if (e.key === 'Escape') { list.style.display='none'; return; }
 
   items.forEach(it => it.classList.remove('highlighted'));
   if (items[idx]) items[idx].classList.add('highlighted');
 }
 
 function closeAllDropdowns() {
-  document.querySelectorAll('.dropdown-list').forEach(l => l.style.display = 'none');
+  document.querySelectorAll('.dropdown-list').forEach(l => l.style.display='none');
   activeDropdown = null;
 }
 
@@ -696,13 +621,14 @@ function updateCharCount(inp) {
   if (!counter) return;
   const len = inp.value.length;
   counter.style.display = len > 0 ? 'block' : 'none';
-  counter.textContent   = `${len}/60`;
-  counter.style.color   = len > 50 ? 'var(--warn)' : 'var(--muted)';
+  counter.textContent = `${len}/60`;
+  counter.style.color = len > 50 ? 'var(--warn)' : 'var(--muted)';
 }
 
 // ── LOG IT ────────────────────────────────────────────────────────────────────
 
 function handleLogIt() {
+  // Commit any open hero edits
   const amtInp = document.getElementById('r-amount-input');
   if (amtInp) commitAmount(amtInp.value);
   const mInp = document.getElementById('merchant-input');
@@ -710,12 +636,13 @@ function handleLogIt() {
   const dInp = document.getElementById('date-input');
   if (dInp) commitDate(dInp.value);
 
-  const d         = parsedData;
-  const ts        = new Date().toISOString();
-  const amt       = d.type === 'Income' ? Math.abs(d.amount) : -Math.abs(d.amount);
+  const d   = parsedData;
+  const ts  = new Date().toISOString();
+  const amt = d.type==='Income' ? Math.abs(d.amount) : -Math.abs(d.amount);
   const sheetDate = toSheetDate(d.date);
-  const rows      = [[ts, d.type, amt, sheetDate, d.merchant, d.paymentMethod, d.category, d.group, d.memo, d.review]];
+  const rows = [[ts, d.type, amt, sheetDate, d.merchant, d.paymentMethod, d.category, d.group, d.memo, d.review]];
 
+  // Duplicate detection
   const dupeKey = `${d.amount}|${d.merchant}`;
   const now     = Date.now();
   if (dupeKey === lastLoggedKey && now - lastLoggedTime < 60000) {
@@ -728,12 +655,13 @@ function handleLogIt() {
 }
 
 function showDupeWarning(rows, d) {
-  document.getElementById('dupe-warn-wrap').innerHTML = `
+  const wrap = document.getElementById('dupe-warn-wrap');
+  wrap.innerHTML = `
     <div class="dupe-card">
       <div class="dupe-title">⚠ Possible duplicate</div>
       <div class="dupe-desc">Same amount and merchant logged less than a minute ago. Log again?</div>
       <div class="dupe-actions">
-        <button class="btn-dupe-log"    onclick="confirmDupe()">Log anyway</button>
+        <button class="btn-dupe-log" onclick="confirmDupe()">Log anyway</button>
         <button class="btn-dupe-cancel" onclick="dismissDupe()">Cancel</button>
       </div>
     </div>`;
@@ -755,7 +683,7 @@ function dismissDupe() {
 function buildManualForm(mode) {
   const today      = todayISO();
   const lastMethod = localStorage.getItem('lastPaymentMethod') || PAYMENT_METHODS[0];
-  const c          = document.getElementById('manual-form');
+  const c = document.getElementById('manual-form');
 
   const row = (key, ctrl) =>
     `<div class="form-row-inner"><div class="form-key">${key}</div><div class="form-val-wrap">${ctrl}</div></div>`;
@@ -763,8 +691,8 @@ function buildManualForm(mode) {
   const text = (id, ph) =>
     `<input class="form-ctrl" id="${id}" type="text" placeholder="${ph}">`;
 
-  const nativeSelect = (id, opts, selected, onch = '') =>
-    `<select class="form-select-ctrl" id="${id}" ${onch}>${opts.map(o => `<option ${o === selected ? 'selected' : ''}>${o}</option>`).join('')}</select>`;
+  const nativeSelect = (id, opts, selected, onch='') =>
+    `<select class="form-select-ctrl" id="${id}" ${onch}>${opts.map(o=>`<option ${o===selected?'selected':''}>${o}</option>`).join('')}</select>`;
 
   const amtDisplay = () =>
     `<div class="form-picker" id="m-amount-display" onclick="openNumpad('m-amount')" style="color:var(--muted)">0.00</div><input type="hidden" id="m-amount" value="0">`;
@@ -777,26 +705,41 @@ function buildManualForm(mode) {
       row('Amount', amtDisplay()) +
       row('Date',   `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
       row('From',   nativeSelect('m-from', PAYMENT_METHODS, lastMethod, 'onchange="syncTransferTo()"')) +
-      row('To',     nativeSelect('m-to', PAYMENT_METHODS.filter(p => p !== lastMethod), PAYMENT_METHODS.find(p => p !== lastMethod) || PAYMENT_METHODS[1])) +
-      row('Memo',   text('m-memo', 'Optional'));
+      row('To',     nativeSelect('m-to',   PAYMENT_METHODS.filter(p=>p!==lastMethod), PAYMENT_METHODS.find(p=>p!==lastMethod)||PAYMENT_METHODS[1])) +
+      row('Memo',   text('m-memo','Optional'));
+
+  } else if (mode === 'reimbursement') {
+    const firstCat = EXPENSE_CATS[0];
+    c.innerHTML =
+      row('Amount',   amtDisplay()) +
+      row('Date',     `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
+      row('From',     `<input class="form-ctrl" id="m-merchant" type="text" placeholder="Who's paying you back">`) +
+      row('Into',     nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
+      row('Category', catPicker(firstCat)) +
+      row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstCat]||''}</div>`) +
+      row('Memo',     text('m-memo','Optional')) +
+      row('Review',   `<div class="review-btns" id="review-btns">
+        ${REVIEW_OPTIONS.map((o,i) => `<button type="button" class="review-btn${i===0?' active':''}" onclick="selectReview(this,'${o}')">${o}</button>`).join('')}
+      </div>`);
+
   } else {
     const firstCat = EXPENSE_CATS[0];
     c.innerHTML =
-      row('Type',     nativeSelect('m-type', ['Expense','Income','Balance'], 'Expense', 'onchange="updateManualCats()"')) +
+      row('Type',     nativeSelect('m-type',['Expense','Income','Balance'],'Expense','onchange="updateManualCats()"')) +
       row('Amount',   amtDisplay()) +
       row('Date',     `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
       row('Merchant', `<input class="form-ctrl" id="m-merchant" type="text" placeholder="Who or where" oninput="applyManualMerchantRules(this.value)">`) +
       row('Via',      nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
       row('Category', catPicker(firstCat)) +
-      row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstCat] || ''}</div>`) +
-      row('Memo',     text('m-memo', 'Optional')) +
+      row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstCat]||''}</div>`) +
+      row('Memo',     text('m-memo','Optional')) +
       row('Review',   `<div class="review-btns" id="review-btns">
-        ${REVIEW_OPTIONS.map((o, i) => `<button type="button" class="review-btn${i === 0 ? ' active' : ''}" onclick="selectReview(this,'${o}')">${o}</button>`).join('')}
+        ${REVIEW_OPTIONS.map((o,i) => `<button type="button" class="review-btn${i===0?' active':''}" onclick="selectReview(this,'${o}')">${o}</button>`).join('')}
       </div>`);
   }
 }
 
-function selectReview(btn) {
+function selectReview(btn, val) {
   document.querySelectorAll('.review-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
@@ -806,13 +749,46 @@ function getReviewVal() {
   return active ? active.textContent : 'Myself';
 }
 
+function fmtAmt(el) {
+  const val = el.value;
+  // If expression (contains operator), just update preview title
+  if (/[+\-*/]/.test(val)) {
+    const result = evalExpr(val);
+    el.title = result !== null
+      ? `= ${result.toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+      : '';
+    return;
+  }
+  // Pure number — format with commas
+  el.title = '';
+  const raw   = val.replace(/[^0-9.]/g, '');
+  const parts = raw.split('.');
+  const int   = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const caret = el.selectionStart;
+  const prev  = el.value.length;
+  el.value    = parts.length > 1 ? `${int}.${parts[1].slice(0,2)}` : int;
+}
+
 function evalExpr(str) {
+  // Safe eval: only allow numbers, operators, dots, spaces, parens
   const cleaned = str.replace(/,/g, '').trim();
   if (!/^[0-9+\-*/.() ]+$/.test(cleaned)) return null;
   try {
     const result = Function('"use strict"; return (' + cleaned + ')')();
     return (typeof result === 'number' && isFinite(result)) ? Math.round(result * 100) / 100 : null;
   } catch { return null; }
+}
+
+function resolveAmt(el) {
+  // Called on blur — resolve expression to final number
+  const val = el.value.trim();
+  if (!val) return;
+  const result = evalExpr(val);
+  if (result !== null) {
+    el.value = result.toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+    el.dataset.preview = '';
+    el.title = '';
+  }
 }
 
 function getRawAmt(id) {
@@ -825,7 +801,8 @@ function syncTransferTo() {
   const from  = document.getElementById('m-from')?.value;
   const toSel = document.getElementById('m-to');
   if (!toSel || !from) return;
-  toSel.innerHTML = PAYMENT_METHODS.filter(p => p !== from).map(p => `<option>${p}</option>`).join('');
+  const filtered = PAYMENT_METHODS.filter(p => p !== from);
+  toSel.innerHTML = filtered.map(p=>`<option>${p}</option>`).join('');
 }
 
 function applyManualMerchantRules(val) {
@@ -840,38 +817,32 @@ function applyManualMerchantRules(val) {
   }
 }
 
-// FIX: reads m-type directly (was incorrectly reading m-type-display dataset)
 function updateManualCats() {
-  const type   = document.getElementById('m-type')?.value || 'Expense';
+  const typeEl = document.getElementById('m-type');
+  const type   = typeEl ? typeEl.value : 'Expense';
   const catRow = document.getElementById('m-category-display')?.closest('.form-row-inner');
   const grpRow = document.getElementById('m-group')?.closest('.form-row-inner');
   const revRow = document.getElementById('review-btns')?.closest('.form-row-inner');
-
   if (type === 'Balance') {
     if (catRow) catRow.style.display = 'none';
     if (grpRow) grpRow.style.display = 'none';
     if (revRow) revRow.style.display = 'none';
     return;
   }
-
   if (catRow) catRow.style.display = '';
   if (grpRow) grpRow.style.display = '';
   if (revRow) revRow.style.display = '';
-
-  const cats    = type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
+  const cats = type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
+  // Reset category to first in new list
   const catDisp = document.getElementById('m-category-display');
-  if (catDisp) {
-    catDisp.dataset.val = cats[0];
-    const caret = catDisp.querySelector('.picker-caret');
-    catDisp.textContent = cats[0];
-    if (caret) catDisp.appendChild(caret);
-  }
+  if (catDisp) { catDisp.dataset.val = cats[0]; catDisp.childNodes[0].textContent = cats[0]; }
   updateManualGroup();
 }
 
 function updateManualGroup() {
-  const cat = document.getElementById('m-category-display')?.dataset.val || '';
-  const el  = document.getElementById('m-group');
+  const catEl = document.getElementById('m-category-display');
+  const cat   = catEl?.dataset.val || '';
+  const el    = document.getElementById('m-group');
   if (el && cat) el.textContent = CATEGORY_MAP[cat] || '';
 }
 
@@ -885,40 +856,55 @@ async function submitManual() {
     const amount = getRawAmt('m-amount');
     const date   = document.getElementById('m-date').value;
     const from   = document.getElementById('m-from')?.value || PAYMENT_METHODS[0];
-    const to     = document.getElementById('m-to')?.value   || PAYMENT_METHODS[1];
+    const to     = document.getElementById('m-to')?.value || PAYMENT_METHODS[1];
     const memo   = document.getElementById('m-memo').value;
-    if (!amount || !date)  { alert('Amount and date are required.'); return; }
-    if (from === to)       { alert('From and To accounts must be different.'); return; }
+    if (!amount || !date) { alert('Amount and date are required.'); return; }
+    if (from === to) { alert('From and To accounts must be different.'); return; }
     const sd = toSheetDate(date);
     rows = [
-      [ts, 'Transfer', -amount, sd, `To ${to}`,    from, '', '', memo, 'Myself'],
-      [ts, 'Transfer',  amount, sd, `From ${from}`, to,  '', '', memo, 'Myself'],
+      [ts,'Transfer',-amount, sd,`To ${to}`,   from,'','',memo,'Myself'],
+      [ts,'Transfer', amount, sd,`From ${from}`,to,  '','',memo,'Myself'],
     ];
-    d = { type: 'Transfer', amount, category: '', paymentMethod: from };
+    d = { type:'Transfer', amount, category:'', paymentMethod:from };
     localStorage.setItem('lastPaymentMethod', from);
+
+  } else if (currentMode === 'reimbursement') {
+    const amount   = getRawAmt('m-amount');
+    const date     = document.getElementById('m-date')?.value || todayISO();
+    const merchant = document.getElementById('m-merchant')?.value || '';
+    const payment  = document.getElementById('m-payment')?.value || PAYMENT_METHODS[0];
+    const memo     = document.getElementById('m-memo')?.value || '';
+    const category = document.getElementById('m-category-display')?.dataset.val || EXPENSE_CATS[0];
+    const review   = getReviewVal();
+    if (!amount || !date) { alert('Amount and date are required.'); return; }
+    const sd    = toSheetDate(date);
+    const group = CATEGORY_MAP[category] || '';
+    rows = [[ts, 'Reimbursement', Math.abs(amount), sd, merchant, payment, category, group, memo, review]];
+    d    = { type:'Reimbursement', amount, category, group, paymentMethod:payment, merchant };
+    localStorage.setItem('lastPaymentMethod', payment);
 
   } else {
     const type     = document.getElementById('m-type')?.value || 'Expense';
     const amount   = getRawAmt('m-amount');
-    const date     = document.getElementById('m-date')?.value    || todayISO();
+    const date     = document.getElementById('m-date')?.value || todayISO();
     const merchant = document.getElementById('m-merchant')?.value || '';
-    const payment  = document.getElementById('m-payment')?.value  || PAYMENT_METHODS[0];
-    const memo     = document.getElementById('m-memo')?.value     || '';
+    const payment  = document.getElementById('m-payment')?.value || PAYMENT_METHODS[0];
+    const memo     = document.getElementById('m-memo')?.value || '';
     if (!amount || !date) { alert('Amount and date are required.'); return; }
     const sd = toSheetDate(date);
-
     if (type === 'Balance') {
       rows = [[ts, 'Balance', Math.abs(amount), sd, `${payment} Balance`, payment, '', '', memo, '']];
-      d    = { type: 'Balance', amount, paymentMethod: payment, merchant: `${payment} Balance` };
+      d    = { type:'Balance', amount, paymentMethod:payment, merchant:`${payment} Balance` };
+      localStorage.setItem('lastPaymentMethod', payment);
     } else {
       const category = document.getElementById('m-category-display')?.dataset.val || EXPENSE_CATS[0];
       const review   = getReviewVal();
-      const amt      = type === 'Income' ? Math.abs(amount) : -Math.abs(amount);
-      const group    = CATEGORY_MAP[category] || '';
+      const amt   = type==='Income' ? Math.abs(amount) : -Math.abs(amount);
+      const group = CATEGORY_MAP[category] || '';
       rows = [[ts, type, amt, sd, merchant, payment, category, group, memo, review]];
-      d    = { type, amount, category, group, paymentMethod: payment, merchant };
+      d    = { type, amount, category, group, paymentMethod:payment, merchant };
+      localStorage.setItem('lastPaymentMethod', payment);
     }
-    localStorage.setItem('lastPaymentMethod', payment);
   }
 
   haptic('medium');
@@ -929,17 +915,21 @@ async function submitManual() {
 
 async function appendRows(rows, d) {
   lastFailedRows = rows;
+
   try {
     const fd = new FormData();
     fd.append('data', JSON.stringify({ rows }));
     await fetch(WEBHOOK, { method: 'POST', body: fd });
 
+    // Track for dupe detection
     if (d && d.amount && d.merchant) {
       lastLoggedKey  = `${d.amount}|${d.merchant}`;
       lastLoggedTime = Date.now();
     }
+
     lastFailedRows = null;
 
+    // Success display
     document.getElementById('success-label').textContent =
       rows.length > 1 ? 'Transfer logged' : `${d?.type || 'Transaction'} logged`;
 
@@ -948,7 +938,7 @@ async function appendRows(rows, d) {
       det.innerHTML = `
         <div class="success-row">${fmt(Math.abs(rows[0][2]))}</div>
         <div class="success-row"><strong>${d.merchant || d.type}</strong> · ${d.paymentMethod}</div>
-        ${d.category ? `<div class="success-row">${d.category} <span style="color:var(--muted)">→</span> ${d.group || ''}</div>` : ''}`;
+        ${d.category ? `<div class="success-row">${d.category} <span style="color:var(--muted)">→</span> ${d.group||''}</div>` : ''}`;
     } else if (rows.length > 1) {
       det.innerHTML = `<div class="success-row">${fmt(Math.abs(rows[0][2]))} moved</div>`;
     }
@@ -964,25 +954,38 @@ async function appendRows(rows, d) {
   }
 }
 
-function retryLog()   { if (lastFailedRows) appendRows(lastFailedRows, parsedData); }
+function retryLog()  { if (lastFailedRows) appendRows(lastFailedRows, parsedData); }
 function copyFailed() {
   if (!lastFailedRows) return;
-  navigator.clipboard.writeText(lastFailedRows.map(r => r.join('\t')).join('\n'))
+  navigator.clipboard.writeText(lastFailedRows.map(r=>r.join('\t')).join('\n'))
     .then(() => alert('Row copied to clipboard.'));
 }
 
-// ── GENERIC PICKER SHEET ──────────────────────────────────────────────────────
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+
+loadSettings();
+// Restore last mode
+selectMode(currentMode);
+
+
+// ── GENERIC PICKER SHEET ─────────────────────────────────────────────────────
+
+let _pickerTarget  = null;
+let _pickerOptions = [];
+let _pickerCb      = null;
 
 function openPicker(targetId, options, current, cb) {
   _pickerTarget  = targetId;
   _pickerOptions = options || [];
   _pickerCb      = cb || null;
-  const cur = current || document.getElementById(targetId + '-display')?.dataset.val || '';
+  const cur = current || document.getElementById(targetId+'-display')?.dataset.val || '';
 
-  document.getElementById('picker-list').innerHTML = _pickerOptions.map(o =>
-    `<div class="picker-item ${o === cur ? 'picker-item-active' : ''}" ontouchend="selectPicker('${o}')" onclick="selectPicker('${o}')">${o}</div>`
+  const sheet = document.getElementById('picker-sheet');
+  const list  = document.getElementById('picker-list');
+  list.innerHTML = _pickerOptions.map(o =>
+    `<div class="picker-item ${o===cur?'picker-item-active':''}" ontouchend="selectPicker('${o}')" onclick="selectPicker('${o}')">${o}</div>`
   ).join('');
-  document.getElementById('picker-sheet').style.display = 'flex';
+  sheet.style.display = 'flex';
   haptic('light');
 }
 
@@ -990,6 +993,7 @@ function selectPicker(val) {
   const disp = document.getElementById(_pickerTarget + '-display');
   if (disp) {
     disp.dataset.val = val;
+    // Update text node (first child), preserve caret span
     const caret = disp.querySelector('.picker-caret');
     disp.textContent = val;
     if (caret) disp.appendChild(caret);
@@ -1013,19 +1017,29 @@ function closePicker() {
   document.getElementById('picker-sheet').style.display = 'none';
 }
 
-// ── CATEGORY PICKER ───────────────────────────────────────────────────────────
+// ── CATEGORY PICKER ──────────────────────────────────────────────────────────
 
 function openCategoryPicker() {
-  // FIX: reads m-type directly (was incorrectly reading m-type-display dataset)
-  const type = document.getElementById('m-type')?.value || 'Expense';
+  const type = currentMode === 'reimbursement' ? 'Expense'
+    : (document.getElementById('m-type')?.value || 'Expense');
   const cats = type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
   const cur  = document.getElementById('m-category-display')?.dataset.val || '';
 
+  // Group by CATEGORY_MAP group
+  const groups = {};
+  cats.forEach(c => {
+    const g = CATEGORY_MAP[c] || 'Other';
+    if (!groups[g]) groups[g] = [];
+    groups[g].push(c);
+  });
+
+  const sheet    = document.getElementById('cat-sheet');
+  const list     = document.getElementById('cat-list');
   const searchEl = document.getElementById('cat-search');
   if (searchEl) searchEl.value = '';
 
-  document.getElementById('cat-list').innerHTML = renderCatList(cats, cur);
-  document.getElementById('cat-sheet').style.display = 'flex';
+  list.innerHTML = renderCatList(cats, cur);
+  sheet.style.display = 'flex';
   haptic('light');
 }
 
@@ -1039,18 +1053,18 @@ function renderCatList(cats, cur) {
   return Object.entries(groups).map(([g, cs]) =>
     `<div class="cat-group-label">${g}</div>` +
     cs.map(c =>
-      `<div class="cat-item ${c === cur ? 'cat-item-active' : ''}" ontouchend="selectCategory('${c}')" onclick="selectCategory('${c}')">${c}</div>`
+      `<div class="cat-item ${c===cur?'cat-item-active':''}" ontouchend="selectCategory('${c}')" onclick="selectCategory('${c}')">${c}</div>`
     ).join('')
   ).join('');
 }
 
-// FIX: reads m-type directly (was incorrectly reading m-type-display dataset)
 function filterCats(val) {
-  const type = document.getElementById('m-type')?.value || 'Expense';
+  const type = currentMode === 'reimbursement' ? 'Expense'
+    : (document.getElementById('m-type')?.value || 'Expense');
   const cats = (type === 'Income' ? INCOME_CATS : EXPENSE_CATS).filter(c =>
     c.toLowerCase().includes(val.toLowerCase())
   );
-  const cur = document.getElementById('m-category-display')?.dataset.val || '';
+  const cur    = document.getElementById('m-category-display')?.dataset.val || '';
   document.getElementById('cat-list').innerHTML = renderCatList(cats, cur);
 }
 
@@ -1071,7 +1085,12 @@ function closeCatPicker() {
   document.getElementById('cat-sheet').style.display = 'none';
 }
 
+
+
 // ── NUMPAD ────────────────────────────────────────────────────────────────────
+
+let npTarget  = null;
+let npExpr    = '0';
 
 function openNumpad(targetId) {
   npTarget = targetId;
@@ -1086,9 +1105,13 @@ function renderNumpad() {
   const exprEl   = document.getElementById('np-expr');
   const resultEl = document.getElementById('np-result');
   if (!exprEl) return;
+
+  // Display with commas on number parts
   exprEl.textContent = formatExprDisplay(npExpr);
+
+  // Show resolved result if expression
   if (/[+\-×÷]/.test(npExpr) && npExpr.length > 1) {
-    const result = evalExpr(npExpr.replace(/×/g, '*').replace(/÷/g, '/'));
+    const result = evalExpr(npExpr.replace(/×/g,'*').replace(/÷/g,'/'));
     resultEl.textContent = result !== null ? '= ' + fmt(result) : '';
   } else {
     resultEl.textContent = '';
@@ -1096,9 +1119,10 @@ function renderNumpad() {
 }
 
 function formatExprDisplay(expr) {
+  // Format number segments with commas
   return expr.replace(/[0-9]+(\.[0-9]*)*/g, seg => {
     const parts = seg.split('.');
-    const int   = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const int = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return parts.length > 1 ? int + '.' + parts[1] : int;
   });
 }
@@ -1108,6 +1132,7 @@ function npInput(char) {
   if (npExpr === '0' && char !== '.' && !/[+\-×÷]/.test(char)) {
     npExpr = char;
   } else {
+    // Prevent double operators
     if (/[+\-×÷]/.test(char) && /[+\-×÷]/.test(npExpr.slice(-1))) {
       npExpr = npExpr.slice(0, -1) + char;
     } else {
@@ -1124,13 +1149,15 @@ function npDelete() {
 }
 
 function npDone() {
-  const raw    = npExpr.replace(/×/g, '*').replace(/÷/g, '/');
+  const raw    = npExpr.replace(/×/g,'*').replace(/÷/g,'/');
   const result = evalExpr(raw) ?? parseFloat(raw) ?? 0;
   const final  = Math.round(result * 100) / 100;
 
+  // Update hidden input
   const hidden = document.getElementById(npTarget);
   if (hidden) hidden.value = String(final);
 
+  // Update display div
   const display = document.getElementById(npTarget + '-display');
   if (display) {
     display.textContent = fmt(final);
@@ -1142,14 +1169,66 @@ function npDone() {
 }
 
 function numpadOutside(e) {
-  if (e.target === document.getElementById('numpad-overlay')) npDone();
+  if (e.target === document.getElementById('numpad-overlay')) {
+    npDone();
+  }
 }
 
-// ── BOOT ──────────────────────────────────────────────────────────────────────
-
-loadSettings();
-selectMode(currentMode);
-
 </script>
+
+
+<!-- GENERIC PICKER SHEET -->
+<div class="sheet-overlay" id="picker-sheet" onclick="if(event.target===this)closePicker()">
+  <div class="sheet-inner">
+    <div class="sheet-drag"></div>
+    <div class="sheet-list" id="picker-list"></div>
+  </div>
+</div>
+
+<!-- CATEGORY PICKER SHEET -->
+<div class="sheet-overlay" id="cat-sheet" onclick="if(event.target===this)closeCatPicker()">
+  <div class="sheet-inner">
+    <div class="sheet-drag"></div>
+    <div class="sheet-search-wrap">
+      <input id="cat-search" type="text" class="sheet-search" placeholder="Search…" autocomplete="off" oninput="filterCats(this.value)">
+    </div>
+    <div class="sheet-list" id="cat-list"></div>
+  </div>
+</div>
+
+
+<!-- NUMPAD -->
+<div class="numpad-overlay" id="numpad-overlay" style="display:none" onclick="numpadOutside(event)">
+  <div class="numpad" id="numpad">
+    <div class="numpad-display">
+      <div class="numpad-expr" id="np-expr">0</div>
+      <div class="numpad-result" id="np-result"></div>
+    </div>
+    <div class="numpad-grid">
+      <button class="nk nk-num" onclick="npInput('7')">7</button>
+      <button class="nk nk-num" onclick="npInput('8')">8</button>
+      <button class="nk nk-num" onclick="npInput('9')">9</button>
+      <button class="nk nk-op"  onclick="npInput('÷')">÷</button>
+
+      <button class="nk nk-num" onclick="npInput('4')">4</button>
+      <button class="nk nk-num" onclick="npInput('5')">5</button>
+      <button class="nk nk-num" onclick="npInput('6')">6</button>
+      <button class="nk nk-op"  onclick="npInput('×')">×</button>
+
+      <button class="nk nk-num" onclick="npInput('1')">1</button>
+      <button class="nk nk-num" onclick="npInput('2')">2</button>
+      <button class="nk nk-num" onclick="npInput('3')">3</button>
+      <button class="nk nk-op"  onclick="npInput('-')">−</button>
+
+      <button class="nk nk-num nk-zero" onclick="npInput('0')">0</button>
+      <button class="nk nk-num" onclick="npInput('.')">.</button>
+      <button class="nk nk-op"  onclick="npInput('+')">+</button>
+
+      <button class="nk nk-del" style="grid-column:span 3" onclick="npDelete()">⌫ delete</button>
+      <button class="nk nk-done" onclick="npDone()">Done</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
