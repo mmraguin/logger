@@ -15,10 +15,10 @@
 
   <div class="mode-strip">
     <div class="pills">
-      <div class="pill active" data-mode="expense"       onclick="selectMode('expense')">Expense</div>
-      <div class="pill"        data-mode="income"        onclick="selectMode('income')">Income</div>
-      <div class="pill"        data-mode="transfer"      onclick="selectMode('transfer')">Transfer</div>
-      <div class="pill"        data-mode="reimbursement" onclick="selectMode('reimbursement')">Reimburse</div>
+      <div class="pill active" data-mode="expense"       onclick="selectMode('expense')">Spend</div>
+      <div class="pill"        data-mode="income"        onclick="selectMode('income')">Earn</div>
+      <div class="pill"        data-mode="transfer"      onclick="selectMode('transfer')">Move</div>
+      <div class="pill"        data-mode="reimbursement" onclick="selectMode('reimbursement')">Receive</div>
       <div class="pill"        data-mode="manual"        onclick="selectMode('manual')">Manual</div>
     </div>
   </div>
@@ -64,7 +64,7 @@
       <div id="dupe-warn-wrap"></div>
       <div id="transfer-notice" class="transfer-notice" style="display:none">↕ Logs 2 rows — outgoing and incoming.</div>
       <div class="action-bar">
-        <div class="btn btn-ghost" onclick="cancelConfirm()">Retake</div>
+        <div class="btn btn-ghost" onclick="cancelConfirm()">Cancel</div>
         <div class="btn btn-log"   id="btn-log-it" onclick="handleLogIt()">Log It</div>
       </div>
     </div>
@@ -577,6 +577,8 @@ function selectDropdownItem(key, val) {
   const list = document.getElementById(`ddlist-${key}`);
   if (list) list.style.display = 'none';
   activeDropdown = null;
+  // If this is the manual form category, update group too
+  if (key === 'm-category') updateManualGroup();
   haptic('light');
 }
 
@@ -697,8 +699,15 @@ function buildManualForm(mode) {
   const amtDisplay = () =>
     `<div class="form-picker" id="m-amount-display" onclick="openNumpad('m-amount')" style="color:var(--muted)">0.00</div><input type="hidden" id="m-amount" value="0">`;
 
-  const catPicker = (firstCat) =>
-    `<div class="form-picker" id="m-category-display" data-val="${firstCat}" onclick="openCategoryPicker()">${firstCat}<span class="picker-caret">›</span></div>`;
+  const catDropdown = (firstCat) =>
+    `<div class="dropdown-wrap" id="dd-wrap-m-category">
+      <input class="dropdown-input" id="dd-m-category" value="${firstCat}" autocomplete="off"
+        onfocus="openManualCatDropdown()"
+        oninput="filterManualCatDropdown(this.value)"
+        onkeydown="dropdownKeyNav(event,'m-category')"
+        onblur="setTimeout(()=>closeAllDropdowns(),200)">
+      <div class="dropdown-list" id="ddlist-m-category" style="display:none"></div>
+    </div>`;
 
   if (mode === 'transfer') {
     c.innerHTML =
@@ -714,13 +723,14 @@ function buildManualForm(mode) {
       row('Amount',   amtDisplay()) +
       row('Date',     `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
       row('From',     `<input class="form-ctrl" id="m-merchant" type="text" placeholder="Who's paying you back">`) +
-      row('Into',     nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
-      row('Category', catPicker(firstCat)) +
+      row('Via',      nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
+      row('Category', catDropdown(firstCat)) +
       row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstCat]||''}</div>`) +
       row('Memo',     text('m-memo','Optional')) +
       row('Review',   `<div class="review-btns" id="review-btns">
         ${REVIEW_OPTIONS.map((o,i) => `<button type="button" class="review-btn${i===0?' active':''}" onclick="selectReview(this,'${o}')">${o}</button>`).join('')}
       </div>`);
+    renderManualCatDropdown(EXPENSE_CATS, firstCat);
 
   } else {
     const firstCat = EXPENSE_CATS[0];
@@ -730,13 +740,47 @@ function buildManualForm(mode) {
       row('Date',     `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
       row('Merchant', `<input class="form-ctrl" id="m-merchant" type="text" placeholder="Who or where" oninput="applyManualMerchantRules(this.value)">`) +
       row('Via',      nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
-      row('Category', catPicker(firstCat)) +
+      row('Category', catDropdown(firstCat)) +
       row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstCat]||''}</div>`) +
       row('Memo',     text('m-memo','Optional')) +
       row('Review',   `<div class="review-btns" id="review-btns">
         ${REVIEW_OPTIONS.map((o,i) => `<button type="button" class="review-btn${i===0?' active':''}" onclick="selectReview(this,'${o}')">${o}</button>`).join('')}
       </div>`);
+    renderManualCatDropdown(EXPENSE_CATS, firstCat);
   }
+}
+
+// ── MANUAL CATEGORY DROPDOWN ──────────────────────────────────────────────────
+
+function getManualCats() {
+  const type = currentMode === 'reimbursement' ? 'Expense'
+    : (document.getElementById('m-type')?.value || 'Expense');
+  return type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
+}
+
+function renderManualCatDropdown(cats, selected) {
+  renderDropdownList('m-category', cats, selected || '');
+}
+
+function openManualCatDropdown() {
+  const cats = getManualCats();
+  const cur  = document.getElementById('dd-m-category')?.value || '';
+  renderDropdownList('m-category', cats, cur);
+  activeDropdown = 'm-category';
+}
+
+function filterManualCatDropdown(val) {
+  const cats = getManualCats().filter(c => c.toLowerCase().includes(val.toLowerCase()));
+  const cur  = document.getElementById('dd-m-category')?.value || '';
+  renderDropdownList('m-category', cats, cur, val);
+}
+
+function selectManualCategory(val) {
+  const inp = document.getElementById('dd-m-category');
+  if (inp) inp.value = val;
+  updateManualGroup();
+  closeAllDropdowns();
+  haptic('light');
 }
 
 function selectReview(btn, val) {
@@ -747,48 +791,6 @@ function selectReview(btn, val) {
 function getReviewVal() {
   const active = document.querySelector('.review-btn.active');
   return active ? active.textContent : 'Myself';
-}
-
-function fmtAmt(el) {
-  const val = el.value;
-  // If expression (contains operator), just update preview title
-  if (/[+\-*/]/.test(val)) {
-    const result = evalExpr(val);
-    el.title = result !== null
-      ? `= ${result.toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2})}`
-      : '';
-    return;
-  }
-  // Pure number — format with commas
-  el.title = '';
-  const raw   = val.replace(/[^0-9.]/g, '');
-  const parts = raw.split('.');
-  const int   = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  const caret = el.selectionStart;
-  const prev  = el.value.length;
-  el.value    = parts.length > 1 ? `${int}.${parts[1].slice(0,2)}` : int;
-}
-
-function evalExpr(str) {
-  // Safe eval: only allow numbers, operators, dots, spaces, parens
-  const cleaned = str.replace(/,/g, '').trim();
-  if (!/^[0-9+\-*/.() ]+$/.test(cleaned)) return null;
-  try {
-    const result = Function('"use strict"; return (' + cleaned + ')')();
-    return (typeof result === 'number' && isFinite(result)) ? Math.round(result * 100) / 100 : null;
-  } catch { return null; }
-}
-
-function resolveAmt(el) {
-  // Called on blur — resolve expression to final number
-  const val = el.value.trim();
-  if (!val) return;
-  const result = evalExpr(val);
-  if (result !== null) {
-    el.value = result.toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
-    el.dataset.preview = '';
-    el.title = '';
-  }
 }
 
 function getRawAmt(id) {
@@ -812,7 +814,8 @@ function applyManualMerchantRules(val) {
     if (sel) sel.value = rules.paymentMethod;
   }
   if (rules.category) {
-    setPickerVal('m-category', rules.category);
+    const inp = document.getElementById('dd-m-category');
+    if (inp) inp.value = rules.category;
     updateManualGroup();
   }
 }
@@ -820,7 +823,7 @@ function applyManualMerchantRules(val) {
 function updateManualCats() {
   const typeEl = document.getElementById('m-type');
   const type   = typeEl ? typeEl.value : 'Expense';
-  const catRow = document.getElementById('m-category-display')?.closest('.form-row-inner');
+  const catRow = document.getElementById('dd-m-category')?.closest('.form-row-inner');
   const grpRow = document.getElementById('m-group')?.closest('.form-row-inner');
   const revRow = document.getElementById('review-btns')?.closest('.form-row-inner');
   if (type === 'Balance') {
@@ -833,16 +836,15 @@ function updateManualCats() {
   if (grpRow) grpRow.style.display = '';
   if (revRow) revRow.style.display = '';
   const cats = type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
-  // Reset category to first in new list
-  const catDisp = document.getElementById('m-category-display');
-  if (catDisp) { catDisp.dataset.val = cats[0]; catDisp.childNodes[0].textContent = cats[0]; }
+  const inp  = document.getElementById('dd-m-category');
+  if (inp) inp.value = cats[0];
   updateManualGroup();
+  renderManualCatDropdown(cats, cats[0]);
 }
 
 function updateManualGroup() {
-  const catEl = document.getElementById('m-category-display');
-  const cat   = catEl?.dataset.val || '';
-  const el    = document.getElementById('m-group');
+  const cat = document.getElementById('dd-m-category')?.value || '';
+  const el  = document.getElementById('m-group');
   if (el && cat) el.textContent = CATEGORY_MAP[cat] || '';
 }
 
@@ -874,7 +876,7 @@ async function submitManual() {
     const merchant = document.getElementById('m-merchant')?.value || '';
     const payment  = document.getElementById('m-payment')?.value || PAYMENT_METHODS[0];
     const memo     = document.getElementById('m-memo')?.value || '';
-    const category = document.getElementById('m-category-display')?.dataset.val || EXPENSE_CATS[0];
+    const category = document.getElementById('dd-m-category')?.value || EXPENSE_CATS[0];
     const review   = getReviewVal();
     if (!amount || !date) { alert('Amount and date are required.'); return; }
     const sd    = toSheetDate(date);
@@ -897,7 +899,7 @@ async function submitManual() {
       d    = { type:'Balance', amount, paymentMethod:payment, merchant:`${payment} Balance` };
       localStorage.setItem('lastPaymentMethod', payment);
     } else {
-      const category = document.getElementById('m-category-display')?.dataset.val || EXPENSE_CATS[0];
+      const category = document.getElementById('dd-m-category')?.value || EXPENSE_CATS[0];
       const review   = getReviewVal();
       const amt   = type==='Income' ? Math.abs(amount) : -Math.abs(amount);
       const group = CATEGORY_MAP[category] || '';
@@ -916,6 +918,10 @@ async function submitManual() {
 async function appendRows(rows, d) {
   lastFailedRows = rows;
 
+  // Loading state
+  const logBtns = document.querySelectorAll('#btn-log-it, .btn-log');
+  logBtns.forEach(b => { b.disabled = true; b.dataset.orig = b.textContent; b.textContent = 'Logging…'; });
+
   try {
     const fd = new FormData();
     fd.append('data', JSON.stringify({ rows }));
@@ -928,6 +934,9 @@ async function appendRows(rows, d) {
     }
 
     lastFailedRows = null;
+
+    // Restore buttons
+    logBtns.forEach(b => { b.disabled = false; b.textContent = b.dataset.orig || 'Log It'; });
 
     // Success display
     document.getElementById('success-label').textContent =
@@ -949,6 +958,7 @@ async function appendRows(rows, d) {
 
   } catch(err) {
     console.error(err);
+    logBtns.forEach(b => { b.disabled = false; b.textContent = b.dataset.orig || 'Log It'; });
     haptic('error');
     show('screen-failure');
   }
@@ -966,125 +976,6 @@ function copyFailed() {
 loadSettings();
 // Restore last mode
 selectMode(currentMode);
-
-
-// ── GENERIC PICKER SHEET ─────────────────────────────────────────────────────
-
-let _pickerTarget  = null;
-let _pickerOptions = [];
-let _pickerCb      = null;
-
-function openPicker(targetId, options, current, cb) {
-  _pickerTarget  = targetId;
-  _pickerOptions = options || [];
-  _pickerCb      = cb || null;
-  const cur = current || document.getElementById(targetId+'-display')?.dataset.val || '';
-
-  const sheet = document.getElementById('picker-sheet');
-  const list  = document.getElementById('picker-list');
-  list.innerHTML = _pickerOptions.map(o =>
-    `<div class="picker-item ${o===cur?'picker-item-active':''}" ontouchend="selectPicker('${o}')" onclick="selectPicker('${o}')">${o}</div>`
-  ).join('');
-  sheet.style.display = 'flex';
-  haptic('light');
-}
-
-function selectPicker(val) {
-  const disp = document.getElementById(_pickerTarget + '-display');
-  if (disp) {
-    disp.dataset.val = val;
-    // Update text node (first child), preserve caret span
-    const caret = disp.querySelector('.picker-caret');
-    disp.textContent = val;
-    if (caret) disp.appendChild(caret);
-  }
-  closePicker();
-  if (_pickerCb) _pickerCb();
-  haptic('light');
-}
-
-function setPickerVal(id, val) {
-  const disp = document.getElementById(id + '-display');
-  if (disp) {
-    disp.dataset.val = val;
-    const caret = disp.querySelector('.picker-caret');
-    disp.textContent = val;
-    if (caret) disp.appendChild(caret);
-  }
-}
-
-function closePicker() {
-  document.getElementById('picker-sheet').style.display = 'none';
-}
-
-// ── CATEGORY PICKER ──────────────────────────────────────────────────────────
-
-function openCategoryPicker() {
-  const type = currentMode === 'reimbursement' ? 'Expense'
-    : (document.getElementById('m-type')?.value || 'Expense');
-  const cats = type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
-  const cur  = document.getElementById('m-category-display')?.dataset.val || '';
-
-  // Group by CATEGORY_MAP group
-  const groups = {};
-  cats.forEach(c => {
-    const g = CATEGORY_MAP[c] || 'Other';
-    if (!groups[g]) groups[g] = [];
-    groups[g].push(c);
-  });
-
-  const sheet    = document.getElementById('cat-sheet');
-  const list     = document.getElementById('cat-list');
-  const searchEl = document.getElementById('cat-search');
-  if (searchEl) searchEl.value = '';
-
-  list.innerHTML = renderCatList(cats, cur);
-  sheet.style.display = 'flex';
-  haptic('light');
-}
-
-function renderCatList(cats, cur) {
-  const groups = {};
-  cats.forEach(c => {
-    const g = CATEGORY_MAP[c] || 'Other';
-    if (!groups[g]) groups[g] = [];
-    groups[g].push(c);
-  });
-  return Object.entries(groups).map(([g, cs]) =>
-    `<div class="cat-group-label">${g}</div>` +
-    cs.map(c =>
-      `<div class="cat-item ${c===cur?'cat-item-active':''}" ontouchend="selectCategory('${c}')" onclick="selectCategory('${c}')">${c}</div>`
-    ).join('')
-  ).join('');
-}
-
-function filterCats(val) {
-  const type = currentMode === 'reimbursement' ? 'Expense'
-    : (document.getElementById('m-type')?.value || 'Expense');
-  const cats = (type === 'Income' ? INCOME_CATS : EXPENSE_CATS).filter(c =>
-    c.toLowerCase().includes(val.toLowerCase())
-  );
-  const cur    = document.getElementById('m-category-display')?.dataset.val || '';
-  document.getElementById('cat-list').innerHTML = renderCatList(cats, cur);
-}
-
-function selectCategory(val) {
-  const disp = document.getElementById('m-category-display');
-  if (disp) {
-    disp.dataset.val = val;
-    const caret = disp.querySelector('.picker-caret');
-    disp.textContent = val;
-    if (caret) disp.appendChild(caret);
-  }
-  updateManualGroup();
-  closeCatPicker();
-  haptic('light');
-}
-
-function closeCatPicker() {
-  document.getElementById('cat-sheet').style.display = 'none';
-}
-
 
 
 // ── NUMPAD ────────────────────────────────────────────────────────────────────
@@ -1175,26 +1066,6 @@ function numpadOutside(e) {
 }
 
 </script>
-
-
-<!-- GENERIC PICKER SHEET -->
-<div class="sheet-overlay" id="picker-sheet" onclick="if(event.target===this)closePicker()">
-  <div class="sheet-inner">
-    <div class="sheet-drag"></div>
-    <div class="sheet-list" id="picker-list"></div>
-  </div>
-</div>
-
-<!-- CATEGORY PICKER SHEET -->
-<div class="sheet-overlay" id="cat-sheet" onclick="if(event.target===this)closeCatPicker()">
-  <div class="sheet-inner">
-    <div class="sheet-drag"></div>
-    <div class="sheet-search-wrap">
-      <input id="cat-search" type="text" class="sheet-search" placeholder="Search…" autocomplete="off" oninput="filterCats(this.value)">
-    </div>
-    <div class="sheet-list" id="cat-list"></div>
-  </div>
-</div>
 
 
 <!-- NUMPAD -->
