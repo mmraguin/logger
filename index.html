@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>tab.</title>
+<title>tab</title>
 <link rel="stylesheet" href="finance-logger.css">
 </head>
 <body>
@@ -135,7 +135,7 @@ const SHEET_ID_DEFAULT      = '15G5abgmSIE-kYkh0LI3FtWXPO2DlvVgUnWmAcn36nE0';
 // ── DATA ──────────────────────────────────────────────────────────────────────
 
 const CATEGORY_MAP = {
-  'Salary':'Income','Freelance':'Income','Gifts Income':'Income','IOU':'Income',
+  'Salary':'Income','Freelance':'Income','Gift':'Income','IOU':'Income',
   'Electricity':'Home','Groceries':'Home','Lulay':'Home',
   'Pet Food':'Pets','Grooming':'Pets','Litter':'Pets','Misc':'Pets','Vet':'Pets',
   'Doctor':'Health','Supplements':'Health','Therapy':'Health','Medicine':'Health','Lab Tests':'Health','Eyes':'Health',
@@ -147,7 +147,7 @@ const CATEGORY_MAP = {
   'Tech Fund':'Goals','Beauty Fund':'Goals','Vacation Fund':'Goals',
 };
 
-const INCOME_CATS     = ['Salary','Freelance','Gifts Income','Others'];
+const INCOME_CATS     = ['Salary','Freelance','Gift','IOU'];
 const EXPENSE_CATS    = Object.keys(CATEGORY_MAP).filter(c => !INCOME_CATS.includes(c));
 const PAYMENT_METHODS = ['GCash','Maribank','BDO','BPI','Maya','UnionBank','UnionBank Credit','Grab Wallet','Shopee Pay','Cash'];
 const REVIEW_OPTIONS  = ['Myself','Others','Both'];
