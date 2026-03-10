@@ -46,6 +46,8 @@
   --warn:        #c8922a;
   --warn-dim:    rgba(200,146,42,0.08);
   --warn-border: rgba(200,146,42,0.25);
+
+  --reimbursement: #60c4a8;
 }
 
 
@@ -185,9 +187,10 @@ body::after {
   font-weight: 600;
 }
 
-.pill.active[data-mode="expense"]  { color: var(--expense); }
-.pill.active[data-mode="income"]   { color: var(--income); }
-.pill.active[data-mode="transfer"] { color: var(--transfer); }
+.pill.active[data-mode="expense"]       { color: var(--expense); }
+.pill.active[data-mode="income"]        { color: var(--income); }
+.pill.active[data-mode="transfer"]      { color: var(--transfer); }
+.pill.active[data-mode="reimbursement"] { color: var(--reimbursement); }
 
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -292,7 +295,6 @@ body::after {
   border-radius: 20px;
 }
 
-/* Pulse ring — matches .pr in style.css */
 .pulse-ring {
   width: 48px;
   height: 48px;
@@ -391,7 +393,6 @@ body::after {
 .receipt-amount-input.expense  { color: var(--expense); }
 .receipt-amount-input.income   { color: var(--income); }
 
-/* Type chip — matches .hchip pattern in style.css */
 .type-chip {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
@@ -499,7 +500,6 @@ body::after {
 
 .field-row:last-child { border-bottom: none; }
 
-/* Label style — matches .lbl in style.css */
 .field-key {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
@@ -619,7 +619,6 @@ body::after {
   text-align: center;
 }
 
-/* Native select — matches .si style from style.css */
 .inline-select {
   background: var(--surface2);
   border: 1px solid var(--border2);
@@ -951,7 +950,6 @@ body::after {
    REVIEW BUTTONS
    ══════════════════════════════════════════════════════════════════════════ */
 
-/* Matches .chip pattern from style.css */
 .review-btns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
 .review-btn {
@@ -1120,7 +1118,6 @@ body::after {
 
 .picker-item-active { color: var(--accent); font-weight: 600; }
 
-/* Category group headers — matches .lbl from style.css */
 .cat-group-label {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
@@ -1157,6 +1154,7 @@ body::after {
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  background: rgba(0,0,0,0.5);
 }
 
 .numpad {
