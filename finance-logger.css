@@ -1269,3 +1269,56 @@ body::after {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   AMOUNT INPUT WITH OPERATOR STRIP
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.amt-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 1;
+  gap: 4px;
+}
+
+.amt-wrap .form-ctrl {
+  width: 100%;
+  text-align: right;
+}
+
+.amt-preview {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  text-align: right;
+  letter-spacing: 0.02em;
+}
+
+.amt-ops {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.amt-op {
+  height: 28px;
+  min-width: 36px;
+  border-radius: 7px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s;
+  user-select: none;
+}
+
+.amt-op:active { background: var(--surface3); }
