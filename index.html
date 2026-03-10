@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>YNAB</title>
+<title>tab.</title>
 <link rel="stylesheet" href="finance-logger.css">
 </head>
 <body>
 <div class="app">
   <div class="topbar">
-    <div class="wordmark">YNA<em>B</em></div>
+    <div class="wordmark">tab<em>.</em></div>
     <div class="gear-btn" onclick="openSettings()">⚙</div>
   </div>
 
@@ -155,7 +155,7 @@ const REVIEW_OPTIONS  = ['Myself','Others','Both'];
 // Merchant intelligence: keyword → { paymentMethod, category (optional) }
 const MERCHANT_RULES = [
   { keywords: ['grab'],              paymentMethod: 'UnionBank Credit', category: null },
-  { keywords: ['indrive','in drive'],paymentMethod: 'Cash',             category: null },
+  { keywords: ['indrive','in drive'],paymentMethod: 'GCash',             category: null },
   { keywords: ['shopee'],            paymentMethod: 'Maribank',          category: null },
   { keywords: ['lazada'],            paymentMethod: 'UnionBank Credit', category: null },
   { keywords: ['app store','apple'], paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
@@ -706,10 +706,10 @@ function buildManualForm(mode) {
         onblur="resolveAmtOnBlur(this)">
       <div class="amt-preview" id="amt-preview" style="display:none"></div>
       <div class="amt-ops" id="amt-ops">
-        <button type="button" class="amt-op" onmousedown="appendOp('+')" ontouchstart="appendOp('+')">+</button>
-        <button type="button" class="amt-op" onmousedown="appendOp('-')" ontouchstart="appendOp('-')">−</button>
-        <button type="button" class="amt-op" onmousedown="appendOp('*')" ontouchstart="appendOp('*')">×</button>
-        <button type="button" class="amt-op" onmousedown="appendOp('/')" ontouchstart="appendOp('/')">÷</button>
+        <button type="button" class="amt-op" onmousedown="event.preventDefault();appendOp('+')" ontouchstart="event.preventDefault();appendOp('+')">+</button>
+        <button type="button" class="amt-op" onmousedown="event.preventDefault();appendOp('-')" ontouchstart="event.preventDefault();appendOp('-')">−</button>
+        <button type="button" class="amt-op" onmousedown="event.preventDefault();appendOp('*')" ontouchstart="event.preventDefault();appendOp('*')">×</button>
+        <button type="button" class="amt-op" onmousedown="event.preventDefault();appendOp('/')" ontouchstart="event.preventDefault();appendOp('/')">÷</button>
       </div>
     </div>`;
 
