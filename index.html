@@ -573,11 +573,14 @@ function filterDropdown(key, val) {
 function selectDropdownItem(key, val) {
   updateField(key, val);
   const inp = document.getElementById(`dd-${key}`);
-  if (inp) { inp.value = val; inp.blur(); }
+  if (inp) {
+    inp.value = val;
+    inp.dataset.confirmed = val;
+    inp.blur();
+  }
   const list = document.getElementById(`ddlist-${key}`);
   if (list) list.style.display = 'none';
   activeDropdown = null;
-  // If this is the manual form category, update group too
   if (key === 'm-category') updateManualGroup();
   haptic('light');
 }
@@ -697,15 +700,15 @@ function buildManualForm(mode) {
     `<select class="form-select-ctrl" id="${id}" ${onch}>${opts.map(o=>`<option ${o===selected?'selected':''}>${o}</option>`).join('')}</select>`;
 
   const amtDisplay = () =>
-    `<div class="form-picker" id="m-amount-display" onclick="openNumpad('m-amount')" style="color:var(--muted)">0.00</div><input type="hidden" id="m-amount" value="0">`;
+    `<input class="form-ctrl" id="m-amount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off">`;
 
   const catDropdown = (firstCat) =>
     `<div class="dropdown-wrap" id="dd-wrap-m-category">
-      <input class="dropdown-input" id="dd-m-category" value="${firstCat}" autocomplete="off"
-        onfocus="openManualCatDropdown()"
+      <input class="dropdown-input" id="dd-m-category" value="${firstCat}" data-confirmed="${firstCat}" autocomplete="off"
+        onfocus="this.dataset.confirmed=this.value; this.value=''; openManualCatDropdown()"
         oninput="filterManualCatDropdown(this.value)"
         onkeydown="dropdownKeyNav(event,'m-category')"
-        onblur="setTimeout(()=>closeAllDropdowns(),200)">
+        onblur="setTimeout(()=>{ const el=document.getElementById('dd-m-category'); if(el&&!el.value)el.value=el.dataset.confirmed||''; closeAllDropdowns(); },200)">
       <div class="dropdown-list" id="ddlist-m-category" style="display:none"></div>
     </div>`;
 
@@ -796,7 +799,16 @@ function getReviewVal() {
 function getRawAmt(id) {
   const el = document.getElementById(id);
   if (!el) return 0;
-  return parseFloat(el.value) || 0;
+  const val = el.value.replace(/,/g, '').trim();
+  // Evaluate simple expressions (e.g. "100+50")
+  try {
+    const cleaned = val.replace(/[^0-9+\-*/.() ]/g, '');
+    if (cleaned && /[+\-*/]/.test(cleaned)) {
+      const result = Function('"use strict"; return (' + cleaned + ')')();
+      if (typeof result === 'number' && isFinite(result)) return Math.round(result * 100) / 100;
+    }
+  } catch {}
+  return parseFloat(val) || 0;
 }
 
 function syncTransferTo() {
@@ -815,7 +827,7 @@ function applyManualMerchantRules(val) {
   }
   if (rules.category) {
     const inp = document.getElementById('dd-m-category');
-    if (inp) inp.value = rules.category;
+    if (inp) { inp.value = rules.category; inp.dataset.confirmed = rules.category; }
     updateManualGroup();
   }
 }
@@ -977,129 +989,7 @@ loadSettings();
 // Restore last mode
 selectMode(currentMode);
 
-
-// ── NUMPAD ────────────────────────────────────────────────────────────────────
-
-let npTarget  = null;
-let npExpr    = '0';
-
-function openNumpad(targetId) {
-  npTarget = targetId;
-  const hidden = document.getElementById(targetId);
-  npExpr = hidden?.value && hidden.value !== '0' ? hidden.value : '0';
-  renderNumpad();
-  document.getElementById('numpad-overlay').style.display = 'flex';
-  haptic('light');
-}
-
-function renderNumpad() {
-  const exprEl   = document.getElementById('np-expr');
-  const resultEl = document.getElementById('np-result');
-  if (!exprEl) return;
-
-  // Display with commas on number parts
-  exprEl.textContent = formatExprDisplay(npExpr);
-
-  // Show resolved result if expression
-  if (/[+\-×÷]/.test(npExpr) && npExpr.length > 1) {
-    const result = evalExpr(npExpr.replace(/×/g,'*').replace(/÷/g,'/'));
-    resultEl.textContent = result !== null ? '= ' + fmt(result) : '';
-  } else {
-    resultEl.textContent = '';
-  }
-}
-
-function formatExprDisplay(expr) {
-  // Format number segments with commas
-  return expr.replace(/[0-9]+(\.[0-9]*)*/g, seg => {
-    const parts = seg.split('.');
-    const int = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return parts.length > 1 ? int + '.' + parts[1] : int;
-  });
-}
-
-function npInput(char) {
-  haptic('light');
-  if (npExpr === '0' && char !== '.' && !/[+\-×÷]/.test(char)) {
-    npExpr = char;
-  } else {
-    // Prevent double operators
-    if (/[+\-×÷]/.test(char) && /[+\-×÷]/.test(npExpr.slice(-1))) {
-      npExpr = npExpr.slice(0, -1) + char;
-    } else {
-      npExpr += char;
-    }
-  }
-  renderNumpad();
-}
-
-function npDelete() {
-  haptic('light');
-  npExpr = npExpr.length > 1 ? npExpr.slice(0, -1) : '0';
-  renderNumpad();
-}
-
-function npDone() {
-  const raw    = npExpr.replace(/×/g,'*').replace(/÷/g,'/');
-  const result = evalExpr(raw) ?? parseFloat(raw) ?? 0;
-  const final  = Math.round(result * 100) / 100;
-
-  // Update hidden input
-  const hidden = document.getElementById(npTarget);
-  if (hidden) hidden.value = String(final);
-
-  // Update display div
-  const display = document.getElementById(npTarget + '-display');
-  if (display) {
-    display.textContent = fmt(final);
-    display.style.color = 'var(--text)';
-  }
-
-  document.getElementById('numpad-overlay').style.display = 'none';
-  haptic('medium');
-}
-
-function numpadOutside(e) {
-  if (e.target === document.getElementById('numpad-overlay')) {
-    npDone();
-  }
-}
-
 </script>
-
-
-<!-- NUMPAD -->
-<div class="numpad-overlay" id="numpad-overlay" style="display:none" onclick="numpadOutside(event)">
-  <div class="numpad" id="numpad">
-    <div class="numpad-display">
-      <div class="numpad-expr" id="np-expr">0</div>
-      <div class="numpad-result" id="np-result"></div>
-    </div>
-    <div class="numpad-grid">
-      <button class="nk nk-num" onclick="npInput('7')">7</button>
-      <button class="nk nk-num" onclick="npInput('8')">8</button>
-      <button class="nk nk-num" onclick="npInput('9')">9</button>
-      <button class="nk nk-op"  onclick="npInput('÷')">÷</button>
-
-      <button class="nk nk-num" onclick="npInput('4')">4</button>
-      <button class="nk nk-num" onclick="npInput('5')">5</button>
-      <button class="nk nk-num" onclick="npInput('6')">6</button>
-      <button class="nk nk-op"  onclick="npInput('×')">×</button>
-
-      <button class="nk nk-num" onclick="npInput('1')">1</button>
-      <button class="nk nk-num" onclick="npInput('2')">2</button>
-      <button class="nk nk-num" onclick="npInput('3')">3</button>
-      <button class="nk nk-op"  onclick="npInput('-')">−</button>
-
-      <button class="nk nk-num nk-zero" onclick="npInput('0')">0</button>
-      <button class="nk nk-num" onclick="npInput('.')">.</button>
-      <button class="nk nk-op"  onclick="npInput('+')">+</button>
-
-      <button class="nk nk-del" style="grid-column:span 3" onclick="npDelete()">⌫ delete</button>
-      <button class="nk nk-done" onclick="npDone()">Done</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
