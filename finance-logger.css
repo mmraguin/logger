@@ -187,10 +187,10 @@ body::after {
   font-weight: 600;
 }
 
-.pill.active[data-mode="expense"]       { color: var(--expense); }
-.pill.active[data-mode="income"]        { color: var(--income); }
-.pill.active[data-mode="transfer"]      { color: var(--transfer); }
-.pill.active[data-mode="reimbursement"] { color: var(--reimbursement); }
+.pill.active[data-mode="expense"]  { color: var(--expense); }
+.pill.active[data-mode="income"]   { color: var(--income); }
+.pill.active[data-mode="transfer"] { color: var(--transfer); }
+.pill.active[data-mode="manual"]   { color: var(--accent); }
 
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -347,9 +347,10 @@ body::after {
   transition: background 0.3s;
 }
 
-.receipt-hero.expense-bg  { background: var(--expense-dim); }
-.receipt-hero.income-bg   { background: var(--income-dim); }
-.receipt-hero.transfer-bg { background: var(--transfer-dim); }
+.receipt-hero.expense-bg    { background: var(--expense-dim); }
+.receipt-hero.income-bg     { background: var(--income-dim); }
+.receipt-hero.transfer-bg   { background: var(--transfer-dim); }
+.receipt-hero.reimburse-bg  { background: var(--income-dim); }
 
 .hero-amount-wrap {
   display: flex;
@@ -373,9 +374,10 @@ body::after {
 
 .receipt-amount:hover { border-bottom-color: var(--border2); }
 
-.receipt-amount.expense  { color: var(--expense); }
-.receipt-amount.income   { color: var(--income); }
-.receipt-amount.transfer { color: var(--transfer); }
+.receipt-amount.expense   { color: var(--expense); }
+.receipt-amount.income    { color: var(--income); }
+.receipt-amount.transfer  { color: var(--transfer); }
+.receipt-amount.reimburse { color: var(--income); }
 
 .receipt-amount-input {
   font-family: 'Space Grotesk', sans-serif;
@@ -390,8 +392,9 @@ body::after {
   font-variant-numeric: tabular-nums;
 }
 
-.receipt-amount-input.expense  { color: var(--expense); }
-.receipt-amount-input.income   { color: var(--income); }
+.receipt-amount-input.expense   { color: var(--expense); }
+.receipt-amount-input.income    { color: var(--income); }
+.receipt-amount-input.reimburse { color: var(--income); }
 
 .type-chip {
   font-family: 'DM Mono', monospace;
@@ -405,9 +408,10 @@ body::after {
   flex-shrink: 0;
 }
 
-.type-chip.expense  { background: var(--expense-dim);  color: var(--expense);  border: 1px solid var(--expense-border); }
-.type-chip.income   { background: var(--income-dim);   color: var(--income);   border: 1px solid var(--income-border); }
-.type-chip.transfer { background: var(--transfer-dim); color: var(--transfer); border: 1px solid rgba(184,169,224,0.25); }
+.type-chip.expense   { background: var(--expense-dim);  color: var(--expense);  border: 1px solid var(--expense-border); }
+.type-chip.income    { background: var(--income-dim);   color: var(--income);   border: 1px solid var(--income-border); }
+.type-chip.transfer  { background: var(--transfer-dim); color: var(--transfer); border: 1px solid rgba(184,169,224,0.25); }
+.type-chip.reimburse { background: var(--income-dim);   color: var(--income);   border: 1px solid var(--income-border); }
 
 .receipt-meta {
   display: flex;
@@ -479,6 +483,33 @@ body::after {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+/* Receive mode type toggle (Income / Reimbursement) */
+.receive-toggle {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px dashed var(--border2);
+}
+
+.receive-toggle-btn {
+  flex: 1;
+  padding: 10px 0;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.receive-toggle-btn.active {
+  color: var(--income);
+  border-bottom-color: var(--income);
 }
 
 
