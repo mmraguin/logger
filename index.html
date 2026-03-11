@@ -302,7 +302,7 @@ async function parseWithGemini(dataUrl) {
 
   const prompt = `Extract transaction data from this Filipino payment app screenshot.
 Return ONLY valid JSON — no markdown, no explanation:
-{"amount":number,"date":"YYYY-MM-DD","merchant":"string","payment_method":"one of: GCash, Credit Card, Maribank, BDO, BPI, Maya, UnionBank, UnionBank Credit, Cash","category":"one of: ${cats}","low_confidence":boolean}
+{"amount":number,"date":"YYYY-MM-DD","merchant":"string","payment_method":"one of: GCash, Maribank, BDO, BPI, Maya, UnionBank, UnionBank Credit, Grab Wallet, Shopee Pay, Cash","category":"one of: ${cats}","low_confidence":boolean}
 
 Rules:
 - amount is always positive
@@ -331,7 +331,9 @@ Rules:
       throw new Error(`Gemini ${res.status}: ${data?.error?.message || 'unknown'}`);
     }
     const raw    = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const match  = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('No JSON in Gemini response');
+    const parsed = JSON.parse(match[0]);
 
     if (parsed.error === 'no_transaction') {
       alert('No transaction found in this screenshot. Try a different image or use Manual.');
@@ -345,7 +347,7 @@ Rules:
     const category      = rules.category      || parsed.category;
 
     parsedData = {
-      type:          currentMode === 'income' ? 'Reimbursement' : 'Expense',
+      type:          currentMode === 'income' ? 'Income' : 'Expense',
       amount:        parsed.amount,
       date:          parsed.date || today,
       merchant:      parsed.merchant,
