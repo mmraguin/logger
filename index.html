@@ -15,11 +15,10 @@
 
   <div class="mode-strip">
     <div class="pills">
-      <div class="pill active" data-mode="expense"       onclick="selectMode('expense')">Spend</div>
-      <div class="pill"        data-mode="income"        onclick="selectMode('income')">Earn</div>
-      <div class="pill"        data-mode="transfer"      onclick="selectMode('transfer')">Move</div>
-      <div class="pill"        data-mode="reimbursement" onclick="selectMode('reimbursement')">Receive</div>
-      <div class="pill"        data-mode="manual"        onclick="selectMode('manual')">Manual</div>
+      <div class="pill active" data-mode="expense"  onclick="selectMode('expense')">Spend</div>
+      <div class="pill"        data-mode="income"   onclick="selectMode('income')">Receive</div>
+      <div class="pill"        data-mode="transfer" onclick="selectMode('transfer')">Move</div>
+      <div class="pill"        data-mode="manual"   onclick="selectMode('manual')">Manual</div>
     </div>
   </div>
 
@@ -59,6 +58,7 @@
           </div>
         </div>
         <div id="warn-banner-wrap"></div>
+        <div id="receive-toggle-wrap"></div>
         <div class="field-section" id="r-fields"></div>
       </div>
       <div id="dupe-warn-wrap"></div>
@@ -247,7 +247,7 @@ function show(id) {
 function cancelConfirm() {
   parsedData = {}; lastFailedRows = null; pendingRows = null;
   document.getElementById('dupe-warn-wrap').innerHTML = '';
-  if (currentMode === 'transfer' || currentMode === 'manual' || currentMode === 'reimbursement') {
+  if (currentMode === 'transfer' || currentMode === 'manual') {
     buildManualForm(currentMode);
     show('screen-manual');
   } else {
@@ -259,17 +259,19 @@ function cancelConfirm() {
 // ── MODE ──────────────────────────────────────────────────────────────────────
 
 function selectMode(mode) {
+  const VALID_MODES = ['expense','income','transfer','manual'];
+  if (!VALID_MODES.includes(mode)) mode = 'expense';
   currentMode = mode;
   localStorage.setItem('lastMode', mode);
   document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.mode === mode));
-  if (mode === 'transfer' || mode === 'manual' || mode === 'reimbursement') { buildManualForm(mode); show('screen-manual'); }
+  if (mode === 'transfer' || mode === 'manual') { buildManualForm(mode); show('screen-manual'); }
   else { refreshHero(); show('screen-upload'); }
 }
 
 function refreshHero() {
   const map = {
     expense: { icon:'📷', label:'Share a screenshot', sub:'GCash, credit card, any bank app' },
-    income:  { icon:'📥', label:'Share a screenshot', sub:'Salary slip, GCash, any inflow' },
+    income:  { icon:'📥', label:'Share a screenshot', sub:'GCash, bank transfer, any inflow' },
   };
   const d = map[currentMode] || map.expense;
   document.getElementById('upload-icon').textContent  = d.icon;
@@ -295,7 +297,7 @@ async function parseWithGemini(dataUrl) {
   if (!apiKey || apiKey.length < 20) { alert('Gemini API key is missing or invalid. Check Settings.'); return; }
   show('screen-parsing');
 
-  const cats  = currentMode === 'income' ? INCOME_CATS.join(', ') : EXPENSE_CATS.join(', ');
+  const cats  = EXPENSE_CATS.join(', ');
   const today = todayISO();
 
   const prompt = `Extract transaction data from this Filipino payment app screenshot.
@@ -343,7 +345,7 @@ Rules:
     const category      = rules.category      || parsed.category;
 
     parsedData = {
-      type:          currentMode === 'income' ? 'Income' : 'Expense',
+      type:          currentMode === 'income' ? 'Reimbursement' : 'Expense',
       amount:        parsed.amount,
       date:          parsed.date || today,
       merchant:      parsed.merchant,
@@ -372,17 +374,21 @@ Rules:
 function buildReceiptCard() {
   const d = parsedData;
 
+  // Type display map — Reimbursement uses 'reimburse' CSS class
+  const typeClass = { 'Income':'income', 'Expense':'expense', 'Transfer':'transfer', 'Reimbursement':'reimburse' };
+  const cls = typeClass[d.type] || 'expense';
+
   // Hero
   const amtEl = document.getElementById('r-amount');
   amtEl.textContent = fmt(d.amount);
-  amtEl.className   = `receipt-amount ${d.type.toLowerCase()}`;
+  amtEl.className   = `receipt-amount ${cls}`;
 
   const hero = document.getElementById('receipt-hero');
-  hero.className = `receipt-hero ${d.type.toLowerCase()}-bg`;
+  hero.className = `receipt-hero ${cls}-bg`;
 
   const chip = document.getElementById('r-type-chip');
   chip.textContent = d.type.toLowerCase();
-  chip.className   = `type-chip ${d.type.toLowerCase()}`;
+  chip.className   = `type-chip ${cls}`;
 
   document.getElementById('r-merchant').textContent = d.merchant || '—';
   document.getElementById('r-date').textContent     = displayDate(d.date);
@@ -393,15 +399,87 @@ function buildReceiptCard() {
     ? `<div class="warn-banner" style="margin:0 0 0 0;border-radius:0;border-left:none;border-right:none;border-top:none;">⚠ Low confidence — review fields carefully</div>`
     : '';
 
-  // Fields
-  const cats   = d.type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
-  const fields = [
-    { key:'Via',      dataKey:'paymentMethod', type:'select',   options:PAYMENT_METHODS, auto: d.autoPayment },
-    { key:'Category', dataKey:'category',      type:'dropdown', options:cats,             auto: d.autoCategory },
-    { key:'Group',    dataKey:'group',          type:'badge' },
-    { key:'Memo',     dataKey:'memo',           type:'text' },
-    { key:'Review',   dataKey:'review',         type:'select',   options:REVIEW_OPTIONS },
-  ];
+  // Receive mode toggle (Income / Reimbursement)
+  const toggleWrap = document.getElementById('receive-toggle-wrap');
+  if (currentMode === 'income') {
+    toggleWrap.innerHTML = `
+      <div class="receive-toggle">
+        <div class="receive-toggle-btn ${d.type==='Income'?'active':''}" onclick="switchReceiveType('Income')">Income</div>
+        <div class="receive-toggle-btn ${d.type==='Reimbursement'?'active':''}" onclick="switchReceiveType('Reimbursement')">Reimbursement</div>
+      </div>`;
+  } else {
+    toggleWrap.innerHTML = '';
+  }
+
+  buildReceiptFields();
+}
+
+function switchReceiveType(type) {
+  parsedData.type = type;
+
+  // Update toggle buttons
+  document.querySelectorAll('.receive-toggle-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === type);
+  });
+
+  // Update hero colors
+  const typeClass = { 'Income':'income', 'Reimbursement':'reimburse' };
+  const cls = typeClass[type] || 'income';
+  const amtEl = document.getElementById('r-amount');
+  if (amtEl) amtEl.className = `receipt-amount ${cls}`;
+  const hero = document.getElementById('receipt-hero');
+  if (hero) hero.className = `receipt-hero ${cls}-bg`;
+  const chip = document.getElementById('r-type-chip');
+  if (chip) { chip.textContent = type.toLowerCase(); chip.className = `type-chip ${cls}`; }
+
+  // Reset category to first valid option for the new type
+  if (type === 'Income') {
+    parsedData.category = INCOME_CATS[0];
+    parsedData.group    = CATEGORY_MAP[INCOME_CATS[0]] || '';
+    parsedData.review   = 'Myself';
+  } else {
+    parsedData.category = EXPENSE_CATS[0];
+    parsedData.group    = CATEGORY_MAP[EXPENSE_CATS[0]] || '';
+  }
+
+  buildReceiptFields();
+}
+
+function buildReceiptFields() {
+  const d = parsedData;
+  const isIncome = d.type === 'Income';
+  const isReimburse = d.type === 'Reimbursement';
+  const isExpense = d.type === 'Expense';
+
+  // Field definitions per type
+  let fields = [];
+
+  if (isExpense) {
+    fields = [
+      { key:'Via',      dataKey:'paymentMethod', type:'select',   options:PAYMENT_METHODS, auto: d.autoPayment },
+      { key:'Category', dataKey:'category',      type:'dropdown', options:EXPENSE_CATS,    auto: d.autoCategory },
+      { key:'Group',    dataKey:'group',          type:'badge' },
+      { key:'Memo',     dataKey:'memo',           type:'text' },
+      { key:'Review',   dataKey:'review',         type:'select',   options:REVIEW_OPTIONS },
+    ];
+  } else if (isIncome) {
+    fields = [
+      { key:'From',     dataKey:'merchant',       type:'merchant' },
+      { key:'Via',      dataKey:'paymentMethod',  type:'select',   options:PAYMENT_METHODS, auto: d.autoPayment },
+      { key:'Category', dataKey:'category',       type:'dropdown', options:INCOME_CATS,     auto: false },
+      { key:'Group',    dataKey:'group',           type:'badge' },
+      { key:'Memo',     dataKey:'memo',            type:'text' },
+      { key:'Review',   dataKey:'review',          type:'select',   options:REVIEW_OPTIONS },
+    ];
+  } else if (isReimburse) {
+    fields = [
+      { key:'From',     dataKey:'merchant',       type:'merchant' },
+      { key:'Via',      dataKey:'paymentMethod',  type:'select',   options:PAYMENT_METHODS, auto: d.autoPayment },
+      { key:'Category', dataKey:'category',       type:'dropdown', options:EXPENSE_CATS,    auto: d.autoCategory },
+      { key:'Group',    dataKey:'group',           type:'badge' },
+      { key:'Memo',     dataKey:'memo',            type:'text' },
+    ];
+  }
 
   const container = document.getElementById('r-fields');
   container.innerHTML = '';
@@ -426,8 +504,17 @@ function buildReceiptCard() {
           <div class="char-count" id="memo-count" style="display:none"></div>
         </div>`;
 
+    } else if (f.type === 'merchant') {
+      // Inline-editable From field (same as receipt-merchant in hero but in fields)
+      row.innerHTML = `
+        <div class="field-key">${f.key}</div>
+        <div class="field-val">
+          <div class="receipt-merchant" id="r-from" onclick="editFrom()">${d.merchant||'—'}</div>
+        </div>`;
+
     } else if (f.type === 'dropdown') {
       const autoBadge = f.auto ? `<span class="auto-badge">auto</span>` : '';
+      const cats = f.options;
       row.innerHTML = `
         <div class="field-key">${f.key}</div>
         <div class="dropdown-wrap" id="dd-wrap-${f.dataKey}">
@@ -455,8 +542,10 @@ function buildReceiptCard() {
     container.appendChild(row);
   });
 
-  // Populate dropdowns after DOM insert
-  if (document.getElementById('ddlist-category')) {
+  // Populate category dropdown after DOM insert
+  const catList = document.getElementById('ddlist-category');
+  if (catList) {
+    const cats = isIncome ? INCOME_CATS : EXPENSE_CATS;
     renderDropdownList('category', cats, d.category);
   }
 }
@@ -507,6 +596,36 @@ function commitMerchant(val) {
     inp.replaceWith(div);
   }
   // Re-apply merchant rules
+  const rules = applyMerchantRules(val);
+  if (rules.paymentMethod) {
+    parsedData.paymentMethod = rules.paymentMethod;
+    parsedData.autoPayment   = true;
+    const sel = document.querySelector('[data-key="paymentMethod"] select');
+    if (sel) sel.value = rules.paymentMethod;
+  }
+}
+
+function editFrom() {
+  const el = document.getElementById('r-from');
+  if (!el) return;
+  el.outerHTML = `<input class="merchant-input" id="from-input" value="${parsedData.merchant||''}"
+    onblur="commitFrom(this.value)"
+    onkeydown="if(event.key==='Enter')this.blur()">`;
+  setTimeout(() => { const inp = document.getElementById('from-input'); if(inp){inp.focus();inp.select();} }, 50);
+}
+
+function commitFrom(val) {
+  parsedData.merchant = val;
+  const inp = document.getElementById('from-input');
+  if (inp) {
+    const div = document.createElement('div');
+    div.className = 'receipt-merchant';
+    div.id = 'r-from';
+    div.textContent = val || '—';
+    div.onclick = editFrom;
+    inp.replaceWith(div);
+  }
+  // Re-apply merchant rules for Via auto-fill
   const rules = applyMerchantRules(val);
   if (rules.paymentMethod) {
     parsedData.paymentMethod = rules.paymentMethod;
@@ -638,14 +757,18 @@ function handleLogIt() {
   if (amtInp) commitAmount(amtInp.value);
   const mInp = document.getElementById('merchant-input');
   if (mInp) commitMerchant(mInp.value);
+  const fInp = document.getElementById('from-input');
+  if (fInp) commitFrom(fInp.value);
   const dInp = document.getElementById('date-input');
   if (dInp) commitDate(dInp.value);
 
   const d   = parsedData;
   const ts  = new Date().toISOString();
-  const amt = d.type==='Income' ? Math.abs(d.amount) : -Math.abs(d.amount);
+  const positive = d.type === 'Income' || d.type === 'Reimbursement';
+  const amt = positive ? Math.abs(d.amount) : -Math.abs(d.amount);
   const sheetDate = toSheetDate(d.date);
-  const rows = [[ts, d.type, amt, sheetDate, d.merchant, d.paymentMethod, d.category, d.group, d.memo, d.review]];
+  const review = d.type === 'Reimbursement' ? '' : (d.review || 'Myself');
+  const rows = [[ts, d.type, amt, sheetDate, d.merchant, d.paymentMethod, d.category, d.group, d.memo, review]];
 
   // Duplicate detection
   const dupeKey = `${d.amount}|${d.merchant}`;
@@ -723,6 +846,11 @@ function buildManualForm(mode) {
       <div class="dropdown-list" id="ddlist-m-category" style="display:none"></div>
     </div>`;
 
+  const reviewBtns = () =>
+    `<div class="review-btns" id="review-btns">
+      ${REVIEW_OPTIONS.map((o,i) => `<button type="button" class="review-btn${i===0?' active':''}" onclick="selectReview(this,'${o}')">${o}</button>`).join('')}
+    </div>`;
+
   if (mode === 'transfer') {
     c.innerHTML =
       row('Amount', amtDisplay()) +
@@ -731,44 +859,30 @@ function buildManualForm(mode) {
       row('To',     nativeSelect('m-to',   PAYMENT_METHODS.filter(p=>p!==lastMethod), PAYMENT_METHODS.find(p=>p!==lastMethod)||PAYMENT_METHODS[1])) +
       row('Memo',   text('m-memo','Optional'));
 
-  } else if (mode === 'reimbursement') {
-    const firstCat = EXPENSE_CATS[0];
-    c.innerHTML =
-      row('Amount',   amtDisplay()) +
-      row('Date',     `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
-      row('From',     `<input class="form-ctrl" id="m-merchant" type="text" placeholder="Who's paying you back">`) +
-      row('Via',      nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
-      row('Category', catDropdown(firstCat)) +
-      row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstCat]||''}</div>`) +
-      row('Memo',     text('m-memo','Optional')) +
-      row('Review',   `<div class="review-btns" id="review-btns">
-        ${REVIEW_OPTIONS.map((o,i) => `<button type="button" class="review-btn${i===0?' active':''}" onclick="selectReview(this,'${o}')">${o}</button>`).join('')}
-      </div>`);
-    renderManualCatDropdown(EXPENSE_CATS, firstCat);
-
   } else {
-    const firstCat = EXPENSE_CATS[0];
+    // Manual mode — type selector drives field visibility
+    const firstExpCat = EXPENSE_CATS[0];
+    const firstIncCat = INCOME_CATS[0];
     c.innerHTML =
-      row('Type',     nativeSelect('m-type',['Expense','Income','Balance'],'Expense','onchange="updateManualCats()"')) +
-      row('Amount',   amtDisplay()) +
-      row('Date',     `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
-      row('Merchant', `<input class="form-ctrl" id="m-merchant" type="text" placeholder="Who or where" oninput="applyManualMerchantRules(this.value)">`) +
+      row('Type', nativeSelect('m-type',['Expense','Income','Reimbursement','Balance'],'Expense','onchange="updateManualCats()"')) +
+      row('Amount', amtDisplay()) +
+      row('Date',   `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
+      // Merchant (Expense) and From (Income/Reimbursement) — toggled by updateManualCats
+      `<div class="form-row-inner" id="row-merchant"><div class="form-key">Merchant</div><div class="form-val-wrap"><input class="form-ctrl" id="m-merchant" type="text" placeholder="Who or where" oninput="applyManualMerchantRules(this.value)"></div></div>` +
+      `<div class="form-row-inner" id="row-from" style="display:none"><div class="form-key">From</div><div class="form-val-wrap"><input class="form-ctrl" id="m-from-text" type="text" placeholder="Who's paying you" oninput="applyManualMerchantRules(this.value)"></div></div>` +
       row('Via',      nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
-      row('Category', catDropdown(firstCat)) +
-      row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstCat]||''}</div>`) +
+      row('Category', catDropdown(firstExpCat)) +
+      row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstExpCat]||''}</div>`) +
       row('Memo',     text('m-memo','Optional')) +
-      row('Review',   `<div class="review-btns" id="review-btns">
-        ${REVIEW_OPTIONS.map((o,i) => `<button type="button" class="review-btn${i===0?' active':''}" onclick="selectReview(this,'${o}')">${o}</button>`).join('')}
-      </div>`);
-    renderManualCatDropdown(EXPENSE_CATS, firstCat);
+      row('Review',   reviewBtns());
+    renderManualCatDropdown(EXPENSE_CATS, firstExpCat);
   }
 }
 
 // ── MANUAL CATEGORY DROPDOWN ──────────────────────────────────────────────────
 
 function getManualCats() {
-  const type = currentMode === 'reimbursement' ? 'Expense'
-    : (document.getElementById('m-type')?.value || 'Expense');
+  const type = document.getElementById('m-type')?.value || 'Expense';
   return type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
 }
 
@@ -891,21 +1005,34 @@ function applyManualMerchantRules(val) {
 function updateManualCats() {
   const typeEl = document.getElementById('m-type');
   const type   = typeEl ? typeEl.value : 'Expense';
-  const catRow = document.getElementById('dd-m-category')?.closest('.form-row-inner');
-  const grpRow = document.getElementById('m-group')?.closest('.form-row-inner');
-  const revRow = document.getElementById('review-btns')?.closest('.form-row-inner');
+
+  const merchantRow = document.getElementById('row-merchant');
+  const fromRow     = document.getElementById('row-from');
+  const catRow      = document.getElementById('dd-m-category')?.closest('.form-row-inner');
+  const grpRow      = document.getElementById('m-group')?.closest('.form-row-inner');
+  const revRow      = document.getElementById('review-btns')?.closest('.form-row-inner');
+
+  // Show/hide Merchant vs From label
+  if (merchantRow) merchantRow.style.display = type === 'Expense' ? '' : 'none';
+  if (fromRow)     fromRow.style.display     = (type === 'Income' || type === 'Reimbursement') ? '' : 'none';
+
   if (type === 'Balance') {
     if (catRow) catRow.style.display = 'none';
     if (grpRow) grpRow.style.display = 'none';
     if (revRow) revRow.style.display = 'none';
     return;
   }
+
+  // Category/Group always visible for Expense, Income, Reimbursement
   if (catRow) catRow.style.display = '';
   if (grpRow) grpRow.style.display = '';
-  if (revRow) revRow.style.display = '';
+
+  // Review: visible for Expense and Income, hidden for Reimbursement
+  if (revRow) revRow.style.display = type === 'Reimbursement' ? 'none' : '';
+
   const cats = type === 'Income' ? INCOME_CATS : EXPENSE_CATS;
   const inp  = document.getElementById('dd-m-category');
-  if (inp) inp.value = cats[0];
+  if (inp) { inp.value = cats[0]; inp.dataset.confirmed = cats[0]; }
   updateManualGroup();
   renderManualCatDropdown(cats, cats[0]);
 }
@@ -938,41 +1065,45 @@ async function submitManual() {
     d = { type:'Transfer', amount, category:'', paymentMethod:from };
     localStorage.setItem('lastPaymentMethod', from);
 
-  } else if (currentMode === 'reimbursement') {
-    const amount   = getRawAmt('m-amount');
-    const date     = document.getElementById('m-date')?.value || todayISO();
-    const merchant = document.getElementById('m-merchant')?.value || '';
-    const payment  = document.getElementById('m-payment')?.value || PAYMENT_METHODS[0];
-    const memo     = document.getElementById('m-memo')?.value || '';
-    const category = document.getElementById('dd-m-category')?.value || EXPENSE_CATS[0];
-    const review   = getReviewVal();
-    if (!amount || !date) { alert('Amount and date are required.'); return; }
-    const sd    = toSheetDate(date);
-    const group = CATEGORY_MAP[category] || '';
-    rows = [[ts, 'Reimbursement', Math.abs(amount), sd, merchant, payment, category, group, memo, review]];
-    d    = { type:'Reimbursement', amount, category, group, paymentMethod:payment, merchant };
-    localStorage.setItem('lastPaymentMethod', payment);
-
   } else {
-    const type     = document.getElementById('m-type')?.value || 'Expense';
-    const amount   = getRawAmt('m-amount');
-    const date     = document.getElementById('m-date')?.value || todayISO();
-    const merchant = document.getElementById('m-merchant')?.value || '';
-    const payment  = document.getElementById('m-payment')?.value || PAYMENT_METHODS[0];
-    const memo     = document.getElementById('m-memo')?.value || '';
+    const type    = document.getElementById('m-type')?.value || 'Expense';
+    const amount  = getRawAmt('m-amount');
+    const date    = document.getElementById('m-date')?.value || todayISO();
+    const payment = document.getElementById('m-payment')?.value || PAYMENT_METHODS[0];
+    const memo    = document.getElementById('m-memo')?.value || '';
     if (!amount || !date) { alert('Amount and date are required.'); return; }
     const sd = toSheetDate(date);
+
     if (type === 'Balance') {
       rows = [[ts, 'Balance', Math.abs(amount), sd, `${payment} Balance`, payment, '', '', memo, '']];
       d    = { type:'Balance', amount, paymentMethod:payment, merchant:`${payment} Balance` };
       localStorage.setItem('lastPaymentMethod', payment);
+
+    } else if (type === 'Reimbursement') {
+      const merchant = document.getElementById('m-from-text')?.value || '';
+      const category = document.getElementById('dd-m-category')?.value || EXPENSE_CATS[0];
+      const group    = CATEGORY_MAP[category] || '';
+      rows = [[ts, 'Reimbursement', Math.abs(amount), sd, merchant, payment, category, group, memo, '']];
+      d    = { type:'Reimbursement', amount, category, group, paymentMethod:payment, merchant };
+      localStorage.setItem('lastPaymentMethod', payment);
+
+    } else if (type === 'Income') {
+      const merchant = document.getElementById('m-from-text')?.value || '';
+      const category = document.getElementById('dd-m-category')?.value || INCOME_CATS[0];
+      const review   = getReviewVal();
+      const group    = CATEGORY_MAP[category] || '';
+      rows = [[ts, 'Income', Math.abs(amount), sd, merchant, payment, category, group, memo, review]];
+      d    = { type:'Income', amount, category, group, paymentMethod:payment, merchant };
+      localStorage.setItem('lastPaymentMethod', payment);
+
     } else {
+      // Expense
+      const merchant = document.getElementById('m-merchant')?.value || '';
       const category = document.getElementById('dd-m-category')?.value || EXPENSE_CATS[0];
       const review   = getReviewVal();
-      const amt   = type==='Income' ? Math.abs(amount) : -Math.abs(amount);
-      const group = CATEGORY_MAP[category] || '';
-      rows = [[ts, type, amt, sd, merchant, payment, category, group, memo, review]];
-      d    = { type, amount, category, group, paymentMethod:payment, merchant };
+      const group    = CATEGORY_MAP[category] || '';
+      rows = [[ts, 'Expense', -Math.abs(amount), sd, merchant, payment, category, group, memo, review]];
+      d    = { type:'Expense', amount, category, group, paymentMethod:payment, merchant };
       localStorage.setItem('lastPaymentMethod', payment);
     }
   }
