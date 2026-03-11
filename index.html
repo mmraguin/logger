@@ -321,7 +321,7 @@ Rules:
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: mimeType, data: base64 } }] }],
-        generationConfig: { maxOutputTokens: 400, temperature: 0.1 }
+        generationConfig: { maxOutputTokens: 1500, temperature: 0.1 }
       })
     });
 
@@ -331,6 +331,8 @@ Rules:
       throw new Error(`Gemini ${res.status}: ${data?.error?.message || 'unknown'}`);
     }
     const raw    = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('Gemini raw response:', JSON.stringify(data, null, 2));
+    console.log('Gemini text:', raw);
     const match  = raw.match(/\{[\s\S]*\}/);
     if (!match) throw new Error('No JSON in Gemini response');
     const parsed = JSON.parse(match[0]);
@@ -519,15 +521,17 @@ function buildReceiptFields() {
       const cats = f.options;
       row.innerHTML = `
         <div class="field-key">${f.key}</div>
-        <div class="dropdown-wrap" id="dd-wrap-${f.dataKey}">
-          <input class="dropdown-input" id="dd-${f.dataKey}" value="${d[f.dataKey]||''}" placeholder="Tap to search…"
-            autocomplete="off"
-            onfocus="openDropdown('${f.dataKey}')"
-            oninput="filterDropdown('${f.dataKey}', this.value)"
-            onkeydown="dropdownKeyNav(event,'${f.dataKey}')"
-            onblur="setTimeout(()=>closeAllDropdowns(),200)">
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;flex:1">
           ${autoBadge}
-          <div class="dropdown-list" id="ddlist-${f.dataKey}" style="display:none"></div>
+          <div class="dropdown-wrap" id="dd-wrap-${f.dataKey}">
+            <input class="dropdown-input" id="dd-${f.dataKey}" value="${d[f.dataKey]||''}" placeholder="Tap to search…"
+              autocomplete="off"
+              onfocus="openDropdown('${f.dataKey}')"
+              oninput="filterDropdown('${f.dataKey}', this.value)"
+              onkeydown="dropdownKeyNav(event,'${f.dataKey}')"
+              onblur="setTimeout(()=>closeAllDropdowns(),200)">
+            <div class="dropdown-list" id="ddlist-${f.dataKey}" style="display:none"></div>
+          </div>
         </div>`;
 
     } else if (f.type === 'select') {
