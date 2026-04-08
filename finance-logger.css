@@ -391,6 +391,8 @@ body::before {
   border: 1px solid rgba(232,232,232,0.15);
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   overflow: hidden;
+}
+
 .receipt-hero {
   padding: 28px 24px 22px;
   border-bottom: 1px dashed var(--border2);
