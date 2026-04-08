@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600;700&display=swap');
 
 /* ══════════════════════════════════════════════════════════════════════════
    DESIGN TOKENS
@@ -8,46 +8,46 @@
 
 :root {
   /* Backgrounds */
-  --bg:       #0b0b0d;
-  --surface:  #141416;
-  --surface2: #1e1e22;
-  --surface3: #28282e;
+  --bg:       #0a0a0a;
+  --surface:  #1a1a1a;
+  --surface2: #222;
+  --surface3: #2e2e2e;
 
   /* Borders */
-  --border:  #2a2a30;
-  --border2: #363640;
+  --border:  rgba(232,232,232,0.10);
+  --border2: rgba(232,232,232,0.18);
 
   /* Brand */
   --accent:        #2a9d9f;
-  --accent-dim:    rgba(42,157,159,0.10);
+  --accent-dim:    rgba(42,157,159,0.12);
   --accent-border: rgba(42,157,159,0.25);
 
   /* Text */
-  --text:  #ededf0;
-  --text2: #9898a6;
-  --muted: #60606e;
+  --text:  #e8e8e8;
+  --text2: #999;
+  --muted: #888;
 
   /* Semantic — matched to style.css */
-  --income:         #4ade80;
-  --income-dim:     rgba(74,222,128,0.08);
-  --income-border:  rgba(74,222,128,0.20);
+  --income:         #88ff88;
+  --income-dim:     rgba(136,255,136,0.08);
+  --income-border:  rgba(136,255,136,0.20);
 
-  --expense:        #ff5c5c;
-  --expense-dim:    rgba(255,92,92,0.08);
-  --expense-border: rgba(255,92,92,0.20);
+  --expense:        #ff4444;
+  --expense-dim:    rgba(255,68,68,0.08);
+  --expense-border: rgba(255,68,68,0.20);
 
-  --danger:        #e63946;
-  --danger-dim:    rgba(230,57,70,0.08);
-  --danger-border: rgba(230,57,70,0.25);
+  --danger:        #ff4444;
+  --danger-dim:    rgba(255,68,68,0.08);
+  --danger-border: rgba(255,68,68,0.25);
 
-  --transfer:     #b8a9e0;
-  --transfer-dim: rgba(184,169,224,0.08);
+  --transfer:     #6666ff;
+  --transfer-dim: rgba(102,102,255,0.08);
 
   --warn:        #c8922a;
   --warn-dim:    rgba(200,146,42,0.08);
   --warn-border: rgba(200,146,42,0.25);
 
-  --reimbursement: #60c4a8;
+  --reimbursement: #88ff88;
 }
 
 
@@ -67,30 +67,65 @@ html, body {
 }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-variant-numeric: tabular-nums;
   background: var(--bg);
   color: var(--text);
   display: flex;
   justify-content: center;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Noise grain overlay — matches style.css */
-body::after {
+/* Scanline overlay */
+body::before {
   content: '';
   position: fixed;
-  inset: 0;
-  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.01) 2px,
+    rgba(255,255,255,0.01) 4px
+  );
   pointer-events: none;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  z-index: 1;
+  opacity: 0.5;
 }
 
 
 /* ══════════════════════════════════════════════════════════════════════════
    APP SHELL
    ══════════════════════════════════════════════════════════════════════════ */
+
+/* Star field */
+.constellation {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  background: var(--text);
+  opacity: 0.15;
+  animation: twinkle 5s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.2; }
+}
 
 .app {
   width: 100%;
@@ -99,6 +134,8 @@ body::after {
   display: flex;
   flex-direction: column;
   padding-bottom: 40px;
+  position: relative;
+  z-index: 2;
 }
 
 
@@ -107,18 +144,26 @@ body::after {
    ══════════════════════════════════════════════════════════════════════════ */
 
 .topbar {
-  padding: 20px 20px 0;
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+  border-bottom: 1px solid rgba(232,232,232,0.08);
+  background: rgba(26,26,26,0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .wordmark {
-  font-family: 'Syne', sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-family: 'Instrument Serif', serif;
+  font-size: 24px;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.5px;
   color: var(--text);
 }
 
@@ -128,22 +173,22 @@ body::after {
 }
 
 .gear-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--muted);
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: opacity 0.2s;
   font-size: 16px;
+  opacity: 0.5;
   user-select: none;
 }
 
-.gear-btn:hover  { border-color: var(--border2); color: var(--text2); }
+.gear-btn:hover  { opacity: 1; }
 .gear-btn:active { transform: scale(0.92); }
 
 
@@ -158,9 +203,10 @@ body::after {
 
 .pills {
   display: flex;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: rgba(26,26,26,0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(232,232,232,0.12);
   padding: 3px;
   gap: 2px;
 }
@@ -168,9 +214,11 @@ body::after {
 .pill {
   flex: 1;
   padding: 8px 4px;
-  border-radius: 9px;
-  font-size: 12px;
-  font-weight: 500;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: lowercase;
   color: var(--muted);
   text-align: center;
   cursor: pointer;
@@ -184,7 +232,6 @@ body::after {
 .pill.active {
   background: var(--surface3);
   color: var(--text);
-  font-weight: 600;
 }
 
 .pill.active[data-mode="expense"]  { color: var(--expense); }
@@ -223,9 +270,11 @@ body::after {
 
 .upload-hero {
   min-height: 260px;
-  background: var(--surface);
-  border: 1.5px dashed var(--border2);
-  border-radius: 20px;
+  background: rgba(26,26,26,0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px dashed rgba(232,232,232,0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -235,6 +284,7 @@ body::after {
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
+  animation: fadeIn 0.8s ease-out;
 }
 
 .upload-hero::before {
@@ -253,7 +303,7 @@ body::after {
 .upload-icon {
   width: 60px;
   height: 60px;
-  border-radius: 16px;
+  border-radius: 0;
   background: var(--surface2);
   border: 1px solid var(--border2);
   display: flex;
@@ -266,9 +316,10 @@ body::after {
 .upload-hero:active .upload-icon { transform: scale(0.9); }
 
 .upload-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 17px;
-  font-weight: 600;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 400;
 }
 
 .upload-sub {
@@ -290,9 +341,11 @@ body::after {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
+  background: rgba(26,26,26,0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(232,232,232,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
 .pulse-ring {
@@ -324,9 +377,11 @@ body::after {
 }
 
 .parsing-text {
-  font-size: 13px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   color: var(--text2);
-  letter-spacing: 0.01em;
 }
 
 
@@ -335,10 +390,13 @@ body::after {
    ══════════════════════════════════════════════════════════════════════════ */
 
 .receipt {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
+  background: rgba(26,26,26,0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(232,232,232,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   overflow: hidden;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .receipt-hero {
@@ -360,10 +418,11 @@ body::after {
 }
 
 .receipt-amount {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 36px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 44px;
+  font-weight: 400;
+  letter-spacing: -1.5px;
   line-height: 1;
   cursor: pointer;
   border-bottom: 1.5px dashed transparent;
@@ -380,10 +439,11 @@ body::after {
 .receipt-amount.reimburse { color: var(--income); }
 
 .receipt-amount-input {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 36px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 44px;
+  font-weight: 400;
+  letter-spacing: -1.5px;
   line-height: 1;
   background: transparent;
   border: none;
@@ -397,12 +457,12 @@ body::after {
 .receipt-amount-input.reimburse { color: var(--income); }
 
 .type-chip {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 9px;
-  letter-spacing: 0.08em;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 20px;
+  padding: 2px 6px;
+  border-radius: 0;
   font-weight: 500;
   margin-top: 6px;
   flex-shrink: 0;
@@ -410,7 +470,7 @@ body::after {
 
 .type-chip.expense   { background: var(--expense-dim);  color: var(--expense);  border: 1px solid var(--expense-border); }
 .type-chip.income    { background: var(--income-dim);   color: var(--income);   border: 1px solid var(--income-border); }
-.type-chip.transfer  { background: var(--transfer-dim); color: var(--transfer); border: 1px solid rgba(184,169,224,0.25); }
+.type-chip.transfer  { background: var(--transfer-dim); color: var(--transfer); border: 1px solid rgba(102,102,255,0.25); }
 .type-chip.reimburse { background: var(--income-dim);   color: var(--income);   border: 1px solid var(--income-border); }
 
 .receipt-meta {
@@ -446,7 +506,7 @@ body::after {
 }
 
 .receipt-date {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 11px;
   color: var(--muted);
   cursor: pointer;
@@ -458,7 +518,7 @@ body::after {
 .receipt-date:hover { border-bottom-color: var(--border2); }
 
 .date-input {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 11px;
   background: transparent;
   border: none;
@@ -474,9 +534,10 @@ body::after {
    ══════════════════════════════════════════════════════════════════════════ */
 
 .warn-banner {
-  background: var(--warn-dim);
-  border: 1px solid var(--warn-border);
-  border-radius: 10px;
+  background: transparent;
+  border: none;
+  border-left: 2px solid var(--warn);
+  border-radius: 0;
   padding: 8px 14px;
   font-size: 12px;
   color: var(--warn);
@@ -496,7 +557,7 @@ body::after {
   flex: 1;
   padding: 10px 0;
   text-align: center;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -532,7 +593,7 @@ body::after {
 .field-row:last-child { border-bottom: none; }
 
 .field-key {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -549,25 +610,25 @@ body::after {
 .field-val.group-tag { display: flex; justify-content: flex-end; }
 
 .group-badge {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 10px;
   background: var(--surface3);
   border: 1px solid var(--border2);
-  border-radius: 6px;
+  border-radius: 0;
   padding: 2px 8px;
   color: var(--text2);
-  letter-spacing: 0.04em;
+  letter-spacing: 1px;
 }
 
 .auto-badge {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 9px;
   background: var(--accent-dim);
   border: 1px solid var(--accent-border);
-  border-radius: 5px;
+  border-radius: 0;
   padding: 2px 6px;
   color: var(--accent);
-  letter-spacing: 0.04em;
+  letter-spacing: 1px;
   margin-left: 6px;
 }
 
@@ -575,7 +636,7 @@ body::after {
   background: transparent;
   border: none;
   outline: none;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: var(--text);
@@ -590,7 +651,7 @@ body::after {
   color: var(--muted);
   text-align: right;
   margin-top: 2px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
 }
 
 
@@ -604,7 +665,7 @@ body::after {
   background: transparent;
   border: none;
   outline: none;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: var(--text);
@@ -621,7 +682,7 @@ body::after {
   top: calc(100% + 6px);
   background: var(--surface2);
   border: 1px solid var(--border2);
-  border-radius: 12px;
+  border-radius: 0;
   max-height: 200px;
   overflow-y: auto;
   z-index: 50;
@@ -653,9 +714,9 @@ body::after {
 .inline-select {
   background: var(--surface2);
   border: 1px solid var(--border2);
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 13px;
   padding: 6px 10px;
   width: 100%;
@@ -671,7 +732,7 @@ body::after {
 .dupe-card {
   background: var(--warn-dim);
   border: 1px solid var(--warn-border);
-  border-radius: 14px;
+  border-radius: 0;
   padding: 14px 18px;
   display: flex;
   flex-direction: column;
@@ -679,9 +740,10 @@ body::after {
 }
 
 .dupe-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 18px;
+  font-weight: 400;
   color: var(--warn);
 }
 
@@ -692,12 +754,14 @@ body::after {
 .btn-dupe-log {
   flex: 1;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 0;
   background: var(--warn);
   color: #061414;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   border: none;
   cursor: pointer;
 }
@@ -705,13 +769,15 @@ body::after {
 .btn-dupe-cancel {
   flex: 1;
   padding: 10px;
-  border-radius: 10px;
-  background: var(--surface2);
+  border-radius: 0;
+  background: transparent;
   border: 1px solid var(--border2);
   color: var(--text2);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
@@ -725,14 +791,15 @@ body::after {
 .btn {
   flex: 1;
   padding: 16px;
-  border-radius: 14px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
+  border-radius: 0;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   border: none;
   cursor: pointer;
   transition: all 0.15s;
-  letter-spacing: -0.01em;
   position: relative;
   overflow: hidden;
 }
@@ -744,22 +811,21 @@ body::after {
   background: white;
   opacity: 0;
   transition: opacity 0.15s;
-  border-radius: inherit;
 }
 
 .btn:active::after { opacity: 0.08; }
 
-.btn-log { background: var(--accent); color: #051010; }
-.btn-log:hover  { filter: brightness(1.08); }
+.btn-log { background: var(--text); color: var(--bg); }
+.btn-log:hover  { filter: brightness(0.92); }
 .btn-log:active { transform: scale(0.96); }
 
 .btn-ghost {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text2);
+  background: var(--bg);
+  border: 1px solid rgba(232,232,232,0.2);
+  color: var(--text);
 }
 
-.btn-ghost:hover  { border-color: var(--border2); color: var(--text); }
+.btn-ghost:hover  { border-color: rgba(232,232,232,0.4); }
 .btn-ghost:active { transform: scale(0.97); }
 
 
@@ -768,9 +834,11 @@ body::after {
    ══════════════════════════════════════════════════════════════════════════ */
 
 .failure-card {
-  background: var(--danger-dim);
+  background: rgba(26,26,26,0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--danger-border);
-  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -778,9 +846,10 @@ body::after {
 }
 
 .failure-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 20px;
+  font-weight: 400;
   color: var(--danger);
 }
 
@@ -791,12 +860,14 @@ body::after {
 .btn-retry {
   flex: 1;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 0;
   background: var(--danger);
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   border: none;
   cursor: pointer;
   transition: all 0.15s;
@@ -805,13 +876,15 @@ body::after {
 .btn-copy {
   flex: 1;
   padding: 12px;
-  border-radius: 10px;
-  background: var(--surface2);
+  border-radius: 0;
+  background: transparent;
   border: 1px solid var(--border2);
   color: var(--text2);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
@@ -824,10 +897,12 @@ body::after {
    ══════════════════════════════════════════════════════════════════════════ */
 
 .success-card {
-  background: var(--accent-dim);
+  background: rgba(26,26,26,0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--accent-border);
-  border-radius: 20px;
-  padding: 32px 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  padding: 40px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -837,23 +912,24 @@ body::after {
 }
 
 .success-check {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--accent);
+  width: 44px;
+  height: 44px;
+  border-radius: 0;
+  background: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  color: #061414;
+  font-size: 20px;
+  color: var(--bg);
   margin-bottom: 4px;
   animation: checkPop 0.4s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .success-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 24px;
+  font-weight: 400;
   color: var(--accent);
 }
 
@@ -868,10 +944,11 @@ body::after {
    ══════════════════════════════════════════════════════════════════════════ */
 
 .transfer-notice {
-  background: var(--transfer-dim);
-  border: 1px solid rgba(184,169,224,0.2);
-  border-radius: 12px;
-  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-left: 2px solid var(--transfer);
+  border-radius: 0;
+  padding: 8px 12px;
   font-size: 12px;
   color: var(--transfer);
 }
@@ -882,10 +959,13 @@ body::after {
    ══════════════════════════════════════════════════════════════════════════ */
 
 .form-block {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  background: rgba(26,26,26,0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(232,232,232,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   overflow: hidden;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .form-row-inner {
@@ -900,7 +980,7 @@ body::after {
 .form-row-inner:last-child { border-bottom: none; }
 
 .form-key {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -913,7 +993,7 @@ body::after {
   background: transparent;
   border: none;
   outline: none;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: var(--text);
@@ -928,7 +1008,7 @@ body::after {
   background: transparent;
   border: none;
   outline: none;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 14px;
   color: var(--text);
   text-align: right;
@@ -940,7 +1020,7 @@ body::after {
   background: transparent;
   border: none;
   outline: none;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 14px;
   color: var(--muted);
   text-align: right;
@@ -955,7 +1035,7 @@ body::after {
   align-items: center;
   justify-content: flex-end;
   gap: 6px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: var(--text);
@@ -969,7 +1049,7 @@ body::after {
 .picker-caret { color: var(--muted); font-size: 16px; line-height: 1; flex-shrink: 0; }
 
 .form-readonly-val {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 14px;
   color: var(--muted);
   text-align: right;
@@ -984,11 +1064,13 @@ body::after {
 .review-btns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
 .review-btn {
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 0;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   border: 1px solid var(--border2);
   background: transparent;
   color: var(--text2);
@@ -1000,10 +1082,10 @@ body::after {
 .review-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 .review-btn.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #051010;
-  font-weight: 600;
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+  font-weight: 700;
 }
 
 
@@ -1028,9 +1110,11 @@ body::after {
 .sheet {
   width: 100%;
   max-width: 430px;
-  background: var(--surface);
-  border-radius: 24px 24px 0 0;
-  border: 1px solid var(--border);
+  background: rgba(26,26,26,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 0;
+  border: 1px solid rgba(232,232,232,0.12);
   border-bottom: none;
   padding: 12px 20px 52px;
   display: flex;
@@ -1043,20 +1127,21 @@ body::after {
   width: 36px;
   height: 4px;
   background: var(--border2);
-  border-radius: 2px;
+  border-radius: 0;
   margin: 0 auto 4px;
 }
 
 .sheet-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 17px;
-  font-weight: 700;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 20px;
+  font-weight: 400;
 }
 
 .setting-group { display: flex; flex-direction: column; gap: 6px; }
 
 .setting-label {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 0.1em;
@@ -1066,9 +1151,9 @@ body::after {
 .setting-input {
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 0;
   color: var(--text);
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 13px;
   padding: 12px 14px;
   outline: none;
@@ -1098,9 +1183,11 @@ body::after {
 .sheet-inner {
   width: 100%;
   max-width: 430px;
-  background: var(--surface);
-  border-radius: 24px 24px 0 0;
-  border: 1px solid var(--border2);
+  background: rgba(26,26,26,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 0;
+  border: 1px solid rgba(232,232,232,0.12);
   border-bottom: none;
   padding: 8px 0 48px;
   max-height: 70vh;
@@ -1113,7 +1200,7 @@ body::after {
   width: 36px;
   height: 4px;
   background: var(--border2);
-  border-radius: 2px;
+  border-radius: 0;
   margin: 8px auto 12px;
   flex-shrink: 0;
 }
@@ -1124,9 +1211,9 @@ body::after {
   width: 100%;
   background: var(--surface2);
   border: 1px solid var(--border2);
-  border-radius: 10px;
+  border-radius: 0;
   padding: 10px 14px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 14px;
   color: var(--text);
   outline: none;
@@ -1136,10 +1223,10 @@ body::after {
 
 .picker-item {
   padding: 14px 16px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 15px;
   color: var(--text);
-  border-radius: 10px;
+  border-radius: 0;
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -1150,7 +1237,7 @@ body::after {
 .picker-item-active { color: var(--accent); font-weight: 600; }
 
 .cat-group-label {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1160,10 +1247,10 @@ body::after {
 
 .cat-item {
   padding: 12px 16px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 15px;
   color: var(--text);
-  border-radius: 10px;
+  border-radius: 0;
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -1200,7 +1287,7 @@ body::after {
 .numpad-display {
   background: var(--bg);
   border: 1px solid var(--border2);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 14px 18px;
   margin-bottom: 12px;
   display: flex;
@@ -1210,7 +1297,7 @@ body::after {
 }
 
 .numpad-expr {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 22px;
   color: var(--text);
   flex: 1;
@@ -1219,7 +1306,7 @@ body::after {
 }
 
 .numpad-result {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 13px;
   color: var(--accent);
   margin-left: 10px;
@@ -1234,9 +1321,9 @@ body::after {
 
 .nk {
   height: 52px;
-  border-radius: 12px;
+  border-radius: 0;
   border: none;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 18px;
   font-weight: 500;
   cursor: pointer;
@@ -1254,7 +1341,7 @@ body::after {
 .nk-op           { background: var(--surface3); color: var(--accent); font-size: 20px; }
 .nk-op:active    { background: var(--border2); }
 .nk-del          { background: var(--surface3); color: var(--text2); font-size: 15px; }
-.nk-done         { background: var(--accent); color: #051010; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; }
+.nk-done         { background: var(--text); color: var(--bg); font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
 .nk-done:active  { filter: brightness(1.1); }
 .nk-zero         { grid-column: span 2; }
 
@@ -1266,6 +1353,16 @@ body::after {
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.2; }
 }
 
 @keyframes slideUp {
@@ -1320,7 +1417,7 @@ body::after {
 }
 
 .amt-preview {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 11px;
   color: var(--accent);
   text-align: right;
@@ -1336,11 +1433,11 @@ body::after {
 .amt-op {
   height: 28px;
   min-width: 36px;
-  border-radius: 7px;
+  border-radius: 0;
   border: 1px solid var(--border2);
   background: var(--surface2);
   color: var(--accent);
-  font-family: 'DM Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
