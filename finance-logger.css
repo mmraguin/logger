@@ -166,8 +166,9 @@ body::before {
   letter-spacing: -0.5px;
   color: var(--text);
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  text-align: center;
 }
 
 .wordmark em {
