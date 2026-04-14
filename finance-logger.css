@@ -177,6 +177,21 @@ body::before {
   font-style: normal;
 }
 
+.back-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.5;
+  font-size: 20px;
+  transition: opacity 0.15s;
+  user-select: none;
+}
+.back-btn:hover  { opacity: 1; }
+.back-btn:active { transform: scale(0.92); }
+
 .gear-btn {
   width: 28px;
   height: 28px;
