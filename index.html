@@ -137,19 +137,17 @@ const SHEET_ID_DEFAULT      = '15G5abgmSIE-kYkh0LI3FtWXPO2DlvVgUnWmAcn36nE0';
 // ── DATA ──────────────────────────────────────────────────────────────────────
 
 const CATEGORY_MAP = {
-  'Salary':'Income','Freelance':'Income','Gift':'Income','Other':'Income','IOU':'Income',
-  'Electricity':'Home','Groceries':'Home','Lulay':'Home',
+  'Salary':'Income','Freelance':'Income','Gift':'Income','IOU':'Income',
+  'Electricity':'Fixed','Lulay':'Fixed','Cellphone':'Fixed','Association Dues':'Fixed',
+  'Groceries':'Essentials','Medicine':'Essentials','Supplements':'Essentials','Doctor':'Essentials','Transpo':'Essentials',
   'Pet Food':'Pets','Grooming':'Pets','Litter':'Pets','Misc':'Pets','Vet':'Pets',
-  'Doctor':'Health','Supplements':'Health','Therapy':'Health','Medicine':'Health','Lab Tests':'Health','Eyes':'Health',
-  'Cellphone':'Quality Of Life','Eating Out':'Quality Of Life','Car':'Quality Of Life','Self Care':'Quality Of Life',
-  'Social':'Quality Of Life','Shopping':'Quality Of Life','Transpo':'Quality Of Life','Others':'Quality Of Life',
-  'Stellar Rebels':'Stellar Rebels',
-  'Digital Subscriptions':'Sinking','Gifts':'Sinking','Car Maintenance':'Sinking','Home Maintenance':'Sinking',
+  'Eating Out':'Lifestyle','Self Care':'Lifestyle','Social':'Lifestyle','Shopping':'Lifestyle','Others':'Lifestyle',
+  'Digital Subscriptions - Monthly':'Sinking','Digital Subscriptions - Yearly':'Sinking','Gift Giving':'Sinking','Car Maintenance':'Sinking','Home Maintenance':'Sinking','Eyes':'Sinking','Lab Tests':'Sinking',
   'Family Emergency':'Emergency','Medical Emergency':'Emergency','Pet Emergency':'Emergency','Job Loss':'Emergency',
   'Tech Fund':'Goals','Beauty Fund':'Goals','Vacation Fund':'Goals',
 };
 
-const INCOME_CATS     = ['Salary','Freelance','Gift','Other','IOU'];
+const INCOME_CATS     = ['Salary','Freelance','Gift','IOU'];
 const EXPENSE_CATS    = Object.keys(CATEGORY_MAP).filter(c => !INCOME_CATS.includes(c));
 const PAYMENT_METHODS = ['GCash','Maribank','BDO','BPI','Maya','UnionBank','UnionBank Credit','Grab Wallet','Shopee Pay','Cash'];
 const REVIEW_OPTIONS  = ['Myself','Others','Both'];
@@ -160,13 +158,13 @@ const MERCHANT_RULES = [
   { keywords: ['indrive','in drive'],paymentMethod: 'GCash',             category: null },
   { keywords: ['shopee'],            paymentMethod: 'Maribank',          category: null },
   { keywords: ['lazada'],            paymentMethod: 'UnionBank Credit', category: null },
-  { keywords: ['app store','apple'], paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['google play','play store'], paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['netflix'],           paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['spotify'],           paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['youtube premium'],   paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['canva'],             paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
-  { keywords: ['adobe'],             paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions' },
+  { keywords: ['app store','apple'], paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions - Monthly' },
+  { keywords: ['google play','play store'], paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions - Monthly' },
+  { keywords: ['netflix'],           paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions - Monthly' },
+  { keywords: ['spotify'],           paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions - Monthly' },
+  { keywords: ['youtube premium'],   paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions - Monthly' },
+  { keywords: ['canva'],             paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions - Monthly' },
+  { keywords: ['adobe'],             paymentMethod: 'UnionBank Credit', category: 'Digital Subscriptions - Monthly' },
 ];
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
