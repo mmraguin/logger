@@ -321,7 +321,7 @@ Rules:
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: mimeType, data: base64 } }] }],
-        generationConfig: { maxOutputTokens: 1500, temperature: 0.1 }
+        generationConfig: { maxOutputTokens: 1500, temperature: 0.1, thinkingConfig: { thinkingBudget: 0 } }
       })
     });
 
@@ -330,7 +330,8 @@ Rules:
       console.error('Gemini error:', JSON.stringify(data));
       throw new Error(`Gemini ${res.status}: ${data?.error?.message || 'unknown'}`);
     }
-    const raw    = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const parts  = data.candidates?.[0]?.content?.parts || [];
+    const raw    = (parts.find(function(p) { return !p.thought && p.text; }) || parts[parts.length - 1] || {}).text || '';
     console.log('Gemini raw response:', JSON.stringify(data, null, 2));
     console.log('Gemini text:', raw);
     const match  = raw.match(/\{[\s\S]*\}/);
