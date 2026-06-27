@@ -415,6 +415,8 @@ body::before {
   animation: breathe 2s ease-in-out infinite;
 }
 
+.touch .pulse-dot { animation-duration: 4s; }
+
 @keyframes breathe {
   0%, 100% { opacity: 0.3; transform: scale(0.7); }
   50%       { opacity: 1;   transform: scale(1.3); }
