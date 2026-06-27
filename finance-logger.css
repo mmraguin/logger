@@ -64,6 +64,7 @@
 
 html, body {
   height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -73,7 +74,6 @@ body {
   color: var(--text);
   display: flex;
   justify-content: center;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -130,10 +130,10 @@ body::before {
 .app {
   width: 100%;
   max-width: 430px;
-  min-height: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  padding-bottom: 40px;
+  overflow: hidden;
   position: relative;
   z-index: 2;
 }
@@ -214,48 +214,73 @@ body::before {
 
 
 /* ══════════════════════════════════════════════════════════════════════════
-   MODE PILLS
+   TAB BAR
    ══════════════════════════════════════════════════════════════════════════ */
 
-.mode-strip {
-  padding: 12px 16px 0;
+.tabbar {
   flex-shrink: 0;
-}
-
-.pills {
+  height: calc(50px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-top: 1px solid rgba(232,232,232,0.05);
+  background: rgba(10,10,10,0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
-  background: transparent;
-  gap: 6px;
+  z-index: 10;
+  position: relative;
 }
 
-.pill {
+.tab {
   flex: 1;
-  padding: 6px 4px;
-  font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  font-weight: 400;
-  letter-spacing: 1.5px;
-  text-transform: lowercase;
-  color: var(--muted);
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   cursor: pointer;
-  transition: all 0.18s;
-  white-space: nowrap;
+  color: var(--muted);
+  position: relative;
+  transition: color 0.15s;
   user-select: none;
-  border-bottom: 1.5px solid transparent;
 }
 
-.pill:hover { color: var(--text2); }
+.tab:active { transform: scale(0.88); }
 
-.pill.active {
-  background: none;
-  border-bottom-color: currentColor;
+.tab.active[data-mode="expense"]  { color: var(--expense); }
+.tab.active[data-mode="income"]   { color: var(--income); }
+.tab.active[data-mode="transfer"] { color: var(--transfer); }
+.tab.active[data-mode="manual"]   { color: var(--accent); }
+
+.ti {
+  width: 18px;
+  height: 18px;
 }
 
-.pill.active[data-mode="expense"]  { color: var(--expense); }
-.pill.active[data-mode="income"]   { color: var(--income); }
-.pill.active[data-mode="transfer"] { color: var(--transfer); }
-.pill.active[data-mode="manual"]   { color: var(--accent); }
+.ti svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tlabel {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: lowercase;
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .tabbar { height: 62px; }
+  .tab { gap: 4px; }
+  .ti { width: 20px; height: 20px; }
+  .tlabel { display: block; font-size: 8px; letter-spacing: 1.5px; }
+}
 
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -264,6 +289,7 @@ body::before {
 
 .content {
   flex: 1;
+  overflow-y: auto;
   padding: 16px 16px 0;
   display: flex;
   flex-direction: column;

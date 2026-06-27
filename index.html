@@ -15,15 +15,6 @@
     <div class="gear-btn" onclick="openSettings()">⚙</div>
   </div>
 
-  <div class="mode-strip">
-    <div class="pills">
-      <div class="pill active" data-mode="expense"  onclick="selectMode('expense')">Spend</div>
-      <div class="pill"        data-mode="income"   onclick="selectMode('income')">Receive</div>
-      <div class="pill"        data-mode="transfer" onclick="selectMode('transfer')">Move</div>
-      <div class="pill"        data-mode="manual"   onclick="selectMode('manual')">Manual</div>
-    </div>
-  </div>
-
   <div class="content">
 
     <!-- UPLOAD -->
@@ -102,6 +93,42 @@
       </div>
     </div>
 
+  </div>
+
+  <div class="tabbar">
+    <div class="tab active" data-mode="expense" onclick="selectMode('expense')">
+      <div class="ti">
+        <svg viewBox="0 0 24 24">
+          <rect x="2" y="5" width="20" height="14" rx="2"/>
+          <path d="M2 10h20"/>
+        </svg>
+      </div>
+      <div class="tlabel">Spend</div>
+    </div>
+    <div class="tab" data-mode="income" onclick="selectMode('income')">
+      <div class="ti">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 20V4M5 11l7-7 7 7"/>
+        </svg>
+      </div>
+      <div class="tlabel">Receive</div>
+    </div>
+    <div class="tab" data-mode="transfer" onclick="selectMode('transfer')">
+      <div class="ti">
+        <svg viewBox="0 0 24 24">
+          <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/>
+        </svg>
+      </div>
+      <div class="tlabel">Move</div>
+    </div>
+    <div class="tab" data-mode="manual" onclick="selectMode('manual')">
+      <div class="ti">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+      </div>
+      <div class="tlabel">Manual</div>
+    </div>
   </div>
 </div>
 
@@ -265,7 +292,7 @@ function selectMode(mode) {
   if (!VALID_MODES.includes(mode)) mode = 'expense';
   currentMode = mode;
   localStorage.setItem('lastMode', mode);
-  document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.mode === mode));
+  document.querySelectorAll('.tab[data-mode]').forEach(p => p.classList.toggle('active', p.dataset.mode === mode));
   if (mode === 'transfer' || mode === 'manual') { buildManualForm(mode); show('screen-manual'); }
   else { refreshHero(); show('screen-upload'); }
 }
