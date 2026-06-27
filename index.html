@@ -149,7 +149,7 @@ const CATEGORY_MAP = {
 
 const INCOME_CATS     = ['Salary','Freelance','Gift','IOU'];
 const EXPENSE_CATS    = Object.keys(CATEGORY_MAP).filter(c => !INCOME_CATS.includes(c));
-const PAYMENT_METHODS = ['GCash','Maribank','BDO','BPI','Maya','UnionBank','UnionBank Credit','Grab Wallet','Shopee Pay','Cash'];
+const PAYMENT_METHODS = ['GCash','Maribank','BDO','BPI','Maya','UnionBank','UnionBank Credit','Grab Wallet','Shopee Pay','Cash','BanKo','CIMB'];
 const REVIEW_OPTIONS  = ['Myself','Others','Both'];
 
 // Merchant intelligence: keyword → { paymentMethod, category (optional) }
@@ -302,7 +302,7 @@ async function parseWithGemini(dataUrl) {
 
   const prompt = `Extract transaction data from this Filipino payment app screenshot.
 Return ONLY valid JSON — no markdown, no explanation:
-{"amount":number,"date":"YYYY-MM-DD","merchant":"string","payment_method":"one of: GCash, Maribank, BDO, BPI, Maya, UnionBank, UnionBank Credit, Grab Wallet, Shopee Pay, Cash","category":"one of: ${cats}","low_confidence":boolean}
+{"amount":number,"date":"YYYY-MM-DD","merchant":"string","payment_method":"one of: GCash, Maribank, BDO, BPI, Maya, UnionBank, UnionBank Credit, Grab Wallet, Shopee Pay, Cash, BanKo, CIMB","category":"one of: ${cats}","low_confidence":boolean}
 
 Rules:
 - amount is always positive
