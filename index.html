@@ -93,6 +93,11 @@
       </div>
     </div>
 
+    <!-- RECONCILE -->
+    <div class="screen" id="screen-reconcile">
+      <div id="reconcile-content"></div>
+    </div>
+
   </div>
 
   <div class="tabbar">
@@ -128,6 +133,17 @@
         </svg>
       </div>
       <div class="tlabel">Manual</div>
+    </div>
+    <div class="tab" data-mode="reconcile" onclick="selectMode('reconcile')">
+      <div class="ti">
+        <svg viewBox="0 0 24 24">
+          <line x1="12" y1="3" x2="12" y2="21"/>
+          <path d="M5 8l3.5 6H1.5L5 8z"/>
+          <path d="M19 8l3.5 6h-7L19 8z"/>
+          <line x1="2" y1="21" x2="22" y2="21"/>
+        </svg>
+      </div>
+      <div class="tlabel">Balance</div>
     </div>
   </div>
 </div>
@@ -279,6 +295,9 @@ function cancelConfirm() {
   if (currentMode === 'transfer' || currentMode === 'manual') {
     buildManualForm(currentMode);
     show('screen-manual');
+  } else if (currentMode === 'reconcile') {
+    buildReconcileScreen();
+    show('screen-reconcile');
   } else {
     refreshHero();
     show('screen-upload');
@@ -288,12 +307,13 @@ function cancelConfirm() {
 // ── MODE ──────────────────────────────────────────────────────────────────────
 
 function selectMode(mode) {
-  const VALID_MODES = ['expense','income','transfer','manual'];
+  const VALID_MODES = ['expense','income','transfer','manual','reconcile'];
   if (!VALID_MODES.includes(mode)) mode = 'expense';
   currentMode = mode;
   localStorage.setItem('lastMode', mode);
   document.querySelectorAll('.tab[data-mode]').forEach(p => p.classList.toggle('active', p.dataset.mode === mode));
   if (mode === 'transfer' || mode === 'manual') { buildManualForm(mode); show('screen-manual'); }
+  else if (mode === 'reconcile') { buildReconcileScreen(); show('screen-reconcile'); }
   else { refreshHero(); show('screen-upload'); }
 }
 
@@ -1204,6 +1224,159 @@ function copyFailed() {
   if (!lastFailedRows) return;
   navigator.clipboard.writeText(lastFailedRows.map(r=>r.join('\t')).join('\n'))
     .then(() => alert('Row copied to clipboard.'));
+}
+
+// ── RECONCILE ─────────────────────────────────────────────────────────────────
+
+var reconcileAccount = PAYMENT_METHODS[0];
+var reconcileLogged  = null;
+
+function readTabCache() {
+  try {
+    var raw = localStorage.getItem('tab_v1');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+
+function parseTabDate(v) {
+  var s = String(v || '');
+  if (/^\d{4}-\d{2}-\d{2}T/.test(s)) {
+    var ts = new Date(s);
+    return new Date(ts.getUTCFullYear(), ts.getUTCMonth(), ts.getUTCDate());
+  }
+  return null;
+}
+
+function buildReconcileScreen() {
+  var acctOpts = PAYMENT_METHODS.map(function(a) {
+    return '<option value="' + a + '"' + (a === reconcileAccount ? ' selected' : '') + '>' + a + '</option>';
+  }).join('');
+
+  document.getElementById('reconcile-content').innerHTML =
+    '<div class="form-block">' +
+      '<div class="form-row-inner">' +
+        '<div class="form-key">Account</div>' +
+        '<div class="form-val-wrap">' +
+          '<select class="form-select-ctrl" id="recon-account" onchange="onReconAccountChange()">' + acctOpts + '</select>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div id="recon-data-block"></div>';
+
+  loadReconBalance();
+}
+
+function onReconAccountChange() {
+  reconcileAccount = document.getElementById('recon-account').value;
+  loadReconBalance();
+}
+
+function loadReconBalance() {
+  var cache = readTabCache();
+
+  if (!cache || !cache.as || !cache.as.length) {
+    renderReconData(null, null);
+    return;
+  }
+
+  var asData = cache.as;
+  if (!parseTabDate(String(asData[0][0] || ''))) asData = asData.slice(1);
+
+  var latestDate = null;
+  var latestBal  = null;
+
+  asData.forEach(function(row) {
+    var d   = parseTabDate(row[0]);
+    var acc = String(row[1] || '').trim();
+    if (acc === reconcileAccount && d) {
+      if (!latestDate || d > latestDate) {
+        latestDate = d;
+        latestBal  = parseFloat(row[4]) || 0;
+      }
+    }
+  });
+
+  reconcileLogged = latestBal;
+  renderReconData(latestBal, cache.ts ? new Date(cache.ts) : null);
+}
+
+function renderReconData(logged, cacheTs) {
+  var block = document.getElementById('recon-data-block');
+  if (!block) return;
+
+  if (logged === null) {
+    block.innerHTML = '<div class="recon-notice">No tab data in cache — open the tab app first, then come back.</div>';
+    return;
+  }
+
+  var tsStr = cacheTs
+    ? cacheTs.toLocaleDateString('en-US', { month:'short', day:'numeric' }) +
+      ' · ' + cacheTs.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })
+    : 'unknown';
+
+  block.innerHTML =
+    '<div class="form-block">' +
+      '<div class="form-row-inner">' +
+        '<div class="form-key">Logged</div>' +
+        '<div class="form-val-wrap"><span class="form-readonly-val">' + fmt(logged) + '</span></div>' +
+      '</div>' +
+      '<div class="form-row-inner">' +
+        '<div class="form-key">Actual</div>' +
+        '<div class="form-val-wrap">' +
+          '<input class="form-ctrl" id="recon-actual" type="text" inputmode="decimal" placeholder="0.00" oninput="updateReconDiff()">' +
+        '</div>' +
+      '</div>' +
+      '<div class="form-row-inner" id="recon-diff-row" style="display:none">' +
+        '<div class="form-key">Diff</div>' +
+        '<div class="form-val-wrap"><span id="recon-diff-val" class="recon-diff"></span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="recon-cache-note">Tab cache · ' + tsStr + '</div>' +
+    '<button class="btn btn-log" id="recon-log-btn" onclick="logReconciliation()" style="display:none">Log Difference</button>';
+}
+
+function updateReconDiff() {
+  var el     = document.getElementById('recon-actual');
+  var str    = el ? el.value : '';
+  var actual = parseFloat(str.replace(/,/g, '')) || 0;
+
+  var diffRow = document.getElementById('recon-diff-row');
+  var diffVal = document.getElementById('recon-diff-val');
+  var logBtn  = document.getElementById('recon-log-btn');
+  if (!str || !diffRow || !diffVal) return;
+
+  var diff = actual - (reconcileLogged || 0);
+
+  if (diff > 0) {
+    diffVal.textContent = '+' + fmt(diff);
+    diffVal.className = 'recon-diff recon-diff-pos';
+  } else if (diff < 0) {
+    diffVal.textContent = '-' + fmt(Math.abs(diff));
+    diffVal.className = 'recon-diff recon-diff-neg';
+  } else {
+    diffVal.textContent = fmt(0);
+    diffVal.className = 'recon-diff recon-diff-zero';
+  }
+
+  diffRow.style.display = '';
+  if (logBtn) logBtn.style.display = diff !== 0 ? '' : 'none';
+}
+
+async function logReconciliation() {
+  var actualStr = document.getElementById('recon-actual').value;
+  var actual    = parseFloat(actualStr.replace(/,/g, '')) || 0;
+  var diff      = actual - (reconcileLogged || 0);
+  if (diff === 0) { alert('No difference to log.'); return; }
+
+  var ts       = new Date().toISOString();
+  var sd       = toSheetDate(todayISO());
+  var merchant = reconcileAccount + ' Reconciliation';
+  var memo     = 'Logged ' + fmt(reconcileLogged || 0) + ' · Actual ' + fmt(actual);
+  var rows     = [[ts, 'Balance', diff, sd, merchant, reconcileAccount, '', '', memo, '']];
+  var d        = { type:'Balance', amount:Math.abs(diff), paymentMethod:reconcileAccount, merchant:merchant };
+
+  haptic('medium');
+  await appendRows(rows, d);
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────

@@ -254,7 +254,8 @@ body::before {
 .tab.active[data-mode="expense"]  { color: var(--expense); }
 .tab.active[data-mode="income"]   { color: var(--income); }
 .tab.active[data-mode="transfer"] { color: var(--transfer); }
-.tab.active[data-mode="manual"]   { color: var(--accent); }
+.tab.active[data-mode="manual"]      { color: var(--accent); }
+.tab.active[data-mode="reconcile"]   { color: var(--warn); }
 
 .ti {
   width: 18px;
@@ -1430,6 +1431,40 @@ body::before {
   from { transform: scale(0); }
   to   { transform: scale(1); }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RECONCILE SCREEN
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.recon-notice {
+  background: var(--surface);
+  border: 1px dashed var(--border2);
+  padding: 24px 20px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.recon-cache-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-align: center;
+  padding: 6px 0 2px;
+}
+
+.recon-diff {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.recon-diff-pos  { color: var(--income); }
+.recon-diff-neg  { color: var(--expense); }
+.recon-diff-zero { color: var(--muted); }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
