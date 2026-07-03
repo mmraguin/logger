@@ -1393,8 +1393,8 @@ async function logReconciliation() {
   var sd       = toSheetDate(todayISO());
   var merchant = reconcileAccount + ' Reconciliation';
   var memo     = 'Logged ' + fmt(reconcileLogged || 0) + ' · Actual ' + fmt(actual);
-  var rows     = [[ts, 'Balance', diff, sd, merchant, reconcileAccount, '', '', memo, '']];
-  var d        = { type:'Balance', amount:Math.abs(diff), paymentMethod:reconcileAccount, merchant:merchant };
+  var rows     = [[ts, 'Reconciliation', diff, sd, merchant, reconcileAccount, '', '', memo, '']];
+  var d        = { type:'Reconciliation', amount:Math.abs(diff), paymentMethod:reconcileAccount, merchant:merchant };
 
   haptic('medium');
   await appendRows(rows, d);
