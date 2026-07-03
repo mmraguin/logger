@@ -173,8 +173,9 @@
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 
-const SHEET_TAB = 'Log';
-const WEBHOOK   = 'https://script.google.com/macros/s/AKfycbwfl8-4sVKehGHxjGJirXVOYoTOZyinPFijxhQxJVVZQbWFaeBv53hr5HHuoPzYCg5z-Q/exec';
+const SHEET_TAB   = 'Log';
+const WEBHOOK     = 'https://script.google.com/macros/s/AKfycbwfl8-4sVKehGHxjGJirXVOYoTOZyinPFijxhQxJVVZQbWFaeBv53hr5HHuoPzYCg5z-Q/exec';
+const TAB_WEBHOOK = 'https://script.google.com/macros/s/AKfycbxy2zzSSdVP4zoLO8em6hUkAnNran5lq2_U1QIbMgVRutHuVeE_KBRzkRiEbc9X7GeMQA/exec';
 const SHEET_ID_DEFAULT      = '15G5abgmSIE-kYkh0LI3FtWXPO2DlvVgUnWmAcn36nE0';
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
@@ -1271,21 +1272,15 @@ function onReconAccountChange() {
   loadReconBalance();
 }
 
-function loadReconBalance() {
-  var cache = readTabCache();
-
-  if (!cache || !cache.as || !cache.as.length) {
-    renderReconData(null, null);
-    return;
-  }
-
-  var asData = cache.as;
-  if (!parseTabDate(String(asData[0][0] || ''))) asData = asData.slice(1);
+function parseAccountSnapshot(asData) {
+  if (!asData || !asData.length) return null;
+  var rows = asData;
+  if (!parseTabDate(String(rows[0][0] || ''))) rows = rows.slice(1);
 
   var latestDate = null;
   var latestBal  = null;
 
-  asData.forEach(function(row) {
+  rows.forEach(function(row) {
     var d   = parseTabDate(row[0]);
     var acc = String(row[1] || '').trim();
     if (acc === reconcileAccount && d) {
@@ -1296,8 +1291,34 @@ function loadReconBalance() {
     }
   });
 
-  reconcileLogged = latestBal;
-  renderReconData(latestBal, cache.ts ? new Date(cache.ts) : null);
+  return latestBal;
+}
+
+async function loadReconBalance() {
+  // Show loading state immediately
+  var block = document.getElementById('recon-data-block');
+  if (block) block.innerHTML = '<div class="recon-notice" style="color:var(--muted)">Fetching from Sheets…</div>';
+
+  // Try live fetch first
+  try {
+    var res  = await fetch(TAB_WEBHOOK);
+    var data = await res.json();
+    var bal  = parseAccountSnapshot(data.accountSnapshot || []);
+    reconcileLogged = bal;
+    renderReconData(bal, new Date());
+    return;
+  } catch (e) {}
+
+  // Fall back to localStorage cache
+  var cache = readTabCache();
+  if (cache && cache.as && cache.as.length) {
+    var bal = parseAccountSnapshot(cache.as);
+    reconcileLogged = bal;
+    renderReconData(bal, cache.ts ? new Date(cache.ts) : null);
+    return;
+  }
+
+  renderReconData(null, null);
 }
 
 function renderReconData(logged, cacheTs) {
@@ -1305,7 +1326,7 @@ function renderReconData(logged, cacheTs) {
   if (!block) return;
 
   if (logged === null) {
-    block.innerHTML = '<div class="recon-notice">No tab data in cache — open the tab app first, then come back.</div>';
+    block.innerHTML = '<div class="recon-notice">No balance data found for this account in the Sheet.</div>';
     return;
   }
 
