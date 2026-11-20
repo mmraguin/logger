@@ -83,7 +83,7 @@ html, body { height: 100%; }
 
 body {
   font-family: var(--font);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.45;
   font-variant-numeric: tabular-nums;
   background: var(--bg);
@@ -130,7 +130,7 @@ button, input, select, textarea { font-family: inherit; }
   right: 0;
   text-align: center;
   pointer-events: none;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text);
@@ -284,8 +284,8 @@ button, input, select, textarea { font-family: inherit; }
 
 .upload-icon svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 
-.upload-label { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
-.upload-sub { font-size: 13px; color: var(--text2); }
+.upload-label { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.upload-sub { font-size: 12px; color: var(--text2); }
 
 #file-input { display: none; }
 
@@ -316,7 +316,7 @@ button, input, select, textarea { font-family: inherit; }
   animation: breathe 1.6s ease-in-out infinite;
 }
 
-.parsing-text { font-size: 14px; font-weight: 500; color: var(--text2); }
+.parsing-text { font-size: 13px; font-weight: 500; color: var(--text2); }
 
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -346,7 +346,7 @@ button, input, select, textarea { font-family: inherit; }
 
 .receipt-amount,
 .receipt-amount-input {
-  font-size: 44px;
+  font-size: 39px;
   font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 48px;
@@ -381,7 +381,7 @@ button, input, select, textarea { font-family: inherit; }
   margin-top: 6px;
   padding: 4px 10px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: capitalize;
   border: 1px solid var(--border2);
@@ -399,7 +399,7 @@ button, input, select, textarea { font-family: inherit; }
 
 .receipt-merchant {
   display: inline-block;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
   cursor: pointer;
@@ -411,7 +411,7 @@ button, input, select, textarea { font-family: inherit; }
 
 .merchant-input {
   width: 100%;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   background: transparent;
   border: none;
@@ -422,7 +422,7 @@ button, input, select, textarea { font-family: inherit; }
 }
 
 .receipt-date {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text2);
   cursor: pointer;
   border-bottom: 1.5px dashed transparent;
@@ -434,7 +434,7 @@ button, input, select, textarea { font-family: inherit; }
 
 .date-input {
   width: 110px;
-  font-size: 13px;
+  font-size: 12px;
   background: transparent;
   border: none;
   border-bottom: 1.5px solid var(--accent-border);
@@ -453,7 +453,7 @@ button, input, select, textarea { font-family: inherit; }
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--warning);
   background: var(--warn-dim);
@@ -462,7 +462,7 @@ button, input, select, textarea { font-family: inherit; }
 
 .transfer-notice {
   padding: 12px 16px;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text2);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -482,7 +482,7 @@ button, input, select, textarea { font-family: inherit; }
   display: grid;
   place-items: center;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text2);
   background: var(--surface2);
@@ -514,13 +514,13 @@ button, input, select, textarea { font-family: inherit; }
 
 .field-key,
 .form-key {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text2);
 }
 
 .field-val {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text);
   text-align: right;
@@ -531,7 +531,7 @@ button, input, select, textarea { font-family: inherit; }
 .group-badge {
   padding: 3px 10px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   background: var(--surface3);
   border: 1px solid var(--border2);
@@ -542,7 +542,7 @@ button, input, select, textarea { font-family: inherit; }
   margin-left: 6px;
   padding: 2px 8px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   background: var(--accent-dim);
   border: 1px solid var(--accent-border);
@@ -556,7 +556,7 @@ button, input, select, textarea { font-family: inherit; }
   background: transparent;
   border: none;
   outline: none;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text);
   text-align: right;
@@ -574,7 +574,7 @@ button, input, select, textarea { font-family: inherit; }
 .form-ctrl { flex: 1; }
 .form-ctrl[type="date"] { color-scheme: dark; }
 
-.char-count { margin-top: 2px; font-size: 12px; color: var(--muted); text-align: right; }
+.char-count { margin-top: 2px; font-size: 11px; color: var(--muted); text-align: right; }
 
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -600,7 +600,7 @@ button, input, select, textarea { font-family: inherit; }
 
 .dropdown-item {
   padding: 12px 14px;
-  font-size: 14px;
+  font-size: 13px;
   text-align: left;
   color: var(--text);
   cursor: pointer;
@@ -611,14 +611,14 @@ button, input, select, textarea { font-family: inherit; }
 .dropdown-item.highlighted { background: var(--surface3); }
 .dropdown-item.selected { color: var(--primary); font-weight: 600; }
 
-.dropdown-empty { padding: 12px 14px; font-size: 13px; color: var(--muted); text-align: center; }
+.dropdown-empty { padding: 12px 14px; font-size: 12px; color: var(--muted); text-align: center; }
 
 .inline-select {
   background: var(--surface2);
   border: 1px solid var(--border2);
   border-radius: 8px;
   color: var(--text);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   padding: 8px 10px;
   outline: none;
@@ -642,8 +642,8 @@ button, input, select, textarea { font-family: inherit; }
   border-radius: var(--r-lg);
 }
 
-.dupe-title { font-size: 15px; font-weight: 600; color: var(--warning); }
-.dupe-desc { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.dupe-title { font-size: 14px; font-weight: 600; color: var(--warning); }
+.dupe-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
 .dupe-actions { display: flex; gap: 8px; }
 
 .btn-dupe-log,
@@ -654,7 +654,7 @@ button, input, select, textarea { font-family: inherit; }
   min-height: 44px;
   padding: 0 16px;
   border-radius: var(--r-md);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: filter 0.12s, transform 0.12s, border-color 0.12s;
@@ -689,7 +689,7 @@ button, input, select, textarea { font-family: inherit; }
   place-items: center;
   border: none;
   border-radius: var(--r-md);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.005em;
   cursor: pointer;
@@ -722,8 +722,8 @@ button, input, select, textarea { font-family: inherit; }
   border-radius: var(--r-lg);
 }
 
-.failure-title { font-size: 17px; font-weight: 600; color: var(--error); }
-.failure-desc { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.failure-title { font-size: 16px; font-weight: 600; color: var(--error); }
+.failure-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
 .failure-actions { display: flex; gap: 8px; }
 
 .success-card {
@@ -748,14 +748,14 @@ button, input, select, textarea { font-family: inherit; }
   border-radius: 50%;
   background: var(--success);
   color: #0C1F16;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   animation: checkPop 0.4s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.success-label { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.success-label { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
 .success-detail { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
-.success-row { font-size: 14px; color: var(--text2); }
+.success-row { font-size: 13px; color: var(--text2); }
 .success-row strong { color: var(--text); font-weight: 600; }
 
 
@@ -773,14 +773,14 @@ button, input, select, textarea { font-family: inherit; }
 }
 
 .form-row-inner:last-child { border-bottom: none; }
-.form-key { flex-shrink: 0; width: 88px; }
+.form-key { flex-shrink: 0; width: 88px; color: var(--text); font-size: 14px; font-weight: 500; }
 
 .form-readonly,
 .form-readonly-val {
   background: transparent;
   border: none;
   outline: none;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--muted);
   text-align: right;
   width: 100%;
@@ -795,7 +795,7 @@ button, input, select, textarea { font-family: inherit; }
   justify-content: flex-end;
   gap: 6px;
   width: 100%;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text);
   text-align: right;
@@ -803,7 +803,7 @@ button, input, select, textarea { font-family: inherit; }
 }
 
 .form-picker:active { opacity: 0.7; }
-.picker-caret { flex-shrink: 0; font-size: 14px; line-height: 1; color: var(--muted); }
+.picker-caret { flex-shrink: 0; font-size: 13px; line-height: 1; color: var(--muted); }
 
 /* Review: choice chips */
 .review-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
@@ -812,7 +812,7 @@ button, input, select, textarea { font-family: inherit; }
   min-height: 36px;
   padding: 0 14px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
   color: var(--text2);
@@ -828,7 +828,7 @@ button, input, select, textarea { font-family: inherit; }
 /* Amount with operator strip */
 .amt-wrap { display: flex; flex-direction: column; align-items: flex-end; flex: 1; gap: 6px; }
 .amt-wrap .form-ctrl { width: 100%; text-align: right; }
-.amt-preview { font-size: 13px; font-weight: 500; color: var(--lilac); text-align: right; }
+.amt-preview { font-size: 12px; font-weight: 500; color: var(--lilac); text-align: right; }
 .amt-ops { display: flex; gap: 6px; justify-content: flex-end; }
 
 .amt-op {
@@ -840,7 +840,7 @@ button, input, select, textarea { font-family: inherit; }
   border: 1px solid var(--border2);
   background: var(--surface2);
   color: var(--primary);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   user-select: none;
@@ -880,15 +880,15 @@ button, input, select, textarea { font-family: inherit; }
 }
 
 .sheet-handle { width: 36px; height: 4px; margin: 0 auto; border-radius: 2px; background: var(--border2); }
-.sheet-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.sheet-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
 
 .setting-group { display: flex; flex-direction: column; gap: 8px; }
-.setting-label { font-size: 13px; font-weight: 500; color: var(--text2); }
+.setting-label { font-size: 12px; font-weight: 500; color: var(--text2); }
 
 .setting-input {
   width: 100%;
   padding: 12px 14px;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text);
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -899,7 +899,7 @@ button, input, select, textarea { font-family: inherit; }
 
 .setting-input:hover { border-color: var(--border2); }
 .setting-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--accent-dim); }
-.setting-hint { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.setting-hint { font-size: 11px; color: var(--muted); line-height: 1.5; }
 
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -908,7 +908,7 @@ button, input, select, textarea { font-family: inherit; }
 
 .recon-notice {
   padding: 24px 16px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text2);
   text-align: center;
   line-height: 1.5;
@@ -917,9 +917,9 @@ button, input, select, textarea { font-family: inherit; }
   border-radius: var(--r-lg);
 }
 
-.recon-cache-note { padding: 4px 0; font-size: 12px; color: var(--muted); text-align: center; }
+.recon-cache-note { padding: 4px 0; font-size: 11px; color: var(--muted); text-align: center; }
 
-.recon-diff { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.recon-diff { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
 .recon-diff-pos  { color: var(--success); }
 .recon-diff-neg  { color: var(--error); }
 .recon-diff-zero { color: var(--muted); }
@@ -959,3 +959,26 @@ button, input, select, textarea { font-family: inherit; }
 .tab-back::before { display: none; }
 .tab-back .ti img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 6px; }
 .tlabel { font-size: 11px; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MANUAL FORM — list rows (label left, value + chevron right) and amount hero
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.form-row-inner { padding: 10px 16px; min-height: 48px; }
+.form-row-inner .form-ctrl,
+.form-row-inner .form-select-ctrl,
+.form-row-inner .dropdown-input { color: var(--text2); font-weight: 400; }
+.form-row-inner .form-ctrl::placeholder,
+.form-row-inner .dropdown-input::placeholder { color: var(--muted); }
+.form-select-ctrl { -webkit-appearance: none; appearance: none; text-align-last: right; }
+.row-chev { flex-shrink: 0; margin-left: 8px; font-size: 18px; line-height: 1; color: var(--muted); pointer-events: none; }
+
+.amt-hero { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.amt-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.amt-line { display: flex; align-items: baseline; gap: 6px; width: 100%; }
+.amt-peso { font-size: 32px; font-weight: 400; color: var(--text); line-height: 1.1; }
+.amt-input { flex: 1; min-width: 0; background: transparent; border: none; outline: none; padding: 0; font-size: 32px; font-weight: 400; line-height: 1.1; color: var(--text); text-align: left; caret-color: var(--primary); }
+.amt-input::placeholder { color: var(--text); opacity: 1; }
+.amt-hero .amt-preview { text-align: left; }
+.amt-hero .amt-ops { justify-content: flex-start; margin-top: 6px; }

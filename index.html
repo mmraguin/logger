@@ -848,8 +848,9 @@ function buildManualForm(mode) {
   const lastMethod = localStorage.getItem('lastPaymentMethod') || PAYMENT_METHODS[0];
   const c = document.getElementById('manual-form');
 
-  const row = (key, ctrl) =>
-    `<div class="form-row-inner"><div class="form-key">${key}</div><div class="form-val-wrap">${ctrl}</div></div>`;
+  const CHEV = '<span class="row-chev" aria-hidden="true">›</span>';
+  const row = (key, ctrl, chev = true) =>
+    `<div class="form-row-inner"><div class="form-key">${key}</div><div class="form-val-wrap">${ctrl}${chev ? CHEV : ''}</div></div>`;
 
   const text = (id, ph) =>
     `<input class="form-ctrl" id="${id}" type="text" placeholder="${ph}">`;
@@ -858,10 +859,14 @@ function buildManualForm(mode) {
     `<select class="form-select-ctrl" id="${id}" ${onch}>${opts.map(o=>`<option ${o===selected?'selected':''}>${o}</option>`).join('')}</select>`;
 
   const amtDisplay = () =>
-    `<div class="amt-wrap" id="amt-wrap">
-      <input class="form-ctrl" id="m-amount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off"
-        oninput="updateAmtPreview(this.value)"
-        onblur="resolveAmtOnBlur(this)">
+    `<div class="amt-hero" id="amt-wrap">
+      <div class="amt-label">Amount</div>
+      <div class="amt-line">
+        <span class="amt-peso">₱</span>
+        <input class="amt-input" id="m-amount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off"
+          oninput="updateAmtPreview(this.value)"
+          onblur="resolveAmtOnBlur(this)">
+      </div>
       <div class="amt-preview" id="amt-preview" style="display:none"></div>
       <div class="amt-ops" id="amt-ops">
         <button type="button" class="amt-op" onmousedown="event.preventDefault();appendOp('+')" ontouchstart="event.preventDefault();appendOp('+')">+</button>
@@ -873,7 +878,7 @@ function buildManualForm(mode) {
 
   const catDropdown = (firstCat) =>
     `<div class="dropdown-wrap" id="dd-wrap-m-category">
-      <input class="dropdown-input" id="dd-m-category" value="${firstCat}" data-confirmed="${firstCat}" autocomplete="off"
+      <input class="dropdown-input" id="dd-m-category" placeholder="Choose" value="${firstCat}" data-confirmed="${firstCat}" autocomplete="off"
         onfocus="this.dataset.confirmed=this.value; this.value=''; openManualCatDropdown()"
         oninput="filterManualCatDropdown(this.value)"
         onkeydown="dropdownKeyNav(event,'m-category')"
@@ -888,28 +893,28 @@ function buildManualForm(mode) {
 
   if (mode === 'transfer') {
     c.innerHTML =
-      row('Amount', amtDisplay()) +
+      amtDisplay() +
       row('Date',   `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
       row('From',   nativeSelect('m-from', PAYMENT_METHODS, lastMethod, 'onchange="syncTransferTo()"')) +
       row('To',     nativeSelect('m-to',   PAYMENT_METHODS.filter(p=>p!==lastMethod), PAYMENT_METHODS.find(p=>p!==lastMethod)||PAYMENT_METHODS[1])) +
-      row('Memo',   text('m-memo','Optional'));
+      row('Note',   text('m-memo','Optional'));
 
   } else {
     // Manual mode — type selector drives field visibility
     const firstExpCat = EXPENSE_CATS[0];
     const firstIncCat = INCOME_CATS[0];
     c.innerHTML =
+      amtDisplay() +
       row('Type', nativeSelect('m-type',['Expense','Income','Reimbursement','Balance'],'Expense','onchange="updateManualCats()"')) +
-      row('Amount', amtDisplay()) +
+      row('Category', catDropdown(firstExpCat)) +
+      row('Account',  nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
       row('Date',   `<input class="form-ctrl" id="m-date" type="date" value="${today}" style="color-scheme:dark">`) +
       // Merchant (Expense) and From (Income/Reimbursement) — toggled by updateManualCats
-      `<div class="form-row-inner" id="row-merchant"><div class="form-key">Merchant</div><div class="form-val-wrap"><input class="form-ctrl" id="m-merchant" type="text" placeholder="Who or where" oninput="applyManualMerchantRules(this.value)"></div></div>` +
-      `<div class="form-row-inner" id="row-from" style="display:none"><div class="form-key">From</div><div class="form-val-wrap"><input class="form-ctrl" id="m-from-text" type="text" placeholder="Who's paying you" oninput="applyManualMerchantRules(this.value)"></div></div>` +
-      row('Via',      nativeSelect('m-payment', PAYMENT_METHODS, lastMethod)) +
-      row('Category', catDropdown(firstExpCat)) +
-      row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstExpCat]||''}</div>`) +
-      row('Memo',     text('m-memo','Optional')) +
-      row('Review',   reviewBtns());
+      `<div class="form-row-inner" id="row-merchant"><div class="form-key">Merchant</div><div class="form-val-wrap"><input class="form-ctrl" id="m-merchant" type="text" placeholder="Who or where" oninput="applyManualMerchantRules(this.value)">${CHEV}</div></div>` +
+      `<div class="form-row-inner" id="row-from" style="display:none"><div class="form-key">From</div><div class="form-val-wrap"><input class="form-ctrl" id="m-from-text" type="text" placeholder="Who's paying you" oninput="applyManualMerchantRules(this.value)">${CHEV}</div></div>` +
+      row('Note',     text('m-memo','Optional')) +
+      row('Group',    `<div class="form-readonly-val" id="m-group">${CATEGORY_MAP[firstExpCat]||''}</div>`, false) +
+      row('Review',   reviewBtns(), false);
     renderManualCatDropdown(EXPENSE_CATS, firstExpCat);
   }
 }
