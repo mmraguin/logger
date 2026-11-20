@@ -6,14 +6,42 @@
 
 ## What this is
 
-Mobile-first transaction logger companion to `mmraguin.github.io/tab/`. Handles all writes to the Google Sheet. Two files: `index.html` (all HTML + JS), `finance-logger.css` (all styles). Visual system matches the tab app (Inter, dark neutral surfaces, lavender primary, tokens in `:root` — old token names kept as aliases because the JS uses `var(--muted)` inline). The tab app writes the `tab_v1` cache this app reads; keep that shape. GitHub Pages — push to main.
+Mobile-first transaction logger companion to `mmraguin.github.io/tab/`. Handles all writes to the Google Sheet. Files: `index.html` (all HTML + JS), `finance-logger.css` (all styles, the only stylesheet), `Images/` (`favicon.png`, `logo.png`), `apps-script/` (Apps Script mirror). Visual system matches the tab app (Inter, dark neutral surfaces, lavender primary, tokens in `:root` — old token names kept as aliases because the JS uses `var(--muted)` inline). The tab app writes the `tab_v1` cache this app reads; keep that shape. GitHub Pages — push to main.
 
 ```
 WEBHOOK     = 'https://script.google.com/macros/s/AKfycbwfl8-4sVKehGHxjGJirXVOYoTOZyinPFijxhQxJVVZQbWFaeBv53hr5HHuoPzYCg5z-Q/exec'  (write)
-TAB_WEBHOOK = 'https://script.google.com/macros/s/AKfycbxy2zzSSdVP4zoLO8em6hUkAnNran5lq2_U1QIbMgVRutHuVeE_KBRzkRiEbc9X7GeMQA/exec'  (read — same as tab app)
+TAB_WEBHOOK = 'https://script.google.com/macros/s/AKfycbxy2zzSSdVP4zoLO8em6hUkAnNran5lq2_U1QIbMgVRutHuVeE_KBRzkRiEbc9X7GeMQA/exec'  (read — a different deployment from the tab app's WEBHOOK, on purpose; never unify them)
 ```
 
 **Role:** Finance-sheet engineer and thinking partner for Miles. Maintain and extend his personal budget Google Sheet (V1) and its Apps Script, keep the logic intact, and give honest feedback over agreeable feedback.
+
+---
+
+## Files and scripts (what each one does)
+
+| File | What it does |
+|------|--------------|
+| `index.html` | The logger page: all HTML and JS. Log, reconcile and manual screens; posts to `WEBHOOK`, reads balances from `TAB_WEBHOOK`. |
+| `finance-logger.css` | The only stylesheet. |
+| `Images/favicon.png` | Favicon, apple-touch-icon and the back-to-tab button icon. |
+| `Images/logo.png` | Wordmark in the header. |
+| `.nojekyll` | Empty file that tells GitHub Pages to skip Jekyll and serve the files as is. Keep it. |
+| `.gitignore` | Ignores `.DS_Store`. |
+| `ROADMAP.md` | Open work only. |
+| `MEMORY.md` / `MEMORY-ARCHIVE.md` | Active decisions and workbook notes / resolved history. |
+
+**`apps-script/`** is a local-only mirror of the Google Sheet's Apps Script project. It is git-ignored on purpose: `Code.gs` hardcodes the Sheet ID and this repo is public. It runs only inside Google, never on GitHub Pages. Keep it identical to the live project. Never commit it.
+
+| Script | What it does |
+|--------|--------------|
+| `Code.gs` | The two web endpoints. `doPost` takes rows from the logger into the Log tab. `doGet` serves the sheet data to tab and the logger. Redeploy only when these change. |
+| `Activity.gs` | `syncActivity` (runs every minute) copies Log into Activity and computes every column. |
+| `Budget.gs` | Budget helpers: months, goals, Left to assign, Needed, the Moves log, and Open next month. |
+| `Panel.gs` | The assign-and-move panel (Auto-fill by priority, Top up savings, Cover overspent). |
+| `History.gs` | `refreshLive` (hourly) rebuilds LiveHistory. `closeMonth` archives a finished month. |
+| `Core.gs` | The sheet menu and small helpers the other files use. Needed by all. |
+| `Backup.gs` | `makeBackup`. Run before any big change. |
+| `Readme.gs` | Rebuilds the README tab inside the sheet. Optional, safe to skip. |
 
 ---
 
@@ -68,8 +96,8 @@ See MEMORY.md for full context. Current in-flight:
 | File | Read when... |
 |---|---|
 | `MEMORY.md` | Start of every session. Holds decisions, workbook architecture, money rules, SOPs |
-| `Personal Budget Workbook/outputs/apps-script/` | Changing or debugging any script. Live files, one per Apps Script file. Not yet copied into this repo |
-| `Personal Budget Workbook/outputs/apps-script/Readme.gs` | Rebuilding the README tab inside the sheet |
+| `apps-script/` | Changing or debugging any script. Mirror of the live Apps Script project, one file per script |
+| `apps-script/Readme.gs` | Rebuilding the README tab inside the sheet |
 | `Personal Budget Workbook/inputs/web-pages/` | Changing the dashboard or the logger page. Snapshots only, the live pages are on GitHub |
 | `Personal Budget Workbook/outputs/retired-scripts/` | Looking up how a past one-time step worked. Never paste these back into the project |
 | `ROADMAP.md` | Planning next features |

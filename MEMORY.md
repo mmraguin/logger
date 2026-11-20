@@ -2,7 +2,7 @@
 
 > Keep lean. Max ~15 active entries. When a feature is stable and no longer changing, move its entry to MEMORY-ARCHIVE.md.
 > Claude: check this before every session. Update after any decision or shipped change.
-> Covers logger, the tab dashboard, and the Personal Budget Workbook (Sheet and Apps Script). Last updated: 2026-11-19.
+> Covers logger, the tab dashboard, and the Personal Budget Workbook (Sheet and Apps Script). Last updated: 2026-11-20.
 
 ---
 
@@ -15,21 +15,11 @@
 **Match logic:** date + amount fuzzy match. Primary goal: catch missed transactions and credit card discrepancies.
 **Lives in:** logger (has write access), not tab.
 
-### Plan tab progress bar semantics (tab)
-**Status:** flagged, not fixed
-**Problem:** Category progress bar in Plan tab is ambiguous. Unclear whether fill is % spent or % remaining. It must read like the Goals tab bars (available / target, fill = progress toward goal).
-**Fix:** Audit every progress bar (Plan categories, Goals tab, Home goals strip) and normalize on one fill direction before shipping.
-
 ---
 
-## Shipped (stable — move to archive when next session starts)
 
-### Account Reconciliation Tab (logger)
-**Shipped:** Jul 3 2026
-**What:** 5th tab (Balance scale icon, amber). Fetches latest AccountSnapshot balance per account from TAB_WEBHOOK. User inputs actual balance, sees live diff, logs signed diff as `Reconciliation` type with memo.
-**Key files:** `index.html` — `buildReconcileScreen()`, `loadReconBalance()`, `logReconciliation()`, `parseAccountSnapshot()`, `parseTabDate()`.
-
----
+## Webhooks (intentionally different)
+- Logger `WEBHOOK` (write, POST) and `TAB_WEBHOOK` (read, GET) are separate Apps Script deployments, and the tab app has its own read `WEBHOOK`. They are meant to differ. Do not unify them. URLs are in CLAUDE.md.
 
 ## Recent Decisions
 
@@ -42,14 +32,10 @@
 | Jul 3 2026 | Reconcile tab fetches live from TAB_WEBHOOK, localStorage as fallback | localStorage not reliably shared across apps on mobile (PWA context, browser sandboxing). Direct fetch is the correct primary path. |
 | Jul 3 2026 | Reconcile diff memo = `Logged ₱X · Actual ₱Y` | Full audit context in the Sheet without cross-referencing. |
 | Jul 3 2026 | Added .nojekyll to skip Jekyll processing | Plain HTML repo. Jekyll was causing intermittent Pages deploy failures. |
-| Jul 3 2026 | No percentage on group total header (tab) | Bar + `₱X / ₱Y` already encodes it. A third encoding adds no information. |
-| Jul 3 2026 | Group total as header (label row), not a category card at the bottom (tab) | Bottom placement looked like another category. Header makes ownership clear. |
-| Jul 3 2026 | `.goal-group` wrapper + `32px` gap between groups (tab) | Gestalt proximity: tight internal spacing, relaxed between-group spacing. |
+| Nov 20 2026 | One brand icon: `Images/favicon.png` (favicon, apple-touch-icon, back-to-tab button) and `Images/logo.png` (wordmark), copied from tab. Old `icon-192`, `apple-touch-icon`, `logo`, `tab-mark` PNGs and the orphan `style.css` removed. | Single source for brand images across both repos. |
 | Jul 3 2026 | Webhook over direct Sheets API | API key + Sheet ID would both be client-side in a public repo. Personal finance data, not worth the privacy tradeoff. |
 | Jul 3 2026 | No Apps Script warm-up trigger | Probabilistic, burns quota, doesn't fix slow reads. |
 | Jul 3 2026 | Accept Apps Script cold start; fix perceived perf with loading states | Cache-first already covers the blank screen. Cold start only matters on explicit refresh. |
-| Jul 6 2026 | Pull to refresh built on `#pw`: `.ptr` indicator (rotates while dragging, spins during fetch), `overscroll-behavior: contain` on `.page` (tab) | Matches native feel and stops the browser's own bounce from fighting it. Threshold 64px, drag capped at 96px, 0.5x resistance. |
-| Jul 7 2026 | Replaced tab `index.html`/`style.css` with the `tabv2` redesign (Instrument Sans / Inconsolata / Fraunces) | Prototyped in sibling `tabv2`, then promoted wholesale as the new visual system. |
 
 ### Budget workbook (2026-11-19)
 
