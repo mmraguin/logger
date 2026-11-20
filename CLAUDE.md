@@ -1,17 +1,19 @@
 # logger — Claude Reference
 
-> Read MEMORY.md before starting any session. Move resolved entries to MEMORY-ARCHIVE.md when a feature is stable and unlikely to change.
+> Read MEMORY.md before starting any session. It holds the decisions log, workbook architecture, money rules and SOPs. Move resolved entries to MEMORY-ARCHIVE.md when a feature is stable and unlikely to change. Never load MEMORY-ARCHIVE.md unless asked.
 
 ---
 
 ## What this is
 
-Mobile-first transaction logger companion to `mmraguin.github.io/tab/`. Handles all writes to the Google Sheet. Two files: `index.html` (all HTML + CSS + JS), `finance-logger.css` (all styles). GitHub Pages — push to main.
+Mobile-first transaction logger companion to `mmraguin.github.io/tab/`. Handles all writes to the Google Sheet. Two files: `index.html` (all HTML + JS), `finance-logger.css` (all styles). Visual system matches the tab app (Inter, dark neutral surfaces, lavender primary, tokens in `:root` — old token names kept as aliases because the JS uses `var(--muted)` inline). The tab app writes the `tab_v1` cache this app reads; keep that shape. GitHub Pages — push to main.
 
 ```
 WEBHOOK     = 'https://script.google.com/macros/s/AKfycbwfl8-4sVKehGHxjGJirXVOYoTOZyinPFijxhQxJVVZQbWFaeBv53hr5HHuoPzYCg5z-Q/exec'  (write)
 TAB_WEBHOOK = 'https://script.google.com/macros/s/AKfycbxy2zzSSdVP4zoLO8em6hUkAnNran5lq2_U1QIbMgVRutHuVeE_KBRzkRiEbc9X7GeMQA/exec'  (read — same as tab app)
 ```
+
+**Role:** Finance-sheet engineer and thinking partner for Miles. Maintain and extend his personal budget Google Sheet (V1) and its Apps Script, keep the logic intact, and give honest feedback over agreeable feedback.
 
 ---
 
@@ -52,6 +54,37 @@ See MEMORY.md for full context. Current in-flight:
 - Add a tab in `.tabbar` HTML with matching `data-mode`.
 - Add `.tab.active[data-mode="newmode"]` color in `finance-logger.css`.
 - Add `<div class="screen" id="screen-newmode">` in content area.
+
+**Working rules (Sheet and Apps Script)**
+- Run makeBackup before any change to the sheet.
+- Use only the Apps Script opened from the YNAB sheet through Extensions. The backup copies carry their own scripts.
+- Editing code changes nothing live for web apps. Redeploy only when doPost or doGet change.
+- Replies follow Miles's style: short active sentences, no em dashes, semicolons, asterisks or quotation marks, no wrap-up phrases.
+
+---
+
+## Resources
+
+| File | Read when... |
+|---|---|
+| `MEMORY.md` | Start of every session. Holds decisions, workbook architecture, money rules, SOPs |
+| `Personal Budget Workbook/outputs/apps-script/` | Changing or debugging any script. Live files, one per Apps Script file. Not yet copied into this repo |
+| `Personal Budget Workbook/outputs/apps-script/Readme.gs` | Rebuilding the README tab inside the sheet |
+| `Personal Budget Workbook/inputs/web-pages/` | Changing the dashboard or the logger page. Snapshots only, the live pages are on GitHub |
+| `Personal Budget Workbook/outputs/retired-scripts/` | Looking up how a past one-time step worked. Never paste these back into the project |
+| `ROADMAP.md` | Planning next features |
+
+**File routing**
+
+| File type | Destination |
+|---|---|
+| Source materials (page snapshots, exports, backups) | `Personal Budget Workbook/inputs/` |
+| Outputs (live scripts, retired scripts) | `Personal Budget Workbook/outputs/` |
+
+**After each session**
+1. Ask: "Should I log any key decisions from this session to MEMORY.md?" Wait for confirmation before writing.
+2. Keep `outputs/apps-script/` identical to the Apps Script project. When a script changes, copy the new text there the same day.
+3. Never delete files in `inputs/` without explicit confirmation.
 
 ---
 

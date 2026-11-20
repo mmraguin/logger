@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>tab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B0D11">
+<title>tab · log</title>
 <link rel="stylesheet" href="finance-logger.css">
 </head>
 <body>
-<div class="constellation" id="stars"></div>
 <div class="app">
   <div class="topbar">
-    <div class="back-btn" onclick="window.location.href='https://mmraguin.github.io/tab/'">&#8592;</div>
+    <div class="back-btn" role="link" tabindex="0" aria-label="Back to tab" onclick="window.location.href='https://mmraguin.github.io/tab/'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></div>
     <div class="wordmark">tab<em>.</em></div>
-    <div class="gear-btn" onclick="openSettings()">⚙</div>
+    <div class="gear-btn" role="button" tabindex="0" aria-label="Settings" onclick="openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
   </div>
 
   <div class="content">
@@ -20,7 +20,7 @@
     <!-- UPLOAD -->
     <div class="screen active" id="screen-upload">
       <div class="upload-hero" id="upload-hero" onclick="document.getElementById('file-input').click()">
-        <div class="upload-icon" id="upload-icon">📷</div>
+        <div class="upload-icon" id="upload-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
         <div class="upload-label" id="upload-label">Share a screenshot</div>
         <div class="upload-sub"   id="upload-sub">GCash, credit card, any bank app</div>
       </div>
@@ -320,11 +320,11 @@ function selectMode(mode) {
 
 function refreshHero() {
   const map = {
-    expense: { icon:'📷', label:'Share a screenshot', sub:'GCash, credit card, any bank app' },
-    income:  { icon:'📥', label:'Share a screenshot', sub:'GCash, bank transfer, any inflow' },
+    expense: { icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>', label:'Share a screenshot', sub:'GCash, credit card, any bank app' },
+    income:  { icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>', label:'Share a screenshot', sub:'GCash, bank transfer, any inflow' },
   };
   const d = map[currentMode] || map.expense;
-  document.getElementById('upload-icon').textContent  = d.icon;
+  document.getElementById('upload-icon').innerHTML    = d.icon;
   document.getElementById('upload-label').textContent = d.label;
   document.getElementById('upload-sub').textContent   = d.sub;
 }
@@ -1411,18 +1411,7 @@ if (navigator.maxTouchPoints > 0 || 'ontouchstart' in window) {
   document.documentElement.classList.add('touch');
 }
 
-// Star field
-(function() {
-  var c = document.getElementById('stars');
-  for (var i = 0; i < 300; i++) {
-    var s = document.createElement('div');
-    s.className = 'star';
-    s.style.left = (Math.random() * 100) + '%';
-    s.style.top = (Math.random() * 100) + '%';
-    s.style.animationDelay = (Math.random() * 5) + 's';
-    c.appendChild(s);
-  }
-})();
+
 
 </script>
 
