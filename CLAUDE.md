@@ -23,7 +23,8 @@ TAB_WEBHOOK = 'https://script.google.com/macros/s/AKfycbxy2zzSSdVP4zoLO8em6hUkAn
 |------|--------------|
 | `index.html` | The logger page: all HTML and JS. Log, reconcile and manual screens; posts to `WEBHOOK`, reads balances from `TAB_WEBHOOK`. |
 | `finance-logger.css` | The only stylesheet. |
-| `Images/favicon.png` | Favicon, apple-touch-icon and the back-to-tab button icon. |
+| `Images/favicon.png` | Browser-tab favicon and the back-to-tab button icon. |
+| `Images/app.png` | Home-screen icon (apple-touch-icon). |
 | `Images/logo.png` | Wordmark in the header. |
 | `.nojekyll` | Empty file that tells GitHub Pages to skip Jekyll and serve the files as is. Keep it. |
 | `.gitignore` | Ignores `.DS_Store`. |
