@@ -119,7 +119,7 @@ button, input, select, textarea { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: calc(8px + env(safe-area-inset-top, 0px)) 8px 8px;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 12px;
   background: var(--bg);
   flex-shrink: 0;
 }
@@ -140,8 +140,8 @@ button, input, select, textarea { font-family: inherit; }
 
 .back-btn,
 .gear-btn {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
   border-radius: var(--r-sm);
